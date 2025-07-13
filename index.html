@@ -2,175 +2,108 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login / Registrierung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Registrierung – GrowEmpire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #000;
+      background: url("assets/hanf.png") no-repeat center center fixed;
+      background-size: cover;
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
     }
-    .container {
-      background: #111;
-      padding: 30px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    .bg-overlay {
+      background-color: rgba(0, 0, 0, 0.75);
+      padding: 2rem;
+      border-radius: 15px;
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 5px;
-    }
-    input {
-      background: #222;
+    .nav-tabs .nav-link.active {
+      background-color: #28a745;
       color: white;
     }
-    button {
-      background: #1db954;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .toggle-link {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 14px;
-      cursor: pointer;
-      color: #1db954;
-    }
-    label {
-      font-size: 13px;
-    }
-    .hidden {
-      display: none;
-    }
-    .checkbox {
-      display: flex;
-      align-items: center;
-      font-size: 13px;
-      margin-top: 5px;
-    }
-    .checkbox input {
-      width: 16px;
-      height: 16px;
-      margin-right: 8px;
-    }
+    label { margin-top: 10px; }
   </style>
 </head>
-<body>
+<body class="d-flex justify-content-center align-items-center">
+  <div class="container bg-overlay" style="max-width: 500px;">
+    <ul class="nav nav-tabs" id="authTabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#loginTab">Login</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#registerTab">Registrieren</a>
+      </li>
+    </ul>
 
-  <div class="container">
-    <h2 id="formTitle">Login</h2>
+    <div class="tab-content mt-3">
+      <!-- LOGIN -->
+      <div id="loginTab" class="tab-pane fade show active">
+        <label for="loginEmail">E-Mail</label>
+        <input type="email" id="loginEmail" class="form-control" />
 
-    <!-- Login Form -->
-    <form id="loginForm">
-      <input type="email" placeholder="E-Mail" id="loginEmail" required />
-      <input type="password" placeholder="Passwort" id="loginPassword" required />
-      <button type="submit">Einloggen</button>
-    </form>
+        <label for="loginPassword">Passwort</label>
+        <input type="password" id="loginPassword" class="form-control" />
 
-    <!-- Register Form -->
-    <form id="registerForm" class="hidden">
-      <input type="email" placeholder="E-Mail" id="registerEmail" required />
-      <input type="password" placeholder="Passwort" id="registerPassword" required />
-      <input type="password" placeholder="Passwort bestätigen" id="registerConfirm" required />
-
-      <div class="checkbox">
-        <input type="checkbox" id="agbCheck" required />
-        <label for="agbCheck">Ich akzeptiere die <a href="agb.html" target="_blank" style="color:#1db954;">AGB</a></label>
+        <button onclick="login()" class="btn btn-success mt-3 w-100">Einloggen</button>
       </div>
 
-      <button type="submit">Registrieren</button>
-    </form>
+      <!-- REGISTRIERUNG -->
+      <div id="registerTab" class="tab-pane fade">
+        <label for="regEmail">E-Mail</label>
+        <input type="email" id="regEmail" class="form-control" />
 
-    <div class="toggle-link" onclick="toggleForm()">Noch kein Konto? Jetzt registrieren</div>
-    <div id="message" style="text-align:center; margin-top: 10px;"></div>
+        <label for="regPassword">Passwort</label>
+        <input type="password" id="regPassword" class="form-control" />
+
+        <label for="regPasswordConfirm">Passwort bestätigen</label>
+        <input type="password" id="regPasswordConfirm" class="form-control" />
+
+        <div class="form-check mt-3">
+          <input type="checkbox" class="form-check-input" id="agbCheck">
+          <label class="form-check-label" for="agbCheck">
+            Ich akzeptiere die <a href="agb.html" target="_blank">AGB & Datenschutz</a>
+          </label>
+        </div>
+
+        <button onclick="register()" class="btn btn-primary mt-3 w-100">Registrieren</button>
+      </div>
+    </div>
+
+    <div id="status" class="text-center mt-3"></div>
   </div>
 
-  <script>
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const formTitle = document.getElementById("formTitle");
-    const toggleLink = document.querySelector(".toggle-link");
-    const message = document.getElementById("message");
-
-    function toggleForm() {
-      const isLogin = !loginForm.classList.contains("hidden");
-      loginForm.classList.toggle("hidden", isLogin);
-      registerForm.classList.toggle("hidden", !isLogin);
-      formTitle.textContent = isLogin ? "Registrieren" : "Login";
-      toggleLink.textContent = isLogin
-        ? "Schon registriert? Jetzt einloggen"
-        : "Noch kein Konto? Jetzt registrieren";
-      message.textContent = '';
-    }
-
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        message.textContent = "Fehler beim Einloggen: " + error.message;
-        message.style.color = "red";
-      } else {
-        message.textContent = "Login erfolgreich! Weiterleitung...";
-        message.style.color = "lime";
-        setTimeout(() => window.location.href = "/dashboard.html", 1000);
-      }
-    });
-
-    registerForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("registerEmail").value;
-      const password = document.getElementById("registerPassword").value;
-      const confirm = document.getElementById("registerConfirm").value;
-
-      if (password !== confirm) {
-        message.textContent = "Passwörter stimmen nicht überein.";
-        message.style.color = "red";
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) {
-        message.textContent = "Fehler bei Registrierung: " + error.message;
-        message.style.color = "red";
-      } else {
-        message.textContent = "Bestätigungslink gesendet. Bitte E-Mail prüfen.";
-        message.style.color = "lime";
-      }
-    });
-  </script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
     const supabase = supabase.createClient(
-      'https://rcmnzryqzfxhupnmpbak.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbW56cnlxemZ4aHVwbm1wYmFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNjI5NDcsImV4cCI6MjA2NzkzODk0N30.Oa5C2N9ny7eApN3eZ8cMOUXpsLIQuQV1HmAGpzo8C0o'
+      "https://rcmnzryqzfxhupnmpbak.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbW56cnlxemZ4aHVwbm1wYmFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNjI5NDcsImV4cCI6MjA2NzkzODk0N30.Oa5C2N9ny7eApN3eZ8cMOUXpsLIQuQV1HmAGpzo8C0o"
     );
+
+    async function login() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      document.getElementById("status").innerText = error ? error.message : "Login erfolgreich!";
+      if (!error) window.location.href = "dashboard.html";
+    }
+
+    async function register() {
+      const email = document.getElementById("regEmail").value;
+      const pw = document.getElementById("regPassword").value;
+      const pw2 = document.getElementById("regPasswordConfirm").value;
+      const agb = document.getElementById("agbCheck").checked;
+
+      if (pw !== pw2) return show("Passwörter stimmen nicht überein.");
+      if (!agb) return show("Bitte akzeptiere die AGB.");
+
+      const { error } = await supabase.auth.signUp({ email, password: pw });
+      show(error ? error.message : "Registrierung erfolgreich! Bitte bestätige deine E-Mail.");
+    }
+
+    function show(msg) {
+      document.getElementById("status").innerText = msg;
+    }
   </script>
 </body>
 </html>
