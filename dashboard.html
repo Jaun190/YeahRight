@@ -4,103 +4,135 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HashCore Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     body {
+      background: #121212;
+      color: #c9a4ff;
+      font-family: 'Orbitron', sans-serif;
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('assets/dashboard_bg.png') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
+      padding: 20px;
     }
 
-    header {
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 1rem 2rem;
+    h1 {
       text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      color: #b184ff;
-      border-bottom: 2px solid #b184ff;
+      font-size: 2em;
+      color: #b78aff;
+      margin-bottom: 40px;
+      text-shadow: 0 0 10px #8b5cf6;
     }
 
-    main {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: auto;
+    .box {
+      background: #1e1e1e;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 25px rgba(187, 139, 255, 0.2);
     }
 
-    .card {
-      background: rgba(0, 0, 0, 0.75);
-      border: 1px solid #b184ff;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 0 20px #b184ff44;
+    .box h2 {
+      font-size: 1.4em;
+      color: #b78aff;
+      margin-bottom: 10px;
     }
 
-    .card h2 {
-      color: #b184ff;
-      margin-top: 0;
-    }
-
-    .btn {
-      background-color: #b184ff;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
+    select, button {
+      font-family: inherit;
+      padding: 10px;
       border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s ease-in-out;
+      border: none;
+      background: #2a2a2a;
+      color: #fff;
+      margin-top: 10px;
+      width: 100%;
     }
 
-    .btn:hover {
-      background-color: #8d5bff;
+    .stats-chart {
+      background: #000;
+      color: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      margin-top: 20px;
+      border: 1px solid #8b5cf6;
     }
 
-    .stat-value {
-      font-weight: bold;
-      color: #ffffff;
+    canvas {
+      width: 100% !important;
+      height: auto !important;
     }
-
   </style>
 </head>
 <body>
-  <header>HashCore Dashboard</header>
 
-  <main>
-    <div class="card">
-      <h2>Lizenzstatus</h2>
-      <p>Aktuelle Lizenz: <span class="stat-value">Starterbox (CHF 49.–)</span></p>
-      <p>Aktiv seit: <span class="stat-value">13. Juli 2025</span></p>
-    </div>
+  <h1>HashCore Dashboard</h1>
 
-    <div class="card">
-      <h2>Meine Hashpower</h2>
-      <p>Gekaufte Hashrate: <span class="stat-value">1.5 TH/s</span></p>
-      <p>Aktive Hashrate: <span class="stat-value">1.3 TH/s</span></p>
-      <button class="btn">Weitere Hashpower kaufen</button>
-    </div>
+  <div class="box">
+    <h2>Meine Hashpower</h2>
+    <select id="hashpower">
+      <option value="29">100 GH/s – CHF 29.–</option>
+      <option value="59">200 GH/s – CHF 59.–</option>
+      <option value="99">500 GH/s – CHF 99.–</option>
+      <option value="179">1 TH/s – CHF 179.–</option>
+    </select>
+    <p>Gewählter Preis: <span id="preis">CHF 29.–</span></p>
+  </div>
 
-    <div class="card">
-      <h2>Partner & Provision</h2>
-      <p>Dein Empfehlungslink: <span class="stat-value">https://hashcore.io/r/abc123</span></p>
-      <p>Geworbene Partner: <span class="stat-value">5</span></p>
-      <p>Provision erhalten: <span class="stat-value">CHF 250.–</span></p>
-      <button class="btn">Auszahlung beantragen</button>
-    </div>
+  <div class="box">
+    <h2>Referral-Link</h2>
+    <code>https://hashcore.io/register?ref=meinname</code>
+    <p>Provision: <strong>CHF 50.–</strong> bei Lizenz + <strong>CHF 100.–</strong> Hashpower-Kauf</p>
+  </div>
 
-    <!-- 🔥 NEU: Nutzerstatistik -->
-    <div class="card">
-      <h2>Meine Statistik</h2>
-      <p><strong>Geworbene Partner:</strong> <span class="stat-value">5</span></p>
-      <p><strong>Verdient durch Partner:</strong> <span class="stat-value">CHF 250.–</span></p>
-      <p><strong>Gekaufte Hashpower:</strong> <span class="stat-value">1.5 TH/s</span></p>
-      <p><strong>Aktive Hashrate:</strong> <span class="stat-value">1.3 TH/s</span></p>
-      <p><strong>Konto seit:</strong> <span class="stat-value">01.07.2025</span></p>
-      <p><strong>ROI (Return on Investment):</strong> <span class="stat-value">88 %</span></p>
-    </div>
+  <div class="box">
+    <h2>Auszahlungsbereich</h2>
+    <p>Verfügbarer Gewinn: <strong>CHF 0.–</strong></p>
+    <button>Auszahlung beantragen</button>
+  </div>
 
-  </main>
+  <div class="box stats-chart">
+    <h2>Live Statistik</h2>
+    <canvas id="statistikChart"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const select = document.getElementById('hashpower');
+    const preisSpan = document.getElementById('preis');
+    select.addEventListener('change', () => {
+      preisSpan.textContent = `CHF ${select.value}.–`;
+    });
+
+    const ctx = document.getElementById('statistikChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Lizenzen', 'Hashpower-Käufe', 'Provisionen', 'Nutzer', 'Auszahlungen', 'TH/s gesamt'],
+        datasets: [{
+          label: 'Statistik',
+          data: [120, 8700, 5400, 380, 2600, 28],
+          backgroundColor: [
+            '#a855f7', '#9333ea', '#7e22ce', '#6b21a8', '#581c87', '#4c1d95'
+          ],
+          borderRadius: 10
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            ticks: { color: '#fff' },
+            grid: { color: '#333' }
+          },
+          x: {
+            ticks: { color: '#fff' },
+            grid: { color: '#333' }
+          }
+        }
+      }
+    });
+  </script>
+
 </body>
 </html>
