@@ -4,152 +4,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HashCore Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: radial-gradient(ellipse at center, #0d0d0d 0%, #000000 100%);
-      color: #fff;
-      overflow-x: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('assets/dashboard_bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
     }
+
     header {
-      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 1rem 2rem;
       text-align: center;
-      background: #1a1a1a;
-      border-bottom: 2px solid #444;
-    }
-    header h1 {
-      color: #a066ff;
       font-size: 2rem;
+      font-weight: bold;
+      color: #b184ff;
+      border-bottom: 2px solid #b184ff;
     }
-    .dashboard-container {
-      padding: 30px;
-      max-width: 900px;
+
+    main {
+      padding: 2rem;
+      max-width: 1200px;
       margin: auto;
     }
+
     .card {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      padding: 20px;
-      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid #b184ff;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(160, 102, 255, 0.2);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 20px #b184ff44;
     }
+
     .card h2 {
-      color: #a066ff;
+      color: #b184ff;
+      margin-top: 0;
     }
-    .select {
-      width: 100%;
-      padding: 10px;
-      font-size: 1rem;
-      background: #0d0d0d;
-      color: #fff;
-      border: 1px solid #a066ff;
-      border-radius: 8px;
-    }
-    #popup {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    #popup-content {
-      background: #000;
-      border: 2px solid #ff44ff;
-      border-radius: 14px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 0 25px #ff44ff;
-    }
-    #popup-content h2 {
-      color: #ff44ff;
-    }
-    button {
-      background: #a066ff;
-      color: #fff;
+
+    .btn {
+      background-color: #b184ff;
+      color: white;
       border: none;
-      padding: 12px 24px;
+      padding: 0.75rem 1.5rem;
       font-size: 1rem;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s ease;
-    }
-    button:hover {
-      background: #c38cff;
-    }
-    .ref-link {
-      background: #0a0a0a;
-      padding: 10px;
       border-radius: 8px;
-      border: 1px dashed #555;
-      word-break: break-all;
+      cursor: pointer;
+      transition: 0.2s ease-in-out;
     }
+
+    .btn:hover {
+      background-color: #8d5bff;
+    }
+
+    .stat-value {
+      font-weight: bold;
+      color: #ffffff;
+    }
+
   </style>
 </head>
 <body>
+  <header>HashCore Dashboard</header>
 
-  <header>
-    <h1>HashCore Dashboard</h1>
-  </header>
-
-  <div class="dashboard-container">
+  <main>
+    <div class="card">
+      <h2>Lizenzstatus</h2>
+      <p>Aktuelle Lizenz: <span class="stat-value">Starterbox (CHF 49.–)</span></p>
+      <p>Aktiv seit: <span class="stat-value">13. Juli 2025</span></p>
+    </div>
 
     <div class="card">
       <h2>Meine Hashpower</h2>
-      <select class="select" id="hashrate-select">
-        <option value="29">100 GH/s – CHF 29.–</option>
-        <option value="99">500 GH/s – CHF 99.–</option>
-        <option value="149">1 TH/s – CHF 149.–</option>
-      </select>
-      <p>Gewählter Preis: <span id="price">CHF 29.–</span></p>
+      <p>Gekaufte Hashrate: <span class="stat-value">1.5 TH/s</span></p>
+      <p>Aktive Hashrate: <span class="stat-value">1.3 TH/s</span></p>
+      <button class="btn">Weitere Hashpower kaufen</button>
     </div>
 
     <div class="card">
-      <h2>Referral-Link</h2>
-      <div class="ref-link">https://hashcore.io/register?ref=meinname</div>
-      <p>Provision: CHF 50.– bei Lizenz + CHF 100.– Hashpower-Kauf</p>
+      <h2>Partner & Provision</h2>
+      <p>Dein Empfehlungslink: <span class="stat-value">https://hashcore.io/r/abc123</span></p>
+      <p>Geworbene Partner: <span class="stat-value">5</span></p>
+      <p>Provision erhalten: <span class="stat-value">CHF 250.–</span></p>
+      <button class="btn">Auszahlung beantragen</button>
     </div>
 
+    <!-- 🔥 NEU: Nutzerstatistik -->
     <div class="card">
-      <h2>Auszahlungsbereich</h2>
-      <p>Verfügbarer Gewinn: CHF 0.–</p>
-      <button onclick="alert('Demnächst verfügbar')">Auszahlung beantragen</button>
+      <h2>Meine Statistik</h2>
+      <p><strong>Geworbene Partner:</strong> <span class="stat-value">5</span></p>
+      <p><strong>Verdient durch Partner:</strong> <span class="stat-value">CHF 250.–</span></p>
+      <p><strong>Gekaufte Hashpower:</strong> <span class="stat-value">1.5 TH/s</span></p>
+      <p><strong>Aktive Hashrate:</strong> <span class="stat-value">1.3 TH/s</span></p>
+      <p><strong>Konto seit:</strong> <span class="stat-value">01.07.2025</span></p>
+      <p><strong>ROI (Return on Investment):</strong> <span class="stat-value">88 %</span></p>
     </div>
 
-  </div>
-
-  <div id="popup">
-    <div id="popup-content">
-      <h2>Starter-Lizenz erforderlich</h2>
-      <p>Bevor du Hashpower kaufen oder verdienen kannst, musst du die CHF 49.– Starter-Lizenz aktivieren.</p>
-      <button onclick="buyLicense()">Jetzt Lizenz kaufen</button>
-    </div>
-  </div>
-
-  <script>
-    const hasLicense = false; // später durch Supabase ersetzen
-
-    const popup = document.getElementById('popup');
-    if (hasLicense) {
-      popup.style.display = 'none';
-    }
-
-    const priceDisplay = document.getElementById('price');
-    document.getElementById('hashrate-select').addEventListener('change', function() {
-      const selected = this.value;
-      priceDisplay.textContent = `CHF ${selected}.–`;
-    });
-
-    function buyLicense() {
-      alert("Lizenz gekauft (Fake)");
-      popup.style.display = 'none';
-    }
-  </script>
-
+  </main>
 </body>
 </html>
