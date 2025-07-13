@@ -1,70 +1,81 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login & Registrierung</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        background-image: url("assets/hanf.png");
-        background-size: cover;
-        background-position: center;
-      }
-    </style>
-  </head>
-  <body class="flex items-center justify-center min-h-screen">
-    <div class="bg-zinc-900 bg-opacity-90 p-8 rounded-xl shadow-2xl w-full max-w-md">
-      <!-- Umschalter -->
-      <div class="flex justify-center mb-6 space-x-4">
-        <button onclick="toggleForm('login')" class="text-white font-semibold" id="loginTab">Login</button>
-        <button onclick="toggleForm('register')" class="text-green-400 font-semibold" id="registerTab">Registrieren</button>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grow Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url('assets/hanf.png');
+      background-size: cover;
+      background-position: center;
+      backdrop-filter: blur(4px);
+    }
 
-      <!-- LOGIN FORMULAR -->
-      <form id="loginForm" class="space-y-4">
-        <h2 class="text-2xl font-bold text-center text-green-400">Login</h2>
-        <input type="email" placeholder="E-Mail" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
-        <input type="password" placeholder="Passwort" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
-        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded shadow-md">Einloggen</button>
-      </form>
+    .glass {
+      background: rgba(17, 17, 17, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-      <!-- REGISTER FORMULAR -->
-      <form id="registerForm" class="space-y-4 hidden">
-        <h2 class="text-2xl font-bold text-center text-green-400">Registrieren</h2>
-        <input type="text" placeholder="Vorname" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
-        <input type="text" placeholder="Nachname" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
-        <input type="text" placeholder="Adresse" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
-        <input type="email" placeholder="E-Mail" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
-        <input type="password" placeholder="Passwort" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
-        <input type="password" placeholder="Passwort bestätigen" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
-        <label class="text-sm text-white flex items-center space-x-2">
-          <input type="checkbox" required />
-          <span>Ich akzeptiere die <a href="agb.html" class="underline text-green-400">AGB</a></span>
-        </label>
-        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded shadow-md">Registrieren</button>
-      </form>
+    .tab-active {
+      border-bottom: 2px solid #22c55e;
+      color: #22c55e;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white">
+  <div class="w-full max-w-md p-6 rounded-2xl shadow-2xl glass">
+    <!-- Tabs -->
+    <div class="flex justify-around mb-6 text-lg font-semibold">
+      <button id="tab-login" onclick="showForm('login')" class="tab-active">Login</button>
+      <button id="tab-register" onclick="showForm('register')" class="text-zinc-300">Registrieren</button>
     </div>
 
-    <script>
-      function toggleForm(form) {
-        const loginForm = document.getElementById("loginForm");
-        const registerForm = document.getElementById("registerForm");
-        const loginTab = document.getElementById("loginTab");
-        const registerTab = document.getElementById("registerTab");
+    <!-- Login -->
+    <form id="form-login" class="space-y-4">
+      <h2 class="text-center text-2xl font-bold text-green-400">Willkommen zurück</h2>
+      <input type="email" placeholder="E-Mail" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+      <input type="password" placeholder="Passwort" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+      <button type="submit" class="w-full bg-green-500 hover:bg-green-600 py-2 px-4 rounded shadow-md">Einloggen</button>
+    </form>
 
-        if (form === "login") {
-          loginForm.classList.remove("hidden");
-          registerForm.classList.add("hidden");
-          loginTab.classList.add("text-green-400");
-          registerTab.classList.remove("text-green-400");
-        } else {
-          loginForm.classList.add("hidden");
-          registerForm.classList.remove("hidden");
-          loginTab.classList.remove("text-green-400");
-          registerTab.classList.add("text-green-400");
-        }
+    <!-- Registrierung -->
+    <form id="form-register" class="space-y-4 hidden">
+      <h2 class="text-center text-2xl font-bold text-green-400">Account erstellen</h2>
+      <input type="text" placeholder="Vorname" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+      <input type="text" placeholder="Nachname" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+      <input type="email" placeholder="E-Mail" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+      <input type="password" placeholder="Passwort" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+      <input type="password" placeholder="Passwort bestätigen" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+      <label class="text-sm flex items-center gap-2 text-zinc-200">
+        <input type="checkbox" required />
+        <span>Ich akzeptiere die <a href="agb.html" class="underline text-green-400">AGB</a></span>
+      </label>
+      <button type="submit" class="w-full bg-green-500 hover:bg-green-600 py-2 px-4 rounded shadow-md">Registrieren</button>
+    </form>
+  </div>
+
+  <script>
+    function showForm(form) {
+      const loginTab = document.getElementById('tab-login');
+      const registerTab = document.getElementById('tab-register');
+      const loginForm = document.getElementById('form-login');
+      const registerForm = document.getElementById('form-register');
+
+      if (form === 'login') {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        loginTab.classList.add('tab-active');
+        registerTab.classList.remove('tab-active');
+      } else {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        loginTab.classList.remove('tab-active');
+        registerTab.classList.add('tab-active');
       }
-    </script>
-  </body>
+    }
+  </script>
+</body>
 </html>
