@@ -3,177 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GrowEmpire – Login & Registrierung</title>
+  <title>GrowEmpire Login/Register</title>
   <style>
     * {
-      box-sizing: border-box;
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
     }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      background: linear-gradient(-45deg, #1d2b64, #f8cdda, #2d3a4b, #3f2b96);
+      min-height: 100vh;
+      background: linear-gradient(120deg, #0f3b1d, #1b4d2b, #0f3b1d);
       background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      animation: bgAnim 20s ease infinite;
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.95);
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.2);
-      width: 100%;
-      max-width: 420px;
-      z-index: 2;
+    }
+
+    @keyframes bgAnim {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    .container {
+      background-color: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 2rem;
       backdrop-filter: blur(10px);
-    }
-
-    .tabs {
-      display: flex;
-      margin-bottom: 1rem;
-    }
-
-    .tab {
-      flex: 1;
-      text-align: center;
-      padding: 0.8rem;
-      cursor: pointer;
-      font-weight: bold;
-      border-bottom: 2px solid transparent;
-      color: #333;
-    }
-
-    .tab.active {
-      border-color: #4caf50;
-      color: #4caf50;
-    }
-
-    form {
-      display: none;
-    }
-
-    form.active {
-      display: block;
-    }
-
-    input {
       width: 100%;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    button {
-      width: 100%;
-      padding: 0.9rem;
-      background: #4caf50;
+      max-width: 400px;
       color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
     }
 
-    .checkbox-group {
-      display: flex;
-      align-items: center;
+    h2 {
+      text-align: center;
       margin-bottom: 1rem;
-      font-size: 0.9rem;
     }
 
-    .checkbox-group input {
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    input[type="checkbox"] {
       margin-right: 0.5rem;
     }
 
-    .checkbox-group a {
-      color: #4caf50;
-      text-decoration: none;
+    .btn {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #32a852;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    @media(max-width: 500px) {
-      .card {
-        margin: 1rem;
-      }
+    .toggle {
+      margin-top: 1rem;
+      text-align: center;
+      cursor: pointer;
+      color: #a4ffb5;
     }
+
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('login')">Login</div>
-      <div class="tab" onclick="switchTab('register')">Registrieren</div>
-    </div>
 
-    <!-- Login -->
-    <form id="loginForm" class="active" onsubmit="return loginUser()">
-      <input type="email" placeholder="E-Mail" required />
-      <input type="password" placeholder="Passwort" required />
-      <button type="submit">Einloggen</button>
-    </form>
+<div class="container">
+  <h2 id="formTitle">Login</h2>
+  
+  <form id="loginForm">
+    <label>Email:
+      <input type="email" required>
+    </label>
+    <label>Passwort:
+      <input type="password" required>
+    </label>
+    <button class="btn" type="submit">Einloggen</button>
+  </form>
 
-    <!-- Registrierung -->
-    <form id="registerForm" onsubmit="return registerUser()">
-      <input type="text" placeholder="Name" required />
-      <input type="text" placeholder="Adresse" required />
-      <input type="email" placeholder="E-Mail" required />
-      <input type="password" placeholder="Passwort" required />
-      <input type="password" placeholder="Passwort bestätigen" required />
+  <form id="registerForm" class="hidden">
+    <label>Name:
+      <input type="text" required>
+    </label>
+    <label>Adresse:
+      <input type="text" required>
+    </label>
+    <label>Email:
+      <input type="email" required>
+    </label>
+    <label>Passwort:
+      <input type="password" required>
+    </label>
+    <label>Passwort bestätigen:
+      <input type="password" required>
+    </label>
+    <label>
+      <input type="checkbox" required>
+      Ich akzeptiere die <a href="/agb.html" target="_blank" style="color: #a4ffb5;">AGB</a>
+    </label>
+    <button class="btn" type="submit">Registrieren</button>
+  </form>
 
-      <div class="checkbox-group">
-        <input type="checkbox" id="agbCheck" required />
-        <label for="agbCheck">Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a></label>
-      </div>
+  <div class="toggle" onclick="toggleForm()">Jetzt registrieren</div>
+</div>
 
-      <button type="submit" id="registerBtn" disabled>Registrieren</button>
-    </form>
-  </div>
+<script>
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const formTitle = document.getElementById('formTitle');
+  const toggle = document.querySelector('.toggle');
 
-  <script>
-    const tabs = document.querySelectorAll(".tab");
-    const forms = {
-      login: document.getElementById("loginForm"),
-      register: document.getElementById("registerForm")
-    };
+  function toggleForm() {
+    loginForm.classList.toggle('hidden');
+    registerForm.classList.toggle('hidden');
+    formTitle.textContent = loginForm.classList.contains('hidden') ? 'Registrieren' : 'Login';
+    toggle.textContent = loginForm.classList.contains('hidden') ? 'Schon registriert? Jetzt einloggen' : 'Jetzt registrieren';
+  }
+</script>
 
-    function switchTab(tab) {
-      tabs.forEach(t => t.classList.remove("active"));
-      document.querySelector(`.tab:nth-child(${tab === 'login' ? 1 : 2})`).classList.add("active");
-
-      Object.keys(forms).forEach(key => forms[key].classList.remove("active"));
-      forms[tab].classList.add("active");
-    }
-
-    const agbCheck = document.getElementById('agbCheck');
-    const registerBtn = document.getElementById('registerBtn');
-    agbCheck.addEventListener('change', () => {
-      registerBtn.disabled = !agbCheck.checked;
-    });
-
-    function loginUser() {
-      alert("Login erfolgreich (Demo)");
-      return false;
-    }
-
-    function registerUser() {
-      if (!agbCheck.checked) {
-        alert("Bitte akzeptiere die AGB.");
-        return false;
-      }
-      alert("Registrierung erfolgreich (Demo)");
-      return false;
-    }
-  </script>
 </body>
 </html>
