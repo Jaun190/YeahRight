@@ -1,177 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HashCore Login & Register</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: url('bg.jpg') no-repeat center center fixed;
-      background-size: cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      backdrop-filter: blur(4px);
-    }
+import { useState } from 'react';
 
-    .container {
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 16px;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-      display: flex;
-      gap: 2rem;
-      padding: 2rem;
-      color: white;
-    }
+export default function AuthPage() {
+  const [isLogin, setIsLogin] = useState(true);
 
-    .column {
-      flex: 1;
-      min-width: 280px;
-    }
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: "url('/assets/background.png')" }}
+    >
+      <div className="bg-black bg-opacity-70 backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-2xl">
+        <div className="flex justify-center mb-6 space-x-4">
+          <button
+            onClick={() => setIsLogin(true)}
+            className={`w-1/2 py-2 rounded-full font-bold text-white transition ${
+              isLogin ? 'bg-gradient-to-r from-purple-600 to-pink-500' : 'bg-gray-700'
+            }`}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setIsLogin(false)}
+            className={`w-1/2 py-2 rounded-full font-bold text-white transition ${
+              !isLogin ? 'bg-gradient-to-r from-purple-600 to-pink-500' : 'bg-gray-700'
+            }`}
+          >
+            Registrieren
+          </button>
+        </div>
 
-    h2 {
-      color: #b47bff;
-      margin-bottom: 1rem;
-    }
+        <h2 className="text-center text-2xl font-bold text-white mb-4">
+          {isLogin ? 'Willkommen bei' : 'Registrieren bei'} <span className="text-purple-400">HashCore</span>
+        </h2>
 
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      color: white;
-    }
-
-    .checkbox {
-      margin-bottom: 1rem;
-      font-size: 0.8rem;
-    }
-
-    .checkbox input {
-      margin-right: 0.5rem;
-    }
-
-    button {
-      width: 100%;
-      padding: 0.75rem;
-      background: linear-gradient(90deg, #7b2ff7, #f107a3);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .links a {
-      color: #b47bff;
-      text-decoration: underline;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
-
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #111;
-      padding: 2rem;
-      border-radius: 12px;
-      color: white;
-      display: none;
-      z-index: 999;
-      max-width: 400px;
-    }
-
-    .popup h3 {
-      margin-top: 0;
-    }
-
-    .popup button {
-      margin-top: 1rem;
-      background: #444;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      z-index: 998;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="column">
-      <h2>Login</h2>
-      <label>Email</label>
-      <input type="email" placeholder="your@email.com"/>
-      <label>Password</label>
-      <input type="password" placeholder="Password"/>
-      <button>Login</button>
-    </div>
-
-    <div class="column">
-      <h2>Registrieren</h2>
-      <label>Email</label>
-      <input type="email" placeholder="your@email.com"/>
-      <label>Passwort</label>
-      <input type="password" placeholder="Password"/>
-      <label>Passwort bestätigen</label>
-      <input type="password" placeholder="Repeat Password"/>
-      <div class="checkbox">
-        <input type="checkbox" id="accept" />
-        <label for="accept">
-          Ich akzeptiere die <a onclick="showPopup('agb')">AGB</a> und <a onclick="showPopup('datenschutz')">Datenschutzerklärung</a>
-        </label>
+        <form className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 outline-none"
+          />
+          <input
+            type="password"
+            placeholder="Passwort"
+            className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 outline-none"
+          />
+          {!isLogin && (
+            <>
+              <input
+                type="password"
+                placeholder="Passwort bestätigen"
+                className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 outline-none"
+              />
+              <label className="flex items-center text-sm text-white space-x-2">
+                <input type="checkbox" className="form-checkbox text-purple-500" />
+                <span>Ich akzeptiere die AGB und Datenschutzerklärung</span>
+              </label>
+            </>
+          )}
+          <button className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded font-bold hover:opacity-90 transition">
+            {isLogin ? 'Login' : 'Registrieren'}
+          </button>
+        </form>
       </div>
-      <button>Registrieren</button>
     </div>
-  </div>
-
-  <div class="overlay" id="overlay" onclick="hidePopup()"></div>
-
-  <div class="popup" id="agb-popup">
-    <h3>Allgemeine Geschäftsbedingungen (AGB)</h3>
-    <p>Hier stehen die AGB …</p>
-    <button onclick="hidePopup()">Schließen</button>
-  </div>
-
-  <div class="popup" id="datenschutz-popup">
-    <h3>Datenschutzerklärung</h3>
-    <p>Hier steht die Datenschutzerklärung …</p>
-    <button onclick="hidePopup()">Schließen</button>
-  </div>
-
-  <script>
-    function showPopup(type) {
-      document.getElementById('overlay').style.display = 'block';
-      document.getElementById(type + '-popup').style.display = 'block';
-    }
-    function hidePopup() {
-      document.getElementById('overlay').style.display = 'none';
-      document.getElementById('agb-popup').style.display = 'none';
-      document.getElementById('datenschutz-popup').style.display = 'none';
-    }
-  </script>
-</body>
-</html>
+  );
+}
