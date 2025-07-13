@@ -3,94 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GrowEmpire Login</title>
+  <title>GrowEmpire – Login & Register</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      color: #fff;
-      overflow: hidden;
     }
 
-    .login-container {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 30px;
-      border-radius: 10px;
+    .container {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 2rem;
+      border-radius: 12px;
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 1.5rem;
     }
 
-    input {
+    input, select {
       width: 100%;
-      padding: 12px;
-      margin: 8px 0;
+      padding: 0.6rem;
+      margin-bottom: 1rem;
       border: none;
-      border-radius: 5px;
-      background: #eee;
+      border-radius: 6px;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      background: #28a745;
+      padding: 0.8rem;
+      background-color: #29a329;
       color: white;
-      border: none;
-      border-radius: 5px;
-      margin-top: 15px;
       font-weight: bold;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      transition: 0.3s;
     }
 
-    button:hover {
-      background: #218838;
-    }
-
-    .agb {
-      margin-top: 12px;
-      font-size: 0.85rem;
+    .toggle {
       text-align: center;
+      margin-top: 1rem;
+      cursor: pointer;
+      text-decoration: underline;
+      color: #aaa;
     }
 
-    .agb a {
-      color: #ccc;
-      text-decoration: underline;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>GrowEmpire Login</h2>
-    <form id="login-form">
-      <input type="email" id="email" placeholder="E-Mail" required />
-      <input type="password" id="password" placeholder="Passwort" required />
-      <button type="submit">Login</button>
+  <div class="container">
+    <h2 id="formTitle">Login</h2>
+
+    <form id="loginForm">
+      <input type="email" placeholder="E-Mail" required />
+      <input type="password" placeholder="Passwort" required />
+      <button type="submit">Einloggen</button>
     </form>
-    <div class="agb">
-      Mit dem Login akzeptierst du unsere <a href="agb.html" target="_blank">AGB</a>.
-    </div>
+
+    <form id="registerForm" class="hidden">
+      <input type="text" placeholder="Vollständiger Name" required />
+      <input type="text" placeholder="Adresse" required />
+      <input type="text" placeholder="PLZ / Ort" required />
+      <input type="email" placeholder="E-Mail" required />
+      <input type="password" placeholder="Passwort" required />
+      <input type="password" placeholder="Passwort bestätigen" required />
+      <button type="submit">Registrieren</button>
+    </form>
+
+    <div class="toggle" onclick="toggleForm()">Zur Registrierung wechseln</div>
   </div>
 
   <script>
-    document.getElementById("login-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const formTitle = document.getElementById("formTitle");
+    const toggle = document.querySelector(".toggle");
 
-      // TODO: Supabase login hier einbauen
-      console.log("Login attempt:", email, password);
-    });
+    function toggleForm() {
+      loginForm.classList.toggle("hidden");
+      registerForm.classList.toggle("hidden");
+      const isLogin = loginForm.classList.contains("hidden") === false;
+      formTitle.innerText = isLogin ? "Login" : "Registrieren";
+      toggle.innerText = isLogin ? "Zur Registrierung wechseln" : "Zum Login wechseln";
+    }
   </script>
 </body>
 </html>
