@@ -3,32 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registrieren – GrowEmpire</title>
+  <title>GrowEmpire – Login & Registrierung</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(-45deg, #1d2b64, #f8cdda, #2d3a4b, #3f2b96);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .card {
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
       padding: 2rem;
-      border-radius: 8px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.2);
       width: 100%;
-      max-width: 400px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 420px;
+      z-index: 2;
+      backdrop-filter: blur(10px);
     }
 
-    h2 {
-      margin-bottom: 1.5rem;
+    .tabs {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+
+    .tab {
+      flex: 1;
       text-align: center;
+      padding: 0.8rem;
+      cursor: pointer;
+      font-weight: bold;
+      border-bottom: 2px solid transparent;
+      color: #333;
     }
 
-    input, select {
+    .tab.active {
+      border-color: #4caf50;
+      color: #4caf50;
+    }
+
+    form {
+      display: none;
+    }
+
+    form.active {
+      display: block;
+    }
+
+    input {
       width: 100%;
       padding: 0.8rem;
       margin-bottom: 1rem;
@@ -47,11 +86,6 @@
       cursor: pointer;
     }
 
-    button:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
-
     .checkbox-group {
       display: flex;
       align-items: center;
@@ -67,12 +101,30 @@
       color: #4caf50;
       text-decoration: none;
     }
+
+    @media(max-width: 500px) {
+      .card {
+        margin: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>Registrieren</h2>
-    <form onsubmit="return validateForm()">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Login</div>
+      <div class="tab" onclick="switchTab('register')">Registrieren</div>
+    </div>
+
+    <!-- Login -->
+    <form id="loginForm" class="active" onsubmit="return loginUser()">
+      <input type="email" placeholder="E-Mail" required />
+      <input type="password" placeholder="Passwort" required />
+      <button type="submit">Einloggen</button>
+    </form>
+
+    <!-- Registrierung -->
+    <form id="registerForm" onsubmit="return registerUser()">
       <input type="text" placeholder="Name" required />
       <input type="text" placeholder="Adresse" required />
       <input type="email" placeholder="E-Mail" required />
@@ -81,9 +133,7 @@
 
       <div class="checkbox-group">
         <input type="checkbox" id="agbCheck" required />
-        <label for="agbCheck">
-          Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a>
-        </label>
+        <label for="agbCheck">Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a></label>
       </div>
 
       <button type="submit" id="registerBtn" disabled>Registrieren</button>
@@ -91,20 +141,38 @@
   </div>
 
   <script>
+    const tabs = document.querySelectorAll(".tab");
+    const forms = {
+      login: document.getElementById("loginForm"),
+      register: document.getElementById("registerForm")
+    };
+
+    function switchTab(tab) {
+      tabs.forEach(t => t.classList.remove("active"));
+      document.querySelector(`.tab:nth-child(${tab === 'login' ? 1 : 2})`).classList.add("active");
+
+      Object.keys(forms).forEach(key => forms[key].classList.remove("active"));
+      forms[tab].classList.add("active");
+    }
+
     const agbCheck = document.getElementById('agbCheck');
     const registerBtn = document.getElementById('registerBtn');
-
     agbCheck.addEventListener('change', () => {
       registerBtn.disabled = !agbCheck.checked;
     });
 
-    function validateForm() {
+    function loginUser() {
+      alert("Login erfolgreich (Demo)");
+      return false;
+    }
+
+    function registerUser() {
       if (!agbCheck.checked) {
-        alert("Bitte akzeptiere die AGB, um dich zu registrieren.");
+        alert("Bitte akzeptiere die AGB.");
         return false;
       }
       alert("Registrierung erfolgreich (Demo)");
-      return true;
+      return false;
     }
   </script>
 </body>
