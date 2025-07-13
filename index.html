@@ -1,66 +1,102 @@
-import { useState } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HashCore Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+    .container {
+      backdrop-filter: blur(16px);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(140, 0, 255, 0.5);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    h1 span {
+      color: #a855f7;
+    }
+    p {
+      margin-bottom: 30px;
+      color: #aaa;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #222;
+      color: white;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #a855f7, #6366f1);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .toggle-link {
+      margin-top: 20px;
+      display: block;
+      color: #a855f7;
+      cursor: pointer;
+    }
+    #confirm-password {
+      display: none;
+    }
+  </style>
+</head>
+<body>
 
-export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true);
+  <div class="container">
+    <h1>Welcome to <span>HashCore</span></h1>
+    <p>First Class Cloud Mining</p>
+    <form id="login-form">
+      <input type="email" placeholder="Email" required />
+      <input type="password" placeholder="Password" required />
+      <input id="confirm-password" type="password" placeholder="Confirm Password" />
+      <button type="submit" id="submit-btn">Login</button>
+    </form>
+    <span class="toggle-link" onclick="toggleForm()">Don’t have an account? Register</span>
+  </div>
 
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('/assets/background.png')" }}
-    >
-      <div className="bg-black bg-opacity-70 backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-2xl">
-        <div className="flex justify-center mb-6 space-x-4">
-          <button
-            onClick={() => setIsLogin(true)}
-            className={`w-1/2 py-2 rounded-full font-bold text-white transition ${
-              isLogin ? 'bg-gradient-to-r from-purple-600 to-pink-500' : 'bg-gray-700'
-            }`}
-          >
-            Login
-          </button>
-          <button
-            onClick={() => setIsLogin(false)}
-            className={`w-1/2 py-2 rounded-full font-bold text-white transition ${
-              !isLogin ? 'bg-gradient-to-r from-purple-600 to-pink-500' : 'bg-gray-700'
-            }`}
-          >
-            Registrieren
-          </button>
-        </div>
+  <script>
+    let isLogin = true;
+    function toggleForm() {
+      isLogin = !isLogin;
+      document.getElementById('confirm-password').style.display = isLogin ? 'none' : 'block';
+      document.getElementById('submit-btn').textContent = isLogin ? 'Login' : 'Register';
+      document.querySelector('.toggle-link').textContent = isLogin
+        ? "Don’t have an account? Register"
+        : "Already have an account? Login";
+    }
+  </script>
 
-        <h2 className="text-center text-2xl font-bold text-white mb-4">
-          {isLogin ? 'Willkommen bei' : 'Registrieren bei'} <span className="text-purple-400">HashCore</span>
-        </h2>
-
-        <form className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 outline-none"
-          />
-          <input
-            type="password"
-            placeholder="Passwort"
-            className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 outline-none"
-          />
-          {!isLogin && (
-            <>
-              <input
-                type="password"
-                placeholder="Passwort bestätigen"
-                className="w-full p-3 rounded bg-gray-800 text-white placeholder-gray-400 outline-none"
-              />
-              <label className="flex items-center text-sm text-white space-x-2">
-                <input type="checkbox" className="form-checkbox text-purple-500" />
-                <span>Ich akzeptiere die AGB und Datenschutzerklärung</span>
-              </label>
-            </>
-          )}
-          <button className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded font-bold hover:opacity-90 transition">
-            {isLogin ? 'Login' : 'Registrieren'}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
+</body>
+</html>
