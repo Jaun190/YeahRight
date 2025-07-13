@@ -3,107 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GrowEmpire – Dashboard</title>
+  <title>HashCore Dashboard</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      background-color: #000;
-      color: #fff;
-      overflow-x: hidden;
+      font-family: "Segoe UI", sans-serif;
+      background: #0b0b0c;
+      color: white;
+      background-image: url("assets/dashboard-bg.png");
+      background-size: cover;
+      background-position: center;
     }
 
     header {
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.7);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem;
-      background-color: #111;
-      border-bottom: 1px solid #333;
     }
 
-    .menu-button {
+    header h1 {
+      color: #b16eff;
+      font-size: 28px;
+    }
+
+    .btn {
+      background: #a44cff;
+      border: none;
+      padding: 10px 20px;
+      color: white;
       cursor: pointer;
-      width: 30px;
-      height: 25px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .bar {
-      height: 4px;
-      background-color: #fff;
-      border-radius: 2px;
-    }
-
-    .menu {
-      position: fixed;
-      top: 60px;
-      left: 0;
-      width: 220px;
-      background-color: #1a1a1a;
-      padding: 1rem;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease-in-out;
-      height: 100%;
-      z-index: 100;
-    }
-
-    .menu.open {
-      transform: translateX(0);
-    }
-
-    .menu a {
-      display: block;
-      color: #fff;
-      text-decoration: none;
-      margin: 1rem 0;
+      border-radius: 8px;
       font-weight: bold;
     }
 
-    h1 {
+    .container {
+      padding: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px #8a2be2;
+    }
+
+    .referral, .offers, .balance, .actions {
+      margin-bottom: 40px;
+    }
+
+    #licensePopup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #licensePopup .popup {
+      background: #1a1a1d;
+      padding: 30px;
+      border-radius: 10px;
       text-align: center;
-      margin-top: 2rem;
+      max-width: 400px;
+      box-shadow: 0 0 20px #ff2b8a;
     }
 
-    .content {
-      padding: 2rem;
+    #licensePopup .popup h2 {
+      color: #ff2b8a;
+      margin-bottom: 20px;
     }
 
+    #licensePopup .btn {
+      background: #ff2b8a;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 9998;
+    }
+
+    .modal .content {
+      background: #121212;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+    }
   </style>
 </head>
 <body>
 
-  <header>
-    <div><strong>GrowEmpire Dashboard</strong></div>
-    <div class="menu-button" onclick="toggleMenu()">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-    </div>
-  </header>
+<header>
+  <h1>HashCore Dashboard</h1>
+  <button class="btn" onclick="openPayout()">Auszahlen</button>
+</header>
 
-  <nav class="menu" id="sideMenu">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="pflanzen.html">Pflanzen</a>
-    <a href="partner.html">Partner</a>
-    <a href="lizens.html">Lizenz</a>
-    <a href="levelsystem.html">Levelsystem</a>
-    <a href="einstellungen.html">Einstellungen</a>
-    <a href="index.html">Logout</a>
-  </nav>
-
-  <div class="content">
-    <h1>Willkommen im Dashboard</h1>
-    <p>Hier siehst du deinen Fortschritt, deine Lizenz und dein Einkommen.</p>
+<div class="container">
+  <div class="balance card">
+    <h2>Dein Kontostand</h2>
+    <p><strong>CHF 0.00</strong></p>
   </div>
 
-  <script>
-    function toggleMenu() {
-      document.getElementById("sideMenu").classList.toggle("open");
+  <div class="referral card">
+    <h2>Dein Referral-Link</h2>
+    <input type="text" value="https://hashcore.ch/ref/abc123" readonly style="width:100%; padding:8px;">
+  </div>
+
+  <div class="offers card">
+    <h2>Angebote & Pakete</h2>
+    <p>Hier erscheinen deine verfügbaren Pakete, Hashpower-Angebote oder Upgrades.</p>
+  </div>
+
+  <div class="actions card">
+    <h2>Aktionen</h2>
+    <button class="btn">Mehr Hashpower kaufen</button>
+  </div>
+</div>
+
+<!-- Zwangs-Popup bei fehlender Starterbox -->
+<div id="licensePopup">
+  <div class="popup">
+    <h2>Starterbox erforderlich</h2>
+    <p>Um dein Dashboard freizuschalten, musst du eine Starterbox kaufen.</p>
+    <button class="btn" onclick="window.location.href='starterbox.html'">Starterbox kaufen</button>
+  </div>
+</div>
+
+<!-- Modal für Auszahlung -->
+<div class="modal" id="payoutModal">
+  <div class="content">
+    <h3>Auszahlung beantragen</h3>
+    <p>Bitte gib deinen Auszahlungsbetrag und Wallet ein.</p>
+    <input type="text" placeholder="Betrag in CHF" style="width:100%; margin-bottom:10px; padding:8px;">
+    <input type="text" placeholder="Wallet Adresse" style="width:100%; margin-bottom:10px; padding:8px;">
+    <button class="btn">Abschicken</button>
+  </div>
+</div>
+
+<script>
+  // Fake: Lizenzprüfung
+  const hasLicense = false;
+
+  window.onload = function () {
+    if (!hasLicense) {
+      document.getElementById('licensePopup').style.display = 'flex';
     }
-  </script>
+  };
+
+  function openPayout() {
+    document.getElementById('payoutModal').style.display = 'flex';
+  }
+
+  // Modal schließen bei Klick außerhalb
+  window.onclick = function(event) {
+    const modal = document.getElementById('payoutModal');
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
 
 </body>
 </html>
