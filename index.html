@@ -5,47 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HashCore Login</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: url('assets/background.png') center center no-repeat;
-      background-size: cover;
+      background-color: #000;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      color: white;
+      background-repeat: no-repeat;
+      background-size: cover;
     }
+
     .container {
-      backdrop-filter: blur(16px);
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(20, 20, 20, 0.95);
       padding: 40px;
       border-radius: 16px;
-      box-shadow: 0 0 20px rgba(140, 0, 255, 0.5);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
       width: 100%;
       max-width: 400px;
       text-align: center;
     }
+
     h1 {
       font-size: 28px;
       margin-bottom: 10px;
     }
+
     h1 span {
       color: #a855f7;
     }
+
     p {
       margin-bottom: 30px;
       color: #aaa;
     }
+
     input {
       width: 100%;
       padding: 12px;
       margin-bottom: 15px;
       border: none;
       border-radius: 8px;
-      background: #222;
+      background: #111;
       color: white;
     }
+
     button {
       width: 100%;
       padding: 12px;
@@ -58,15 +69,18 @@
       cursor: pointer;
       transition: opacity 0.3s;
     }
+
     button:hover {
       opacity: 0.9;
     }
+
     .toggle-link {
       margin-top: 20px;
       display: block;
       color: #a855f7;
       cursor: pointer;
     }
+
     #confirm-password {
       display: none;
     }
