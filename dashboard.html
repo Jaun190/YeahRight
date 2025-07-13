@@ -2,174 +2,198 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HashCore Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Orbitron', sans-serif;
-    }
     body {
-      background-color: #0a0a0a;
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #0a0a0a;
       color: white;
       overflow-x: hidden;
     }
-
     header {
       padding: 20px;
       text-align: center;
-      font-size: 2rem;
-      background: linear-gradient(90deg, #ff00cc, #333399);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 2em;
+      background: #111;
+      font-weight: bold;
+      color: #f0f0f0;
     }
-
-    .content {
-      padding: 20px;
+    .container {
+      padding: 30px;
       max-width: 1200px;
       margin: auto;
-      display: flex;
-      flex-wrap: wrap;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 20px;
-      justify-content: center;
     }
-
     .card {
-      background: #111;
-      border: 2px solid #ff00cc;
-      border-radius: 16px;
+      background: #1a1a1a;
       padding: 20px;
-      width: 280px;
-      transition: 0.3s;
-      box-shadow: 0 0 20px #ff00cc55;
+      border-radius: 14px;
+      box-shadow: 0 0 10px rgba(255, 0, 128, 0.3);
     }
-
-    .card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 30px #ff00ccaa;
-    }
-
     .card h3 {
-      color: #ff00cc;
-      margin-bottom: 10px;
+      margin: 0 0 10px;
+      color: #ff0099;
     }
-
+    .card p {
+      font-size: 1.2em;
+    }
     .btn {
-      background: #ff00cc;
-      color: white;
+      background: #ff0099;
       border: none;
-      padding: 10px 16px;
-      border-radius: 10px;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
       cursor: pointer;
       margin-top: 10px;
-      transition: 0.2s;
     }
-
     .btn:hover {
-      background: #e600a8;
+      background: #ff33aa;
     }
-
-    /* Popup-Stil */
     .popup-overlay {
-      display: none;
       position: fixed;
       top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.8);
+      display: none;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      z-index: 1000;
     }
-
     .popup {
-      background: #111;
-      border: 2px solid #ff00cc;
-      border-radius: 16px;
+      background: #1c1c1c;
       padding: 30px;
-      text-align: center;
-      color: white;
+      border-radius: 14px;
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 0 30px #ff00cc88;
+      box-shadow: 0 0 30px rgba(255, 0, 128, 0.4);
     }
-
     .popup h2 {
-      color: #ff00cc;
-      margin-bottom: 10px;
+      margin-top: 0;
+      color: #ff0099;
     }
-
-    .popup p {
-      margin-bottom: 20px;
-    }
-
-    .hidden {
-      display: none;
+    .popup button {
+      margin-top: 20px;
+      width: 100%;
     }
   </style>
 </head>
 <body>
 
-  <header>HashCore Dashboard</header>
+<header>HashCore Dashboard</header>
 
-  <!-- Starterbox Popup -->
-  <div id="starterPopup" class="popup-overlay">
-    <div class="popup">
-      <h2>Starterbox erforderlich</h2>
-      <p>Um HashCore nutzen zu können, musst du zuerst die Starterbox für CHF 49.– aktivieren.</p>
-      <button class="btn" onclick="buyStarter()">Jetzt kaufen</button>
+<div class="container">
+  <div class="grid">
+    <div class="card">
+      <h3>Gekaufte Hashrate</h3>
+      <p id="hashrate">0 TH/s</p>
+    </div>
+    <div class="card">
+      <h3>Geschätzter Tagesertrag</h3>
+      <p id="ertrag">CHF 0.00</p>
+    </div>
+    <div class="card">
+      <h3>Geworbene Partner</h3>
+      <p id="partner">0</p>
+    </div>
+    <div class="card">
+      <h3>Deine Provision</h3>
+      <p id="provision">CHF 0.00</p>
+    </div>
+    <div class="card">
+      <h3>Referral-Link</h3>
+      <p>https://hashcore.io/register?ref=DEINNAME</p>
+    </div>
+    <div class="card">
+      <h3>Paket hinzufügen</h3>
+      <button class="btn" onclick="openPackagePopup()">Hashrate kaufen</button>
+    </div>
+    <div class="card">
+      <h3>Auszahlen</h3>
+      <button class="btn" onclick="openWithdrawPopup()">Jetzt auszahlen</button>
     </div>
   </div>
+</div>
 
-  <div class="content" id="dashboardContent" class="hidden">
-    <!-- Demo-Pakete -->
-    <div class="card">
-      <h3>NiceHash S19 Pro</h3>
-      <p>110 TH/s – CHF 2'399.–</p>
-      <button class="btn">Kaufen</button>
-    </div>
-    <div class="card">
-      <h3>CoinMining Z15</h3>
-      <p>420 KSol/s – CHF 3'150.–</p>
-      <button class="btn">Kaufen</button>
-    </div>
-    <div class="card">
-      <h3>MinerBros L7 Bundle</h3>
-      <p>9.5 GH/s – CHF 5'799.–</p>
-      <button class="btn">Kaufen</button>
-    </div>
-    <div class="card">
-      <h3>HashCore Pro Paket</h3>
-      <p>300 TH/s – CHF 7'999.–</p>
-      <button class="btn">Kaufen</button>
-    </div>
-    <div class="card">
-      <h3>Zusatzbox 1 Monat</h3>
-      <p>CHF 99.– / Monat</p>
-      <button class="btn">Aktivieren</button>
-    </div>
+<!-- Starterbox Pflicht-Popup -->
+<div class="popup-overlay" id="starterPopup">
+  <div class="popup">
+    <h2>Starterbox erforderlich</h2>
+    <p>Bitte kaufe die Starterlizenz (CHF 49.–), um das Dashboard zu nutzen.</p>
+    <button class="btn" onclick="closeStarterPopup()">Kaufen (Fake)</button>
   </div>
+</div>
 
-  <script>
-    let hasStarterbox = false; // später aus Supabase
+<!-- Kauf-Popup -->
+<div class="popup-overlay" id="packagePopup">
+  <div class="popup">
+    <h2>Hashrate kaufen</h2>
+    <p>Wähle dein Paket:</p>
+    <button class="btn" onclick="buyHashrate(1)">1 TH/s – CHF 6.50</button>
+    <button class="btn" onclick="buyHashrate(5)">5 TH/s – CHF 32.50</button>
+    <button class="btn" onclick="buyHashrate(10)">10 TH/s – CHF 65.–</button>
+  </div>
+</div>
 
-    window.onload = () => {
-      if (!hasStarterbox) {
-        document.getElementById("starterPopup").style.display = "flex";
-        document.getElementById("dashboardContent").style.display = "none";
-      } else {
-        document.getElementById("starterPopup").style.display = "none";
-        document.getElementById("dashboardContent").style.display = "flex";
-      }
-    };
+<!-- Auszahlung -->
+<div class="popup-overlay" id="withdrawPopup">
+  <div class="popup">
+    <h2>Auszahlung</h2>
+    <p>Gib deine Wallet-Adresse ein:</p>
+    <input type="text" placeholder="z.B. bc1q..." style="width:100%;padding:10px;border-radius:6px;" />
+    <button class="btn" onclick="alert('Auszahlung eingereicht (Fake)')">Auszahlung anfordern</button>
+  </div>
+</div>
 
-    function buyStarter() {
-      hasStarterbox = true;
-      document.getElementById("starterPopup").style.display = "none";
-      document.getElementById("dashboardContent").style.display = "flex";
-      alert("Starterbox aktiviert! (Demo)");
+<script>
+  let hasStarter = false;
+  let totalTHS = 0;
+  let provision = 0;
+  let partner = 0;
+
+  function updateDashboard() {
+    document.getElementById("hashrate").innerText = totalTHS + " TH/s";
+    document.getElementById("ertrag").innerText = "CHF " + (totalTHS * 0.35).toFixed(2);
+    document.getElementById("provision").innerText = "CHF " + provision.toFixed(2);
+    document.getElementById("partner").innerText = partner;
+  }
+
+  function closeStarterPopup() {
+    hasStarter = true;
+    document.getElementById("starterPopup").style.display = "none";
+  }
+
+  function openPackagePopup() {
+    document.getElementById("packagePopup").style.display = "flex";
+  }
+
+  function buyHashrate(amount) {
+    totalTHS += amount;
+    updateDashboard();
+    document.getElementById("packagePopup").style.display = "none";
+  }
+
+  function openWithdrawPopup() {
+    document.getElementById("withdrawPopup").style.display = "flex";
+  }
+
+  window.onload = function() {
+    if (!hasStarter) {
+      document.getElementById("starterPopup").style.display = "flex";
     }
-  </script>
+  };
+
+  document.querySelectorAll(".popup-overlay").forEach(popup => {
+    popup.addEventListener("click", function(e) {
+      if (e.target === this) this.style.display = "none";
+    });
+  });
+</script>
+
 </body>
 </html>
