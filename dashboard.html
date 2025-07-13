@@ -4,61 +4,97 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HashCore Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     body {
-      background: #121212;
-      color: #c9a4ff;
-      font-family: 'Orbitron', sans-serif;
       margin: 0;
-      padding: 20px;
+      background: #0e0e0e;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
     }
 
     h1 {
       text-align: center;
-      font-size: 2em;
-      color: #b78aff;
-      margin-bottom: 40px;
-      text-shadow: 0 0 10px #8b5cf6;
+      color: #A18BFF;
+      margin-top: 1rem;
+      font-size: 2.2rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px #A18BFF;
     }
 
-    .box {
-      background: #1e1e1e;
+    .section {
+      background: #1a1a1a;
+      margin: 1.5rem;
+      padding: 1.5rem;
       border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 25px rgba(187, 139, 255, 0.2);
+      box-shadow: 0 0 20px rgba(161,139,255, 0.3);
     }
 
-    .box h2 {
-      font-size: 1.4em;
-      color: #b78aff;
-      margin-bottom: 10px;
+    .section h2 {
+      color: #A18BFF;
+      margin-bottom: 0.5rem;
+      font-size: 1.4rem;
     }
 
-    select, button {
-      font-family: inherit;
-      padding: 10px;
-      border-radius: 8px;
+    .button {
+      background-color: #A18BFF;
+      color: black;
       border: none;
-      background: #2a2a2a;
-      color: #fff;
-      margin-top: 10px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      margin-top: 1rem;
+      font-weight: bold;
+      cursor: pointer;
       width: 100%;
     }
 
-    .stats-chart {
-      background: #000;
-      color: #fff;
-      padding: 20px;
-      border-radius: 16px;
-      margin-top: 20px;
-      border: 1px solid #8b5cf6;
+    select {
+      padding: 10px;
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 0.5rem;
     }
 
-    canvas {
-      width: 100% !important;
-      height: auto !important;
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: #121212;
+      border: 2px solid #FF69B4;
+      border-radius: 12px;
+      padding: 2rem;
+      color: #fff;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 25px #FF69B4;
+    }
+
+    .popup-content input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 1rem;
+      border-radius: 8px;
+      border: none;
+    }
+
+    .popup-content button {
+      margin-top: 1rem;
+      background-color: #A18BFF;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -66,71 +102,65 @@
 
   <h1>HashCore Dashboard</h1>
 
-  <div class="box">
+  <div class="section">
+    <h2>Lizenzstatus</h2>
+    <p>Aktuelle Lizenz: <strong>Starterbox (CHF 49.–)</strong></p>
+    <p>Aktiv seit: <strong>13. Juli 2025</strong></p>
+  </div>
+
+  <div class="section">
     <h2>Meine Hashpower</h2>
     <select id="hashpower">
-      <option value="29">100 GH/s – CHF 29.–</option>
-      <option value="59">200 GH/s – CHF 59.–</option>
-      <option value="99">500 GH/s – CHF 99.–</option>
-      <option value="179">1 TH/s – CHF 179.–</option>
+      <option>100 GH/s – CHF 29.–</option>
+      <option>500 GH/s – CHF 99.–</option>
+      <option>1 TH/s – CHF 149.–</option>
+      <option>5 TH/s – CHF 599.–</option>
     </select>
-    <p>Gewählter Preis: <span id="preis">CHF 29.–</span></p>
+    <p id="preis">Gewählter Preis: CHF 29.–</p>
+    <button class="button">Weitere Hashpower kaufen</button>
   </div>
 
-  <div class="box">
+  <div class="section">
     <h2>Referral-Link</h2>
-    <code>https://hashcore.io/register?ref=meinname</code>
-    <p>Provision: <strong>CHF 50.–</strong> bei Lizenz + <strong>CHF 100.–</strong> Hashpower-Kauf</p>
+    <p><code>https://hashcore.io/register?ref=meinname</code></p>
+    <p><strong>Provision:</strong> CHF 50.– bei Lizenz + CHF 100.– Hashpower-Kauf</p>
   </div>
 
-  <div class="box">
-    <h2>Auszahlungsbereich</h2>
-    <p>Verfügbarer Gewinn: <strong>CHF 0.–</strong></p>
-    <button>Auszahlung beantragen</button>
+  <div class="section">
+    <h2>Partner & Provision</h2>
+    <p>Geworbene Partner: <strong>5</strong></p>
+    <p>Provision erhalten: <strong>CHF 250.–</strong></p>
+    <button class="button" onclick="openPopup()">Auszahlung beantragen</button>
   </div>
 
-  <div class="box stats-chart">
-    <h2>Live Statistik</h2>
-    <canvas id="statistikChart"></canvas>
+  <div class="popup" id="walletPopup">
+    <div class="popup-content">
+      <h2>Wallet-Adresse eingeben</h2>
+      <input type="text" id="walletAddress" placeholder="z. B. bc1..., 0x..."/>
+      <button onclick="submitWallet()">Absenden</button>
+    </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const select = document.getElementById('hashpower');
-    const preisSpan = document.getElementById('preis');
-    select.addEventListener('change', () => {
-      preisSpan.textContent = `CHF ${select.value}.–`;
-    });
+    const popup = document.getElementById("walletPopup");
 
-    const ctx = document.getElementById('statistikChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Lizenzen', 'Hashpower-Käufe', 'Provisionen', 'Nutzer', 'Auszahlungen', 'TH/s gesamt'],
-        datasets: [{
-          label: 'Statistik',
-          data: [120, 8700, 5400, 380, 2600, 28],
-          backgroundColor: [
-            '#a855f7', '#9333ea', '#7e22ce', '#6b21a8', '#581c87', '#4c1d95'
-          ],
-          borderRadius: 10
-        }]
-      },
-      options: {
-        plugins: {
-          legend: { display: false }
-        },
-        scales: {
-          y: {
-            ticks: { color: '#fff' },
-            grid: { color: '#333' }
-          },
-          x: {
-            ticks: { color: '#fff' },
-            grid: { color: '#333' }
-          }
-        }
+    function openPopup() {
+      popup.style.display = "flex";
+    }
+
+    function submitWallet() {
+      const addr = document.getElementById("walletAddress").value;
+      if (addr.length > 10 && (addr.startsWith("0x") || addr.startsWith("bc1"))) {
+        alert("Adresse gespeichert: " + addr);
+        popup.style.display = "none";
+      } else {
+        alert("Bitte gültige Wallet-Adresse eingeben!");
       }
+    }
+
+    document.getElementById("hashpower").addEventListener("change", function () {
+      const value = this.value.split("– CHF ")[1];
+      document.getElementById("preis").innerText = "Gewählter Preis: CHF " + value + ".–";
     });
   </script>
 
