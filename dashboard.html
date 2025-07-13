@@ -2,113 +2,108 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>GrowEmpire Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GrowEmpire – Dashboard</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
-      color: white;
-      margin: 0; padding: 20px;
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #000;
+      color: #fff;
+      overflow-x: hidden;
     }
-    h1 { margin-bottom: 20px; }
-    .admin-panel {
-      background: rgba(255,255,255,0.1);
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 1000px;
-      margin: auto;
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #111;
+      border-bottom: 1px solid #333;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    th, td {
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: rgba(255,255,255,0.2);
-    }
-    button {
-      background-color: #00c36e;
-      border: none;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
+
+    .menu-button {
       cursor: pointer;
+      width: 30px;
+      height: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    button:hover {
-      background-color: #009f56;
+
+    .bar {
+      height: 4px;
+      background-color: #fff;
+      border-radius: 2px;
     }
+
+    .menu {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 220px;
+      background-color: #1a1a1a;
+      padding: 1rem;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+      height: 100%;
+      z-index: 100;
+    }
+
+    .menu.open {
+      transform: translateX(0);
+    }
+
+    .menu a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      margin: 1rem 0;
+      font-weight: bold;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .content {
+      padding: 2rem;
+    }
+
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <h1>Admin Dashboard – GrowEmpire</h1>
-  <div class="admin-panel">
-    <h2>Nutzerübersicht</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>E-Mail</th>
-          <th>Lizenz</th>
-          <th>Level</th>
-          <th>Partnerzahl</th>
-          <th>Lizenz Ablauf</th>
-          <th>Aktionen</th>
-        </tr>
-      </thead>
-      <tbody id="userTableBody">
-        <tr><td colspan="6">Lade Daten...</td></tr>
-      </tbody>
-    </table>
+
+  <header>
+    <div><strong>GrowEmpire Dashboard</strong></div>
+    <div class="menu-button" onclick="toggleMenu()">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </header>
+
+  <nav class="menu" id="sideMenu">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="pflanzen.html">Pflanzen</a>
+    <a href="partner.html">Partner</a>
+    <a href="lizens.html">Lizenz</a>
+    <a href="levelsystem.html">Levelsystem</a>
+    <a href="einstellungen.html">Einstellungen</a>
+    <a href="index.html">Logout</a>
+  </nav>
+
+  <div class="content">
+    <h1>Willkommen im Dashboard</h1>
+    <p>Hier siehst du deinen Fortschritt, deine Lizenz und dein Einkommen.</p>
   </div>
 
   <script>
-    const supabaseUrl = 'https://rcmnzryqzfxhupnmpbak.supabase.co'
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbW56cnlxemZ4aHVwbm1wYmFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNjI5NDcsImV4cCI6MjA2NzkzODk0N30.Oa5C2N9ny7eApN3eZ8cMOUXpsLIQuQV1HmAGpzo8C0o'
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-    async function loadUsers() {
-      const tbody = document.getElementById('userTableBody');
-      tbody.innerHTML = '<tr><td colspan="6">Lade Daten...</td></tr>';
-
-      const { data: profiles, error } = await supabase
-        .from('profiles')
-        .select(`id,email,license_type,license_expiry,level,partner_count`);
-
-      if (error) {
-        tbody.innerHTML = `<tr><td colspan="6">Fehler beim Laden: ${error.message}</td></tr>`;
-        return;
-      }
-
-      if (!profiles || profiles.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6">Keine Nutzer gefunden.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = '';
-      profiles.forEach(user => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${user.email || '–'}</td>
-            <td>${user.license_type || '–'}</td>
-            <td>${user.level || 0}</td>
-            <td>${user.partner_count || 0}</td>
-            <td>${user.license_expiry ? new Date(user.license_expiry).toLocaleDateString() : 'Lifetime'}</td>
-            <td><button onclick="releasePayout('${user.id}')">Auszahlung freigeben</button></td>
-          </tr>
-        `;
-      });
+    function toggleMenu() {
+      document.getElementById("sideMenu").classList.toggle("open");
     }
-
-    function releasePayout(userId) {
-      alert('Auszahlung für Nutzer ' + userId + ' wurde freigegeben (Platzhalter).');
-    }
-
-    loadUsers();
   </script>
+
 </body>
 </html>
