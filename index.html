@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -89,15 +89,15 @@
 <body>
 
   <div class="container">
-    <h1>Welcome to <span>HashCore</span></h1>
-    <p>First Class Cloud Mining</p>
+    <h1>Willkommen bei <span>HashCore</span></h1>
+    <p>Professionelles Cloud-Mining</p>
     <form id="login-form">
-      <input type="email" placeholder="Email" required />
-      <input type="password" placeholder="Password" required />
-      <input id="confirm-password" type="password" placeholder="Confirm Password" />
-      <button type="submit" id="submit-btn">Login</button>
+      <input type="email" placeholder="E-Mail" required />
+      <input type="password" placeholder="Passwort" required />
+      <input id="confirm-password" type="password" placeholder="Passwort bestätigen" />
+      <button type="submit" id="submit-btn">Einloggen</button>
     </form>
-    <span class="toggle-link" onclick="toggleForm()">Don’t have an account? Register</span>
+    <span class="toggle-link" onclick="toggleForm()">Noch kein Konto? Jetzt registrieren</span>
   </div>
 
   <script>
@@ -105,10 +105,10 @@
     function toggleForm() {
       isLogin = !isLogin;
       document.getElementById('confirm-password').style.display = isLogin ? 'none' : 'block';
-      document.getElementById('submit-btn').textContent = isLogin ? 'Login' : 'Register';
+      document.getElementById('submit-btn').textContent = isLogin ? 'Einloggen' : 'Registrieren';
       document.querySelector('.toggle-link').textContent = isLogin
-        ? "Don’t have an account? Register"
-        : "Already have an account? Login";
+        ? "Noch kein Konto? Jetzt registrieren"
+        : "Schon registriert? Jetzt einloggen";
     }
   </script>
 
