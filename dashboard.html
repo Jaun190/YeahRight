@@ -7,172 +7,192 @@
   <style>
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: #0b0b0c;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0d0d0d;
       color: white;
-      background-image: url("assets/dashboard-bg.png");
+      background-image: url('assets/dashboard_bg.png');
       background-size: cover;
       background-position: center;
     }
 
     header {
       padding: 20px;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      color: #b16eff;
-      font-size: 28px;
-    }
-
-    .btn {
-      background: #a44cff;
-      border: none;
-      padding: 10px 20px;
-      color: white;
-      cursor: pointer;
-      border-radius: 8px;
+      text-align: center;
+      font-size: 2em;
       font-weight: bold;
+      background: rgba(0, 0, 0, 0.7);
     }
 
     .container {
-      padding: 30px;
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.05);
+      flex: 1;
+      background: #1a1a1a;
       padding: 20px;
       border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 20px #8a2be2;
+      box-shadow: 0 0 8px rgba(0,0,0,0.8);
+      min-width: 200px;
     }
 
-    .referral, .offers, .balance, .actions {
-      margin-bottom: 40px;
+    .card h3 {
+      margin-top: 0;
+      font-size: 1.1em;
+      color: #66ffcc;
     }
 
-    #licensePopup {
-      display: none;
+    .btn {
+      background: #00cc99;
+      border: none;
+      color: white;
+      padding: 10px 25px;
+      margin-top: 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #00e6ac;
+    }
+
+    #licensePopup, #payoutModal {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      justify-content: center;
-      align-items: center;
+      display: none;
       z-index: 9999;
-    }
-
-    #licensePopup .popup {
-      background: #1a1a1d;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-      max-width: 400px;
-      box-shadow: 0 0 20px #ff2b8a;
-    }
-
-    #licensePopup .popup h2 {
-      color: #ff2b8a;
-      margin-bottom: 20px;
-    }
-
-    #licensePopup .btn {
-      background: #ff2b8a;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
+      left: 0; top: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0,0,0,0.85);
       justify-content: center;
       align-items: center;
-      z-index: 9998;
     }
 
-    .modal .content {
-      background: #121212;
+    .popup {
+      background: #1f1f1f;
       padding: 30px;
       border-radius: 12px;
-      max-width: 400px;
+      max-width: 500px;
+      color: white;
+      text-align: center;
     }
+
+    .popup .btn {
+      display: block;
+      margin: 10px auto;
+      width: 80%;
+    }
+
   </style>
 </head>
 <body>
+  <header>
+    🚀 HashCore Dashboard
+  </header>
 
-<header>
-  <h1>HashCore Dashboard</h1>
-  <button class="btn" onclick="openPayout()">Auszahlen</button>
-</header>
+  <div class="container">
+    <div class="stats">
+      <div class="card">
+        <h3>Meine Hashrate</h3>
+        <p>120 TH/s</p>
+      </div>
+      <div class="card">
+        <h3>Aktueller Ertrag</h3>
+        <p>CHF 154.20</p>
+      </div>
+      <div class="card">
+        <h3>Partner-Umsatz</h3>
+        <p>CHF 738.00</p>
+      </div>
+      <div class="card">
+        <h3>Level</h3>
+        <p>2 (Pro)</p>
+      </div>
+    </div>
 
-<div class="container">
-  <div class="balance card">
-    <h2>Dein Kontostand</h2>
-    <p><strong>CHF 0.00</strong></p>
+    <button class="btn" onclick="openPayout()">💸 Auszahlung beantragen</button>
   </div>
 
-  <div class="referral card">
-    <h2>Dein Referral-Link</h2>
-    <input type="text" value="https://hashcore.ch/ref/abc123" readonly style="width:100%; padding:8px;">
+  <!-- Popup für fehlende Starterbox -->
+  <div id="licensePopup">
+    <div class="popup">
+      <h2>Wähle dein Startpaket</h2>
+      <p>Ohne Lizenz kannst du dein Dashboard nicht nutzen.</p>
+
+      <div style="margin: 20px 0; text-align: left;">
+        <div style="margin-bottom: 15px;">
+          <strong>🌱 Starterbox – CHF 49.–</strong><br>
+          Einmaliger Zugang zum System inkl. Referral-Link<br>
+          <button class="btn" onclick="fakeBuy('Starterbox')">Jetzt kaufen</button>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <strong>🚀 HashCore Pro – CHF 29.–/Monat</strong><br>
+          Zusatzfunktionen, höhere Provisionen, Statistik-Tools<br>
+          <button class="btn" onclick="fakeBuy('Pro')">Jetzt abonnieren</button>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <strong>🔒 Lifetime Lizenz – CHF 499.–</strong><br>
+          Für immer freigeschaltet. Keine monatlichen Kosten.<br>
+          <button class="btn" onclick="fakeBuy('Lifetime')">Jetzt freischalten</button>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <strong>📅 Jahrespaket – CHF 199.–</strong><br>
+          1 Jahr Dashboard-Zugang + Bonus-Hashpower<br>
+          <button class="btn" onclick="fakeBuy('Jahrespaket')">Jetzt aktivieren</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="offers card">
-    <h2>Angebote & Pakete</h2>
-    <p>Hier erscheinen deine verfügbaren Pakete, Hashpower-Angebote oder Upgrades.</p>
+  <!-- Auszahlung Popup -->
+  <div id="payoutModal">
+    <div class="popup">
+      <h2>Auszahlung beantragen</h2>
+      <p>Bitte gib deine Wallet-Adresse im nächsten Schritt ein (Fake).</p>
+      <button class="btn" onclick="alert('Fake Auszahlung ausgeführt')">Auszahlung bestätigen</button>
+    </div>
   </div>
 
-  <div class="actions card">
-    <h2>Aktionen</h2>
-    <button class="btn">Mehr Hashpower kaufen</button>
-  </div>
-</div>
+  <script>
+    // Fake: Lizenzprüfung
+    const hasLicense = false;
 
-<!-- Zwangs-Popup bei fehlender Starterbox -->
-<div id="licensePopup">
-  <div class="popup">
-    <h2>Starterbox erforderlich</h2>
-    <p>Um dein Dashboard freizuschalten, musst du eine Starterbox kaufen.</p>
-    <button class="btn" onclick="window.location.href='starterbox.html'">Starterbox kaufen</button>
-  </div>
-</div>
+    window.onload = function () {
+      if (!hasLicense) {
+        document.getElementById('licensePopup').style.display = 'flex';
+      }
+    };
 
-<!-- Modal für Auszahlung -->
-<div class="modal" id="payoutModal">
-  <div class="content">
-    <h3>Auszahlung beantragen</h3>
-    <p>Bitte gib deinen Auszahlungsbetrag und Wallet ein.</p>
-    <input type="text" placeholder="Betrag in CHF" style="width:100%; margin-bottom:10px; padding:8px;">
-    <input type="text" placeholder="Wallet Adresse" style="width:100%; margin-bottom:10px; padding:8px;">
-    <button class="btn">Abschicken</button>
-  </div>
-</div>
-
-<script>
-  // Fake: Lizenzprüfung
-  const hasLicense = false;
-
-  window.onload = function () {
-    if (!hasLicense) {
-      document.getElementById('licensePopup').style.display = 'flex';
+    function openPayout() {
+      document.getElementById('payoutModal').style.display = 'flex';
     }
-  };
 
-  function openPayout() {
-    document.getElementById('payoutModal').style.display = 'flex';
-  }
-
-  // Modal schließen bei Klick außerhalb
-  window.onclick = function(event) {
-    const modal = document.getElementById('payoutModal');
-    if (event.target == modal) {
-      modal.style.display = "none";
+    function fakeBuy(paketName) {
+      alert("Paket '" + paketName + "' wurde gekauft (Fake). Dashboard freigeschaltet.");
+      document.getElementById('licensePopup').style.display = 'none';
     }
-  };
-</script>
 
+    window.onclick = function(event) {
+      const modal = document.getElementById('payoutModal');
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+  </script>
 </body>
 </html>
