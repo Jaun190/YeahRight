@@ -4,113 +4,199 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HashCore Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #000;
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: url('assets/background.png') no-repeat center center fixed;
+      background-size: cover;
       color: white;
+    }
+    .container {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background-repeat: no-repeat;
-      background-size: cover;
+      min-height: 100vh;
+      backdrop-filter: blur(10px);
     }
-
-    .container {
-      background: rgba(20, 20, 20, 0.95);
-      padding: 40px;
+    .login-box {
+      display: flex;
+      background: rgba(0, 0, 0, 0.7);
       border-radius: 16px;
-      box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
-      width: 100%;
-      max-width: 400px;
+      padding: 40px;
+      gap: 40px;
+      box-shadow: 0 0 30px #a75fff;
+    }
+    .section {
+      width: 280px;
+    }
+    .section h2 {
       text-align: center;
+      margin-bottom: 20px;
+      color: #a75fff;
     }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-
-    h1 span {
-      color: #a855f7;
-    }
-
-    p {
-      margin-bottom: 30px;
-      color: #aaa;
-    }
-
-    input {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
       padding: 12px;
-      margin-bottom: 15px;
+      margin: 8px 0;
       border: none;
-      border-radius: 8px;
-      background: #111;
+      border-radius: 6px;
+      background: #222;
       color: white;
     }
-
-    button {
+    .btn {
       width: 100%;
       padding: 12px;
-      background: linear-gradient(to right, #a855f7, #6366f1);
+      background: #a75fff;
       border: none;
-      border-radius: 8px;
       color: white;
       font-weight: bold;
-      font-size: 16px;
       cursor: pointer;
-      transition: opacity 0.3s;
+      border-radius: 6px;
+      margin-top: 10px;
     }
-
-    button:hover {
-      opacity: 0.9;
+    .checkbox {
+      margin-top: 10px;
     }
-
-    .toggle-link {
-      margin-top: 20px;
-      display: block;
-      color: #a855f7;
+    .checkbox label {
+      font-size: 12px;
+    }
+    .checkbox a {
+      color: #a75fff;
       cursor: pointer;
+      text-decoration: underline;
     }
-
-    #confirm-password {
+    .popup {
       display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 90%;
+      max-width: 600px;
+      background: #111;
+      padding: 30px;
+      border-radius: 16px;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      box-shadow: 0 0 20px #a75fff;
+    }
+    .popup h3 {
+      color: #a75fff;
+      margin-bottom: 20px;
+    }
+    .popup p {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .close-popup {
+      text-align: right;
+      margin-top: 10px;
+    }
+    .close-popup button {
+      background: #a75fff;
+      border: none;
+      padding: 8px 16px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Willkommen bei <span>HashCore</span></h1>
-    <p>Professionelles Cloud-Mining</p>
-    <form id="login-form">
-      <input type="email" placeholder="E-Mail" required />
-      <input type="password" placeholder="Passwort" required />
-      <input id="confirm-password" type="password" placeholder="Passwort bestätigen" />
-      <button type="submit" id="submit-btn">Einloggen</button>
-    </form>
-    <span class="toggle-link" onclick="toggleForm()">Noch kein Konto? Jetzt registrieren</span>
+    <div class="login-box">
+      <!-- Login -->
+      <div class="section">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="E-Mail" />
+        <input type="password" id="loginPassword" placeholder="Passwort" />
+        <button class="btn" onclick="handleLogin()">Login</button>
+      </div>
+
+      <!-- Registrierung -->
+      <div class="section">
+        <h2>Registrieren</h2>
+        <input type="email" id="regEmail" placeholder="E-Mail" />
+        <input type="password" id="regPass" placeholder="Passwort" />
+        <input type="password" id="regPass2" placeholder="Passwort bestätigen" />
+        <div class="checkbox">
+          <input type="checkbox" id="agbCheck" />
+          <label for="agbCheck">
+            Ich akzeptiere die <a onclick="showPopup('agb')">AGB</a> und <a onclick="showPopup('privacy')">Datenschutz</a>.
+          </label>
+        </div>
+        <button class="btn" onclick="handleRegister()">Registrieren</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGB Popup -->
+  <div class="popup" id="agbPopup">
+    <h3>Allgemeine Geschäftsbedingungen (AGB)</h3>
+    <p>
+      Diese Plattform basiert auf real vermittelter Rechenleistung (Hashrate) über Drittanbieter.
+      Die Nutzung erfolgt auf eigene Verantwortung. Die Preise beinhalten Plattformgebühren.
+      Es besteht keine Garantie auf fixe Gewinne. Jeder Nutzer handelt in eigener Verantwortung
+      und verpflichtet sich zur Einhaltung schweizerischer Gesetze.
+    </p>
+    <div class="close-popup">
+      <button onclick="closePopup('agb')">Schließen</button>
+    </div>
+  </div>
+
+  <!-- Datenschutz Popup -->
+  <div class="popup" id="privacyPopup">
+    <h3>Datenschutzerklärung</h3>
+    <p>
+      Deine Daten werden vertraulich behandelt und nicht an Dritte weitergegeben, außer zur
+      technischen Abwicklung über Drittanbieter (z. B. Hashrate-Provider). Es gelten die
+      Datenschutzrichtlinien nach schweizerischem Recht.
+    </p>
+    <div class="close-popup">
+      <button onclick="closePopup('privacy')">Schließen</button>
+    </div>
   </div>
 
   <script>
-    let isLogin = true;
-    function toggleForm() {
-      isLogin = !isLogin;
-      document.getElementById('confirm-password').style.display = isLogin ? 'none' : 'block';
-      document.getElementById('submit-btn').textContent = isLogin ? 'Einloggen' : 'Registrieren';
-      document.querySelector('.toggle-link').textContent = isLogin
-        ? "Noch kein Konto? Jetzt registrieren"
-        : "Schon registriert? Jetzt einloggen";
+    function showPopup(type) {
+      document.getElementById(type + "Popup").style.display = "block";
+    }
+    function closePopup(type) {
+      document.getElementById(type + "Popup").style.display = "none";
+    }
+
+    function handleLogin() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      if (email && password) {
+        window.location.href = "dashboard.html";
+      } else {
+        alert("Bitte E-Mail und Passwort eingeben.");
+      }
+    }
+
+    function handleRegister() {
+      const email = document.getElementById("regEmail").value;
+      const pass = document.getElementById("regPass").value;
+      const pass2 = document.getElementById("regPass2").value;
+      const agb = document.getElementById("agbCheck").checked;
+      if (!email || !pass || !pass2) {
+        alert("Bitte alle Felder ausfüllen.");
+        return;
+      }
+      if (pass !== pass2) {
+        alert("Passwörter stimmen nicht überein.");
+        return;
+      }
+      if (!agb) {
+        alert("Bitte AGB und Datenschutz akzeptieren.");
+        return;
+      }
+      alert("Registrierung erfolgreich!");
     }
   </script>
-
 </body>
 </html>
