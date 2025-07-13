@@ -1,152 +1,70 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login & Registrierung – GrowEmpire</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background: url('assets/hanf.png') no-repeat center center fixed;
-      background-size: cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      backdrop-filter: blur(4px);
-    }
-
-    .container {
-      background-color: rgba(0, 0, 0, 0.75);
-      padding: 2rem;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-      color: white;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 1rem;
-      color: #b6ffb6;
-    }
-
-    label {
-      display: block;
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.3rem;
-      border-radius: 6px;
-      border: none;
-    }
-
-    button {
-      margin-top: 1.5rem;
-      width: 100%;
-      padding: 0.8rem;
-      background-color: #3cb371;
-      color: white;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background-color: #2e8b57;
-    }
-
-    .switch {
-      margin-top: 1rem;
-      text-align: center;
-    }
-
-    .switch a {
-      color: #aaffaa;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    .agb-check {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2 id="form-title">Login</h2>
-    <form id="login-form">
-      <label for="email">E-Mail</label>
-      <input type="email" id="email" required />
-      
-      <label for="password">Passwort</label>
-      <input type="password" id="password" required />
-
-      <button type="submit">Einloggen</button>
-    </form>
-
-    <form id="register-form" class="hidden">
-      <label for="name">Name</label>
-      <input type="text" id="name" required />
-
-      <label for="adresse">Adresse</label>
-      <input type="text" id="adresse" required />
-
-      <label for="email_reg">E-Mail</label>
-      <input type="email" id="email_reg" required />
-
-      <label for="password_reg">Passwort</label>
-      <input type="password" id="password_reg" required />
-
-      <label for="confirm_password">Passwort bestätigen</label>
-      <input type="password" id="confirm_password" required />
-
-      <div class="agb-check">
-        <input type="checkbox" id="agb" required />
-        <label for="agb">Ich akzeptiere die <a href="agb.html" target="_blank">AGB & Datenschutz</a></label>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Registrierung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background-image: url("assets/hanf.png");
+        background-size: cover;
+        background-position: center;
+      }
+    </style>
+  </head>
+  <body class="flex items-center justify-center min-h-screen">
+    <div class="bg-zinc-900 bg-opacity-90 p-8 rounded-xl shadow-2xl w-full max-w-md">
+      <!-- Umschalter -->
+      <div class="flex justify-center mb-6 space-x-4">
+        <button onclick="toggleForm('login')" class="text-white font-semibold" id="loginTab">Login</button>
+        <button onclick="toggleForm('register')" class="text-green-400 font-semibold" id="registerTab">Registrieren</button>
       </div>
 
-      <button type="submit">Registrieren</button>
-    </form>
+      <!-- LOGIN FORMULAR -->
+      <form id="loginForm" class="space-y-4">
+        <h2 class="text-2xl font-bold text-center text-green-400">Login</h2>
+        <input type="email" placeholder="E-Mail" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+        <input type="password" placeholder="Passwort" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded shadow-md">Einloggen</button>
+      </form>
 
-    <div class="switch">
-      <span id="switch-text">Noch kein Konto? <a onclick="toggleForms()">Registrieren</a></span>
+      <!-- REGISTER FORMULAR -->
+      <form id="registerForm" class="space-y-4 hidden">
+        <h2 class="text-2xl font-bold text-center text-green-400">Registrieren</h2>
+        <input type="text" placeholder="Vorname" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+        <input type="text" placeholder="Nachname" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+        <input type="text" placeholder="Adresse" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+        <input type="email" placeholder="E-Mail" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+        <input type="password" placeholder="Passwort" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+        <input type="password" placeholder="Passwort bestätigen" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-zinc-700" required />
+        <label class="text-sm text-white flex items-center space-x-2">
+          <input type="checkbox" required />
+          <span>Ich akzeptiere die <a href="agb.html" class="underline text-green-400">AGB</a></span>
+        </label>
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded shadow-md">Registrieren</button>
+      </form>
     </div>
-  </div>
 
-  <script>
-    const loginForm = document.getElementById("login-form");
-    const registerForm = document.getElementById("register-form");
-    const switchText = document.getElementById("switch-text");
-    const formTitle = document.getElementById("form-title");
+    <script>
+      function toggleForm(form) {
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
+        const loginTab = document.getElementById("loginTab");
+        const registerTab = document.getElementById("registerTab");
 
-    function toggleForms() {
-      loginForm.classList.toggle("hidden");
-      registerForm.classList.toggle("hidden");
-      const isLogin = loginForm.classList.contains("hidden");
-      formTitle.innerText = isLogin ? "Registrieren" : "Login";
-      switchText.innerHTML = isLogin
-        ? 'Bereits registriert? <a onclick="toggleForms()">Login</a>'
-        : 'Noch kein Konto? <a onclick="toggleForms()">Registrieren</a>';
-    }
-  </script>
-</body>
+        if (form === "login") {
+          loginForm.classList.remove("hidden");
+          registerForm.classList.add("hidden");
+          loginTab.classList.add("text-green-400");
+          registerTab.classList.remove("text-green-400");
+        } else {
+          loginForm.classList.add("hidden");
+          registerForm.classList.remove("hidden");
+          loginTab.classList.remove("text-green-400");
+          registerTab.classList.add("text-green-400");
+        }
+      }
+    </script>
+  </body>
 </html>
