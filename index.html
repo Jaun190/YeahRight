@@ -3,147 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GrowEmpire Login</title>
+  <title>GrowEmpire – Login & Registrierung</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
     body {
       margin: 0;
-      padding: 0;
-      background: #111;
+      font-family: Arial, sans-serif;
+      background: #0e0e0e;
+      color: white;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
     }
-
-    .container {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.15);
-      padding: 30px;
+    .form-box {
+      width: 100%;
       max-width: 400px;
-      width: 100%;
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
     }
-
-    h2 {
-      text-align: center;
-      color: #4caf50;
+    .form-box h1 {
       margin-bottom: 20px;
-    }
-
-    .tabs {
-      display: flex;
-      margin-bottom: 20px;
-    }
-
-    .tab {
-      flex: 1;
+      font-size: 22px;
       text-align: center;
-      padding: 10px;
-      cursor: pointer;
-      background: #eee;
-      border-radius: 8px 8px 0 0;
-      font-weight: bold;
     }
-
-    .tab.active {
-      background: #4caf50;
-      color: white;
-    }
-
-    form {
-      display: none;
-    }
-
-    form.active {
-      display: block;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
+    .form-box input[type="text"],
+    .form-box input[type="password"],
+    .form-box input[type="email"] {
       width: 100%;
       padding: 10px;
-      margin: 6px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 15px;
+      margin: 8px 0;
+      background: #2a2a2a;
       border: none;
-      background: #4caf50;
+      border-radius: 5px;
       color: white;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
     }
-
-    label.checkbox {
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
+    .form-box label {
       font-size: 14px;
     }
-
-    label.checkbox input {
-      margin-right: 6px;
+    .form-box .agb {
+      margin: 10px 0;
     }
-
-    a {
-      color: #4caf50;
-      text-decoration: none;
+    .form-box button {
+      width: 100%;
+      padding: 10px;
+      background: #2ecc71;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-weight: bold;
     }
-
-    a:hover {
-      text-decoration: underline;
+    .switch-form {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .switch-form a {
+      color: #2ecc71;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <h2>GrowEmpire</h2>
-
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('login')">Login</div>
-    <div class="tab" onclick="switchTab('register')">Registrieren</div>
+  <div class="form-box" id="login-box">
+    <h1>Login</h1>
+    <input type="email" placeholder="E-Mail" />
+    <input type="password" placeholder="Passwort" />
+    <button onclick="alert('Login erfolgreich – Weiterleitung zum Dashboard...')">Login</button>
+    <div class="switch-form">Noch kein Konto? <a onclick="switchForm(true)">Registrieren</a></div>
   </div>
 
-  <form id="login" class="active">
-    <input type="email" placeholder="E-Mail" required>
-    <input type="password" placeholder="Passwort" required>
-    <button type="submit">Einloggen</button>
-  </form>
+  <div class="form-box" id="register-box" style="display:none;">
+    <h1>Registrieren</h1>
+    <input type="text" placeholder="Name" />
+    <input type="text" placeholder="Adresse" />
+    <input type="email" placeholder="E-Mail" />
+    <input type="password" placeholder="Passwort" />
+    <input type="password" placeholder="Passwort bestätigen" />
+    <div class="agb">
+      <label><input type="checkbox" required /> Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a></label>
+    </div>
+    <button onclick="alert('Registrierung erfolgreich – Bitte einloggen')">Registrieren</button>
+    <div class="switch-form">Bereits ein Konto? <a onclick="switchForm(false)">Login</a></div>
+  </div>
 
-  <form id="register">
-    <input type="text" placeholder="Vollständiger Name" required>
-    <input type="email" placeholder="E-Mail" required>
-    <input type="text" placeholder="Adresse" required>
-    <input type="password" placeholder="Passwort" required>
-    <input type="password" placeholder="Passwort bestätigen" required>
-    <label class="checkbox">
-      <input type="checkbox" required>
-      Ich akzeptiere die <a href="agb.html" target="_blank">AGB & Datenschutz</a>
-    </label>
-    <button type="submit">Registrieren</button>
-  </form>
-</div>
-
-<script>
-  function switchTab(tab) {
-    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('form').forEach(el => el.classList.remove('active'));
-    document.querySelector(`.tab[onclick*="${tab}"]`).classList.add('active');
-    document.getElementById(tab).classList.add('active');
-  }
-</script>
-
+  <script>
+    function switchForm(showRegister) {
+      document.getElementById('login-box').style.display = showRegister ? 'none' : 'block';
+      document.getElementById('register-box').style.display = showRegister ? 'block' : 'none';
+    }
+  </script>
 </body>
 </html>
