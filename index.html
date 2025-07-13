@@ -3,90 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AGB – GrowEmpire</title>
+  <title>Registrieren – GrowEmpire</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 2rem;
-      line-height: 1.6;
-      color: #222;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
+    .card {
       background: white;
       padding: 2rem;
       border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
     h2 {
-      margin-top: 2rem;
-    }
-
-    ul {
-      padding-left: 1.2rem;
-    }
-
-    footer {
-      margin-top: 3rem;
+      margin-bottom: 1.5rem;
       text-align: center;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
       font-size: 0.9rem;
-      color: #888;
+    }
+
+    .checkbox-group input {
+      margin-right: 0.5rem;
+    }
+
+    .checkbox-group a {
+      color: #4caf50;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Allgemeine Geschäftsbedingungen (AGB)</h1>
+  <div class="card">
+    <h2>Registrieren</h2>
+    <form onsubmit="return validateForm()">
+      <input type="text" placeholder="Name" required />
+      <input type="text" placeholder="Adresse" required />
+      <input type="email" placeholder="E-Mail" required />
+      <input type="password" placeholder="Passwort" required />
+      <input type="password" placeholder="Passwort bestätigen" required />
 
-    <p><strong>Gültig für die Nutzung der Plattform GrowEmpire.</strong></p>
+      <div class="checkbox-group">
+        <input type="checkbox" id="agbCheck" required />
+        <label for="agbCheck">
+          Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a>
+        </label>
+      </div>
 
-    <h2>1. Geltungsbereich</h2>
-    <p>Diese AGB gelten für alle Verträge, Dienstleistungen und Nutzungen zwischen GrowEmpire und den registrierten Nutzern der Plattform.</p>
-
-    <h2>2. Plattformzweck</h2>
-    <p>GrowEmpire ist eine virtuelle Plattform zur Teilnahme an simulierten Pflanzenprojekten mit Rückvergütungssystem. Der Erwerb von Flächen und Pflanzen ist symbolisch und simuliert den Ablauf eines echten Ertragsmodells.</p>
-
-    <h2>3. Lizenz & Mitgliedschaft</h2>
-    <ul>
-      <li>Nutzer benötigen eine gültige Lizenz (Standard, Pro oder Platin), um alle Funktionen der Plattform zu nutzen.</li>
-      <li>Die Lizenzlaufzeit und -kosten sind jeweils bei der Buchung klar definiert.</li>
-    </ul>
-
-    <h2>4. Pflanzen und Erträge</h2>
-    <p>Die Pflanzen und Erträge sind virtuelle Objekte. Es erfolgt keine reale Lieferung oder echter Pflanzenanbau. Alle Ertragsmodelle dienen der Veranschaulichung eines simulierten Wachstumsprozesses.</p>
-
-    <h2>5. Referral-Programm</h2>
-    <p>Durch das Einladen von Partnern können Nutzer Provisionen erhalten. Alle Vergütungen erfolgen virtuell und innerhalb des internen GrowEmpire-Systems.</p>
-
-    <h2>6. Haftung</h2>
-    <p>GrowEmpire übernimmt keine Haftung für Ertragsverluste, Systemfehler oder fehlerhafte Angaben durch Nutzer. Die Plattform basiert auf einem rein symbolischen Modell ohne Anspruch auf reale Gewinnausschüttung.</p>
-
-    <h2>7. Datenschutz</h2>
-    <p>Alle Nutzerdaten werden gemäß der <a href="datenschutz.html">Datenschutzerklärung</a> gespeichert und vertraulich behandelt.</p>
-
-    <h2>8. Änderungen der AGB</h2>
-    <p>GrowEmpire behält sich das Recht vor, diese AGB jederzeit zu ändern. Änderungen werden den Nutzern rechtzeitig bekannt gegeben.</p>
-
-    <h2>9. Kontakt</h2>
-    <p>GrowEmpire<br/>
-    Dominique Jaun<br/>
-    Dorfstrasse 233<br/>
-    Schwanden i.E.<br/>
-    E-Mail: jaun190@gmail.com</p>
-
-    <footer>
-      © 2025 GrowEmpire. Alle Rechte vorbehalten.
-    </footer>
+      <button type="submit" id="registerBtn" disabled>Registrieren</button>
+    </form>
   </div>
+
+  <script>
+    const agbCheck = document.getElementById('agbCheck');
+    const registerBtn = document.getElementById('registerBtn');
+
+    agbCheck.addEventListener('change', () => {
+      registerBtn.disabled = !agbCheck.checked;
+    });
+
+    function validateForm() {
+      if (!agbCheck.checked) {
+        alert("Bitte akzeptiere die AGB, um dich zu registrieren.");
+        return false;
+      }
+      alert("Registrierung erfolgreich (Demo)");
+      return true;
+    }
+  </script>
 </body>
 </html>
