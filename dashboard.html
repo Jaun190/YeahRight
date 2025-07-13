@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>HashCore Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
-      background: #0a0a0a;
+      background-color: #0a0a0a;
       color: white;
-      overflow-x: hidden;
     }
     header {
+      background: #1e1b4b;
       padding: 20px;
       text-align: center;
       font-size: 2em;
-      background: #111;
+      color: #e0e0ff;
       font-weight: bold;
-      color: #f0f0f0;
     }
     .container {
       padding: 30px;
@@ -31,20 +30,19 @@
       gap: 20px;
     }
     .card {
-      background: #1a1a1a;
+      background: #251f57;
       padding: 20px;
       border-radius: 14px;
-      box-shadow: 0 0 10px rgba(255, 0, 128, 0.3);
+      box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
     }
     .card h3 {
-      margin: 0 0 10px;
-      color: #ff0099;
+      color: #a78bfa;
     }
     .card p {
       font-size: 1.2em;
     }
     .btn {
-      background: #ff0099;
+      background: #a78bfa;
       border: none;
       color: white;
       padding: 12px 24px;
@@ -53,33 +51,42 @@
       margin-top: 10px;
     }
     .btn:hover {
-      background: #ff33aa;
+      background: #c4b5fd;
     }
+
+    /* Pink Starterbox Popup */
     .popup-overlay {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.85);
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 9999;
     }
     .popup {
-      background: #1c1c1c;
+      background: #ff007f;
       padding: 30px;
-      border-radius: 14px;
+      border-radius: 12px;
+      color: white;
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 0 30px rgba(255, 0, 128, 0.4);
-    }
-    .popup h2 {
-      margin-top: 0;
-      color: #ff0099;
+      box-shadow: 0 0 20px #ff66aa;
+      text-align: center;
     }
     .popup button {
+      background: white;
+      color: #ff007f;
+      border: none;
+      padding: 12px 20px;
       margin-top: 20px;
-      width: 100%;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .popup button:hover {
+      background: #ffe6f0;
     }
   </style>
 </head>
@@ -91,76 +98,52 @@
   <div class="grid">
     <div class="card">
       <h3>Gekaufte Hashrate</h3>
-      <p id="hashrate">0 TH/s</p>
+      <p id="hashrate">0 MH/s</p>
     </div>
     <div class="card">
-      <h3>Geschätzter Tagesertrag</h3>
+      <h3>Täglicher Ertrag</h3>
       <p id="ertrag">CHF 0.00</p>
     </div>
     <div class="card">
-      <h3>Geworbene Partner</h3>
+      <h3>Partner</h3>
       <p id="partner">0</p>
     </div>
     <div class="card">
-      <h3>Deine Provision</h3>
+      <h3>Provision</h3>
       <p id="provision">CHF 0.00</p>
     </div>
     <div class="card">
-      <h3>Referral-Link</h3>
-      <p>https://hashcore.io/register?ref=DEINNAME</p>
-    </div>
-    <div class="card">
-      <h3>Paket hinzufügen</h3>
-      <button class="btn" onclick="openPackagePopup()">Hashrate kaufen</button>
-    </div>
-    <div class="card">
-      <h3>Auszahlen</h3>
-      <button class="btn" onclick="openWithdrawPopup()">Jetzt auszahlen</button>
+      <h3>Paket kaufen</h3>
+      <button class="btn" onclick="buyHashrate(100)">100 MH/s – CHF 5.–</button>
+      <button class="btn" onclick="buyHashrate(500)">500 MH/s – CHF 25.–</button>
+      <button class="btn" onclick="buyHashrate(1000)">1 GH/s – CHF 50.–</button>
     </div>
   </div>
 </div>
 
-<!-- Starterbox Pflicht-Popup -->
+<!-- Pink Starterbox Pflicht-Popup -->
 <div class="popup-overlay" id="starterPopup">
   <div class="popup">
-    <h2>Starterbox erforderlich</h2>
-    <p>Bitte kaufe die Starterlizenz (CHF 49.–), um das Dashboard zu nutzen.</p>
-    <button class="btn" onclick="closeStarterPopup()">Kaufen (Fake)</button>
-  </div>
-</div>
-
-<!-- Kauf-Popup -->
-<div class="popup-overlay" id="packagePopup">
-  <div class="popup">
-    <h2>Hashrate kaufen</h2>
-    <p>Wähle dein Paket:</p>
-    <button class="btn" onclick="buyHashrate(1)">1 TH/s – CHF 6.50</button>
-    <button class="btn" onclick="buyHashrate(5)">5 TH/s – CHF 32.50</button>
-    <button class="btn" onclick="buyHashrate(10)">10 TH/s – CHF 65.–</button>
-  </div>
-</div>
-
-<!-- Auszahlung -->
-<div class="popup-overlay" id="withdrawPopup">
-  <div class="popup">
-    <h2>Auszahlung</h2>
-    <p>Gib deine Wallet-Adresse ein:</p>
-    <input type="text" placeholder="z.B. bc1q..." style="width:100%;padding:10px;border-radius:6px;" />
-    <button class="btn" onclick="alert('Auszahlung eingereicht (Fake)')">Auszahlung anfordern</button>
+    <h2>Starterbox benötigt</h2>
+    <p>Bitte kaufe die Starterlizenz für CHF 49.–, um das Dashboard nutzen zu können.</p>
+    <button onclick="closeStarterPopup()">Starterbox kaufen (Fake)</button>
   </div>
 </div>
 
 <script>
   let hasStarter = false;
-  let totalTHS = 0;
-  let provision = 0;
-  let partner = 0;
+  let totalHashrate = 0; // in MH/s
 
   function updateDashboard() {
-    document.getElementById("hashrate").innerText = totalTHS + " TH/s";
-    document.getElementById("ertrag").innerText = "CHF " + (totalTHS * 0.35).toFixed(2);
-    document.getElementById("provision").innerText = "CHF " + provision.toFixed(2);
-    document.getElementById("partner").innerText = partner;
+    document.getElementById("hashrate").innerText = totalHashrate + " MH/s";
+    document.getElementById("ertrag").innerText = "CHF " + (totalHashrate * 0.01).toFixed(2);
+    document.getElementById("provision").innerText = "CHF " + (totalHashrate * 0.002).toFixed(2);
+    document.getElementById("partner").innerText = Math.floor(totalHashrate / 200);
+  }
+
+  function buyHashrate(amount) {
+    totalHashrate += amount;
+    updateDashboard();
   }
 
   function closeStarterPopup() {
@@ -168,31 +151,11 @@
     document.getElementById("starterPopup").style.display = "none";
   }
 
-  function openPackagePopup() {
-    document.getElementById("packagePopup").style.display = "flex";
-  }
-
-  function buyHashrate(amount) {
-    totalTHS += amount;
-    updateDashboard();
-    document.getElementById("packagePopup").style.display = "none";
-  }
-
-  function openWithdrawPopup() {
-    document.getElementById("withdrawPopup").style.display = "flex";
-  }
-
   window.onload = function() {
     if (!hasStarter) {
       document.getElementById("starterPopup").style.display = "flex";
     }
   };
-
-  document.querySelectorAll(".popup-overlay").forEach(popup => {
-    popup.addEventListener("click", function(e) {
-      if (e.target === this) this.style.display = "none";
-    });
-  });
 </script>
 
 </body>
