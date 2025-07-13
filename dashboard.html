@@ -2,197 +2,164 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HashCore Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – HashCore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0d0d0d;
-      color: white;
-      background-image: url('assets/dashboard_bg.png');
-      background-size: cover;
-      background-position: center;
-    }
-
-    header {
-      padding: 20px;
-      text-align: center;
-      font-size: 2em;
-      font-weight: bold;
-      background: rgba(0, 0, 0, 0.7);
+      font-family: 'Orbitron', sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
     }
 
     .container {
+      padding: 30px;
       max-width: 1200px;
-      margin: 50px auto;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 10px;
+      margin: auto;
     }
 
-    .stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: space-between;
+    h1 {
+      text-align: center;
+      color: #a259ff;
+      text-shadow: 0 0 10px #a259ff;
+      margin-bottom: 40px;
     }
 
     .card {
-      flex: 1;
-      background: #1a1a1a;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 20px;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.8);
-      min-width: 200px;
+      box-shadow: 0 0 15px #a259ff88;
+      margin-bottom: 20px;
     }
 
-    .card h3 {
-      margin-top: 0;
-      font-size: 1.1em;
-      color: #66ffcc;
-    }
-
-    .btn {
-      background: #00cc99;
-      border: none;
+    .button {
+      background: #a259ff;
       color: white;
-      padding: 10px 25px;
-      margin-top: 20px;
-      font-size: 1em;
-      border-radius: 8px;
+      border: none;
+      padding: 15px 25px;
+      font-size: 16px;
+      border-radius: 12px;
       cursor: pointer;
       transition: 0.3s;
+      display: inline-block;
+      margin: 10px 0;
     }
 
-    .btn:hover {
-      background: #00e6ac;
+    .button:hover {
+      background: #842fff;
     }
 
-    #licensePopup, #payoutModal {
-      position: fixed;
+    .popup {
       display: none;
-      z-index: 9999;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.85);
       justify-content: center;
       align-items: center;
     }
 
-    .popup {
-      background: #1f1f1f;
+    .popup-content {
+      background: #1a1a1a;
       padding: 30px;
-      border-radius: 12px;
+      border-radius: 20px;
       max-width: 500px;
-      color: white;
       text-align: center;
+      color: white;
+      box-shadow: 0 0 20px #a259ff;
     }
 
-    .popup .btn {
-      display: block;
-      margin: 10px auto;
-      width: 80%;
+    .popup-content h2 {
+      margin-bottom: 20px;
+      color: #a259ff;
     }
 
+    .popup-content .button {
+      width: 100%;
+    }
+
+    .close {
+      position: absolute;
+      top: 30px;
+      right: 40px;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+    }
+
+    @media(max-width: 600px) {
+      .popup-content {
+        width: 90%;
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
-    🚀 HashCore Dashboard
-  </header>
 
-  <div class="container">
-    <div class="stats">
-      <div class="card">
-        <h3>Meine Hashrate</h3>
-        <p>120 TH/s</p>
-      </div>
-      <div class="card">
-        <h3>Aktueller Ertrag</h3>
-        <p>CHF 154.20</p>
-      </div>
-      <div class="card">
-        <h3>Partner-Umsatz</h3>
-        <p>CHF 738.00</p>
-      </div>
-      <div class="card">
-        <h3>Level</h3>
-        <p>2 (Pro)</p>
-      </div>
-    </div>
+<div class="container">
+  <h1>Willkommen bei HashCore</h1>
 
-    <button class="btn" onclick="openPayout()">💸 Auszahlung beantragen</button>
+  <div class="card">
+    <h2>Deine Pakete</h2>
+    <p>Du hast noch keine Starterbox gekauft.</p>
+    <button class="button" onclick="openPackagePopup()">Starterbox kaufen</button>
   </div>
 
-  <!-- Popup für fehlende Starterbox -->
-  <div id="licensePopup">
-    <div class="popup">
-      <h2>Wähle dein Startpaket</h2>
-      <p>Ohne Lizenz kannst du dein Dashboard nicht nutzen.</p>
-
-      <div style="margin: 20px 0; text-align: left;">
-        <div style="margin-bottom: 15px;">
-          <strong>🌱 Starterbox – CHF 49.–</strong><br>
-          Einmaliger Zugang zum System inkl. Referral-Link<br>
-          <button class="btn" onclick="fakeBuy('Starterbox')">Jetzt kaufen</button>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-          <strong>🚀 HashCore Pro – CHF 29.–/Monat</strong><br>
-          Zusatzfunktionen, höhere Provisionen, Statistik-Tools<br>
-          <button class="btn" onclick="fakeBuy('Pro')">Jetzt abonnieren</button>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-          <strong>🔒 Lifetime Lizenz – CHF 499.–</strong><br>
-          Für immer freigeschaltet. Keine monatlichen Kosten.<br>
-          <button class="btn" onclick="fakeBuy('Lifetime')">Jetzt freischalten</button>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-          <strong>📅 Jahrespaket – CHF 199.–</strong><br>
-          1 Jahr Dashboard-Zugang + Bonus-Hashpower<br>
-          <button class="btn" onclick="fakeBuy('Jahrespaket')">Jetzt aktivieren</button>
-        </div>
-      </div>
-    </div>
+  <div class="card">
+    <h2>Dein Kontostand</h2>
+    <p><strong>CHF 0.00</strong></p>
+    <button class="button" onclick="openWithdrawPopup()">Auszahlung beantragen</button>
   </div>
+</div>
 
-  <!-- Auszahlung Popup -->
-  <div id="payoutModal">
-    <div class="popup">
-      <h2>Auszahlung beantragen</h2>
-      <p>Bitte gib deine Wallet-Adresse im nächsten Schritt ein (Fake).</p>
-      <button class="btn" onclick="alert('Fake Auszahlung ausgeführt')">Auszahlung bestätigen</button>
-    </div>
+<!-- Paket-Popup -->
+<div class="popup" id="packagePopup">
+  <div class="popup-content">
+    <span class="close" onclick="closePackagePopup()">&times;</span>
+    <h2>Starte jetzt mit deinem Paket</h2>
+    <p>Du benötigst eine Starterbox, um HashCore zu nutzen.</p>
+    <button class="button" onclick="buyStarterbox()">Starterbox für CHF 49.– kaufen</button>
   </div>
+</div>
 
-  <script>
-    // Fake: Lizenzprüfung
-    const hasLicense = false;
+<!-- Auszahlung-Popup -->
+<div class="popup" id="withdrawPopup">
+  <div class="popup-content">
+    <span class="close" onclick="closeWithdrawPopup()">&times;</span>
+    <h2>Auszahlung</h2>
+    <p>Dein Guthaben: CHF 0.00</p>
+    <input type="text" placeholder="Wallet-Adresse" style="width:100%;padding:10px;margin:15px 0;border-radius:8px;border:none;">
+    <button class="button">Auszahlung anfordern</button>
+  </div>
+</div>
 
-    window.onload = function () {
-      if (!hasLicense) {
-        document.getElementById('licensePopup').style.display = 'flex';
-      }
-    };
+<script>
+  function openPackagePopup() {
+    document.getElementById("packagePopup").style.display = "flex";
+  }
+  function closePackagePopup() {
+    document.getElementById("packagePopup").style.display = "none";
+  }
 
-    function openPayout() {
-      document.getElementById('payoutModal').style.display = 'flex';
-    }
+  function openWithdrawPopup() {
+    document.getElementById("withdrawPopup").style.display = "flex";
+  }
+  function closeWithdrawPopup() {
+    document.getElementById("withdrawPopup").style.display = "none";
+  }
 
-    function fakeBuy(paketName) {
-      alert("Paket '" + paketName + "' wurde gekauft (Fake). Dashboard freigeschaltet.");
-      document.getElementById('licensePopup').style.display = 'none';
-    }
+  function buyStarterbox() {
+    alert("Stripe-Zahlung wird implementiert…");
+    closePackagePopup();
+  }
+</script>
 
-    window.onclick = function(event) {
-      const modal = document.getElementById('payoutModal');
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
-    };
-  </script>
 </body>
 </html>
