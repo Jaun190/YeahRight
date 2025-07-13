@@ -3,166 +3,162 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard | HashCore</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
+  <title>Dashboard | Hashline</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background-color: #000;
-      background-image: radial-gradient(#a259ff22 1px, transparent 1px);
-      background-size: 40px 40px;
+      font-family: 'Arial', sans-serif;
+      background: #0c0c0c;
       color: white;
       overflow-x: hidden;
     }
 
-    .dashboard-box {
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid #a259ff;
-      border-radius: 20px;
-      box-shadow: 0 0 20px #a259ff;
-      padding: 30px;
-      margin: 60px auto;
-      max-width: 400px;
+    h1, h2 {
       text-align: center;
-    }
-
-    h1 {
-      font-size: 28px;
+      margin-top: 30px;
       color: #a259ff;
-      text-shadow: 0 0 12px #a259ff;
-      margin-bottom: 25px;
     }
 
-    .glow-button {
+    .dashboard {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+      overflow-y: auto;
+    }
+
+    .box {
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 0 15px rgba(162, 89, 255, 0.3);
+    }
+
+    .box h3 {
+      margin-top: 0;
+      color: #fff;
+    }
+
+    .box p {
+      margin: 5px 0;
+      color: #ccc;
+    }
+
+    .buy-button {
+      margin-top: 10px;
+      padding: 10px 20px;
       background: #a259ff;
       color: white;
       border: none;
-      padding: 14px 25px;
-      border-radius: 12px;
-      font-size: 16px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: 0.3s;
-      margin: 10px 0;
-      width: 100%;
-      box-shadow: 0 0 10px #a259ff, 0 0 20px #a259ff55;
     }
 
-    .glow-button:hover {
-      background: #842fff;
-    }
-
-    .info {
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    /* Popup */
     .popup {
-      position: fixed;
       display: none;
-      z-index: 9999;
+      position: fixed;
       top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-color: rgba(0, 0, 0, 0.9);
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(3px);
       justify-content: center;
       align-items: center;
+      z-index: 999;
     }
 
     .popup-content {
       background: #1a1a1a;
-      border: 2px solid #a259ff;
-      border-radius: 20px;
       padding: 30px;
+      border-radius: 15px;
+      max-width: 500px;
       text-align: center;
-      max-width: 90%;
-      box-shadow: 0 0 25px #a259ff;
+      box-shadow: 0 0 20px #ff00ff;
     }
 
-    .popup h2 {
-      color: #a259ff;
-      margin-bottom: 20px;
+    .popup-content h2 {
+      color: #ff00ff;
     }
 
-    .close {
-      color: #fff;
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    .paket-button {
-      background: #a259ff;
+    .close-btn {
+      margin-top: 20px;
+      background: #ff00ff;
+      color: white;
+      padding: 10px 20px;
       border: none;
       border-radius: 10px;
-      padding: 15px;
-      margin: 10px 0;
-      width: 100%;
-      font-size: 16px;
-      color: white;
       cursor: pointer;
-      box-shadow: 0 0 10px #a259ff, 0 0 20px #a259ff44;
     }
 
-    .paket-button:hover {
-      background: #842fff;
-    }
-
-    @media(max-width: 500px) {
-      .dashboard-box {
-        margin: 40px 15px;
+    @media (max-width: 600px) {
+      .box, .popup-content {
+        margin: 10px;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="dashboard-box">
-    <h1>Willkommen, Dominique</h1>
-    <div class="info">Dein Kontostand: <strong>CHF 0.00</strong></div>
-    <button class="glow-button" onclick="openPackagePopup()">Starterpaket kaufen</button>
-    <button class="glow-button" onclick="openWithdraw()">Auszahlung anfordern</button>
+<div class="popup" id="starterPopup">
+  <div class="popup-content">
+    <h2>Starterbox erforderlich!</h2>
+    <p>Du musst eine Starterbox kaufen, um das Dashboard freizuschalten.</p>
+    <button class="close-btn" onclick="closePopup()">Starterbox kaufen (Demo)</button>
+  </div>
+</div>
+
+<h1>Willkommen bei Hashline</h1>
+<h2>Cloud Mining Angebote</h2>
+
+<div class="dashboard" id="dashboard">
+  <!-- Beispielangebot 1 -->
+  <div class="box">
+    <h3>ASIC Miner – NiceHash</h3>
+    <p>Preis: CHF 2'499.–</p>
+    <p>Hashrate: 110 TH/s</p>
+    <button class="buy-button">Kaufen (Demo)</button>
   </div>
 
-  <!-- STARTERPAKET POPUP -->
-  <div class="popup" id="packagePopup">
-    <div class="popup-content">
-      <span class="close" onclick="closePackagePopup()">&times;</span>
-      <h2>Wähle dein Starterpaket</h2>
-      <button class="paket-button">Starterbox – CHF 49.–</button>
-      <button class="paket-button">Pro Lizenz – CHF 29.– / Monat</button>
-      <button class="paket-button">Jahreslizenz – CHF 100.–</button>
-    </div>
+  <!-- Beispielangebot 2 -->
+  <div class="box">
+    <h3>GPU Rig – CoinMiningCentral</h3>
+    <p>Preis: CHF 1'499.–</p>
+    <p>Hashrate: 800 MH/s</p>
+    <button class="buy-button">Kaufen (Demo)</button>
   </div>
 
-  <!-- AUSZAHLUNG POPUP -->
-  <div class="popup" id="withdrawPopup">
-    <div class="popup-content">
-      <span class="close" onclick="closeWithdraw()">&times;</span>
-      <h2>Auszahlung anfordern</h2>
-      <p>Guthaben: CHF 0.00</p>
-      <input type="text" placeholder="Wallet-Adresse eingeben" style="width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: none;" />
-      <button class="paket-button">Senden</button>
-    </div>
+  <!-- Beispielangebot 3 -->
+  <div class="box">
+    <h3>Starterbox – Hashline</h3>
+    <p>Einmalig: CHF 49.–</p>
+    <p>Provision: CHF 10.– pro Weiterempfehlung</p>
+    <button class="buy-button">Kaufen (Demo)</button>
   </div>
 
-  <script>
-    function openPackagePopup() {
-      document.getElementById('packagePopup').style.display = 'flex';
-    }
-    function closePackagePopup() {
-      document.getElementById('packagePopup').style.display = 'none';
-    }
+  <!-- Beispielangebot 4 -->
+  <div class="box">
+    <h3>MinerBros Bundle</h3>
+    <p>Preis: CHF 3'299.–</p>
+    <p>Hashrate: 145 TH/s</p>
+    <button class="buy-button">Kaufen (Demo)</button>
+  </div>
+</div>
 
-    function openWithdraw() {
-      document.getElementById('withdrawPopup').style.display = 'flex';
+<script>
+  // Nur Demo: Blockiere Dashboard bis Starterbox gekauft
+  let hasStarterbox = false;
+
+  window.onload = function() {
+    if (!hasStarterbox) {
+      document.getElementById("starterPopup").style.display = "flex";
     }
-    function closeWithdraw() {
-      document.getElementById('withdrawPopup').style.display = 'none';
-    }
-  </script>
+  };
+
+  function closePopup() {
+    document.getElementById("starterPopup").style.display = "none";
+    hasStarterbox = true;
+  }
+</script>
 
 </body>
 </html>
