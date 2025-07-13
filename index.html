@@ -3,143 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GrowEmpire Login/Register</title>
+  <title>Login & Registrierung – GrowEmpire</title>
   <style>
     * {
-      margin: 0; padding: 0; box-sizing: border-box;
+      box-sizing: border-box;
       font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      min-height: 100vh;
-      background: linear-gradient(120deg, #0f3b1d, #1b4d2b, #0f3b1d);
-      background-size: 400% 400%;
-      animation: bgAnim 20s ease infinite;
+      background: url('assets/hanf.png') no-repeat center center fixed;
+      background-size: cover;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 2rem;
-    }
-
-    @keyframes bgAnim {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
+      min-height: 100vh;
+      backdrop-filter: blur(4px);
     }
 
     .container {
-      background-color: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
+      background-color: rgba(0, 0, 0, 0.75);
       padding: 2rem;
-      backdrop-filter: blur(10px);
-      width: 100%;
+      border-radius: 12px;
+      width: 90%;
       max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
       color: white;
     }
 
     h2 {
       text-align: center;
       margin-bottom: 1rem;
+      color: #b6ffb6;
     }
 
     label {
       display: block;
       margin-top: 1rem;
+      font-weight: bold;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
+    input, select {
       width: 100%;
       padding: 0.5rem;
-      margin-top: 0.25rem;
+      margin-top: 0.3rem;
+      border-radius: 6px;
       border: none;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.1);
-      color: white;
     }
 
-    input[type="checkbox"] {
-      margin-right: 0.5rem;
-    }
-
-    .btn {
+    button {
       margin-top: 1.5rem;
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.8rem;
+      background-color: #3cb371;
+      color: white;
+      font-size: 1rem;
       border: none;
       border-radius: 8px;
-      background-color: #32a852;
-      color: white;
-      font-weight: bold;
       cursor: pointer;
+      transition: 0.2s;
     }
 
-    .toggle {
+    button:hover {
+      background-color: #2e8b57;
+    }
+
+    .switch {
       margin-top: 1rem;
       text-align: center;
-      cursor: pointer;
-      color: #a4ffb5;
     }
 
-    .hidden { display: none; }
+    .switch a {
+      color: #aaffaa;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .agb-check {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h2 id="form-title">Login</h2>
+    <form id="login-form">
+      <label for="email">E-Mail</label>
+      <input type="email" id="email" required />
+      
+      <label for="password">Passwort</label>
+      <input type="password" id="password" required />
 
-<div class="container">
-  <h2 id="formTitle">Login</h2>
-  
-  <form id="loginForm">
-    <label>Email:
-      <input type="email" required>
-    </label>
-    <label>Passwort:
-      <input type="password" required>
-    </label>
-    <button class="btn" type="submit">Einloggen</button>
-  </form>
+      <button type="submit">Einloggen</button>
+    </form>
 
-  <form id="registerForm" class="hidden">
-    <label>Name:
-      <input type="text" required>
-    </label>
-    <label>Adresse:
-      <input type="text" required>
-    </label>
-    <label>Email:
-      <input type="email" required>
-    </label>
-    <label>Passwort:
-      <input type="password" required>
-    </label>
-    <label>Passwort bestätigen:
-      <input type="password" required>
-    </label>
-    <label>
-      <input type="checkbox" required>
-      Ich akzeptiere die <a href="/agb.html" target="_blank" style="color: #a4ffb5;">AGB</a>
-    </label>
-    <button class="btn" type="submit">Registrieren</button>
-  </form>
+    <form id="register-form" class="hidden">
+      <label for="name">Name</label>
+      <input type="text" id="name" required />
 
-  <div class="toggle" onclick="toggleForm()">Jetzt registrieren</div>
-</div>
+      <label for="adresse">Adresse</label>
+      <input type="text" id="adresse" required />
 
-<script>
-  const loginForm = document.getElementById('loginForm');
-  const registerForm = document.getElementById('registerForm');
-  const formTitle = document.getElementById('formTitle');
-  const toggle = document.querySelector('.toggle');
+      <label for="email_reg">E-Mail</label>
+      <input type="email" id="email_reg" required />
 
-  function toggleForm() {
-    loginForm.classList.toggle('hidden');
-    registerForm.classList.toggle('hidden');
-    formTitle.textContent = loginForm.classList.contains('hidden') ? 'Registrieren' : 'Login';
-    toggle.textContent = loginForm.classList.contains('hidden') ? 'Schon registriert? Jetzt einloggen' : 'Jetzt registrieren';
-  }
-</script>
+      <label for="password_reg">Passwort</label>
+      <input type="password" id="password_reg" required />
 
+      <label for="confirm_password">Passwort bestätigen</label>
+      <input type="password" id="confirm_password" required />
+
+      <div class="agb-check">
+        <input type="checkbox" id="agb" required />
+        <label for="agb">Ich akzeptiere die <a href="agb.html" target="_blank">AGB & Datenschutz</a></label>
+      </div>
+
+      <button type="submit">Registrieren</button>
+    </form>
+
+    <div class="switch">
+      <span id="switch-text">Noch kein Konto? <a onclick="toggleForms()">Registrieren</a></span>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("login-form");
+    const registerForm = document.getElementById("register-form");
+    const switchText = document.getElementById("switch-text");
+    const formTitle = document.getElementById("form-title");
+
+    function toggleForms() {
+      loginForm.classList.toggle("hidden");
+      registerForm.classList.toggle("hidden");
+      const isLogin = loginForm.classList.contains("hidden");
+      formTitle.innerText = isLogin ? "Registrieren" : "Login";
+      switchText.innerHTML = isLogin
+        ? 'Bereits registriert? <a onclick="toggleForms()">Login</a>'
+        : 'Noch kein Konto? <a onclick="toggleForms()">Registrieren</a>';
+    }
+  </script>
 </body>
 </html>
