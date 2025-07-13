@@ -2,164 +2,167 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard – HashCore</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | HashCore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
-      background: #000;
-      color: #fff;
+      background-color: #000;
+      background-image: radial-gradient(#a259ff22 1px, transparent 1px);
+      background-size: 40px 40px;
+      color: white;
       overflow-x: hidden;
     }
 
-    .container {
+    .dashboard-box {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #a259ff;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #a259ff;
       padding: 30px;
-      max-width: 1200px;
-      margin: auto;
+      margin: 60px auto;
+      max-width: 400px;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
+      font-size: 28px;
       color: #a259ff;
-      text-shadow: 0 0 10px #a259ff;
-      margin-bottom: 40px;
+      text-shadow: 0 0 12px #a259ff;
+      margin-bottom: 25px;
     }
 
-    .card {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 0 15px #a259ff88;
-      margin-bottom: 20px;
-    }
-
-    .button {
+    .glow-button {
       background: #a259ff;
       color: white;
       border: none;
-      padding: 15px 25px;
-      font-size: 16px;
+      padding: 14px 25px;
       border-radius: 12px;
+      font-size: 16px;
       cursor: pointer;
       transition: 0.3s;
-      display: inline-block;
       margin: 10px 0;
+      width: 100%;
+      box-shadow: 0 0 10px #a259ff, 0 0 20px #a259ff55;
     }
 
-    .button:hover {
+    .glow-button:hover {
       background: #842fff;
     }
 
+    .info {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Popup */
     .popup {
-      display: none;
       position: fixed;
-      z-index: 999;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0,0,0,0.85);
+      display: none;
+      z-index: 9999;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0, 0, 0, 0.9);
       justify-content: center;
       align-items: center;
     }
 
     .popup-content {
       background: #1a1a1a;
-      padding: 30px;
+      border: 2px solid #a259ff;
       border-radius: 20px;
-      max-width: 500px;
+      padding: 30px;
       text-align: center;
-      color: white;
-      box-shadow: 0 0 20px #a259ff;
+      max-width: 90%;
+      box-shadow: 0 0 25px #a259ff;
     }
 
-    .popup-content h2 {
-      margin-bottom: 20px;
+    .popup h2 {
       color: #a259ff;
-    }
-
-    .popup-content .button {
-      width: 100%;
+      margin-bottom: 20px;
     }
 
     .close {
+      color: #fff;
       position: absolute;
-      top: 30px;
-      right: 40px;
+      top: 20px;
+      right: 30px;
       font-size: 24px;
       cursor: pointer;
-      color: white;
     }
 
-    @media(max-width: 600px) {
-      .popup-content {
-        width: 90%;
+    .paket-button {
+      background: #a259ff;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+      width: 100%;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 10px #a259ff, 0 0 20px #a259ff44;
+    }
+
+    .paket-button:hover {
+      background: #842fff;
+    }
+
+    @media(max-width: 500px) {
+      .dashboard-box {
+        margin: 40px 15px;
       }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Willkommen bei HashCore</h1>
-
-  <div class="card">
-    <h2>Deine Pakete</h2>
-    <p>Du hast noch keine Starterbox gekauft.</p>
-    <button class="button" onclick="openPackagePopup()">Starterbox kaufen</button>
+  <div class="dashboard-box">
+    <h1>Willkommen, Dominique</h1>
+    <div class="info">Dein Kontostand: <strong>CHF 0.00</strong></div>
+    <button class="glow-button" onclick="openPackagePopup()">Starterpaket kaufen</button>
+    <button class="glow-button" onclick="openWithdraw()">Auszahlung anfordern</button>
   </div>
 
-  <div class="card">
-    <h2>Dein Kontostand</h2>
-    <p><strong>CHF 0.00</strong></p>
-    <button class="button" onclick="openWithdrawPopup()">Auszahlung beantragen</button>
+  <!-- STARTERPAKET POPUP -->
+  <div class="popup" id="packagePopup">
+    <div class="popup-content">
+      <span class="close" onclick="closePackagePopup()">&times;</span>
+      <h2>Wähle dein Starterpaket</h2>
+      <button class="paket-button">Starterbox – CHF 49.–</button>
+      <button class="paket-button">Pro Lizenz – CHF 29.– / Monat</button>
+      <button class="paket-button">Jahreslizenz – CHF 100.–</button>
+    </div>
   </div>
-</div>
 
-<!-- Paket-Popup -->
-<div class="popup" id="packagePopup">
-  <div class="popup-content">
-    <span class="close" onclick="closePackagePopup()">&times;</span>
-    <h2>Starte jetzt mit deinem Paket</h2>
-    <p>Du benötigst eine Starterbox, um HashCore zu nutzen.</p>
-    <button class="button" onclick="buyStarterbox()">Starterbox für CHF 49.– kaufen</button>
+  <!-- AUSZAHLUNG POPUP -->
+  <div class="popup" id="withdrawPopup">
+    <div class="popup-content">
+      <span class="close" onclick="closeWithdraw()">&times;</span>
+      <h2>Auszahlung anfordern</h2>
+      <p>Guthaben: CHF 0.00</p>
+      <input type="text" placeholder="Wallet-Adresse eingeben" style="width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: none;" />
+      <button class="paket-button">Senden</button>
+    </div>
   </div>
-</div>
 
-<!-- Auszahlung-Popup -->
-<div class="popup" id="withdrawPopup">
-  <div class="popup-content">
-    <span class="close" onclick="closeWithdrawPopup()">&times;</span>
-    <h2>Auszahlung</h2>
-    <p>Dein Guthaben: CHF 0.00</p>
-    <input type="text" placeholder="Wallet-Adresse" style="width:100%;padding:10px;margin:15px 0;border-radius:8px;border:none;">
-    <button class="button">Auszahlung anfordern</button>
-  </div>
-</div>
+  <script>
+    function openPackagePopup() {
+      document.getElementById('packagePopup').style.display = 'flex';
+    }
+    function closePackagePopup() {
+      document.getElementById('packagePopup').style.display = 'none';
+    }
 
-<script>
-  function openPackagePopup() {
-    document.getElementById("packagePopup").style.display = "flex";
-  }
-  function closePackagePopup() {
-    document.getElementById("packagePopup").style.display = "none";
-  }
-
-  function openWithdrawPopup() {
-    document.getElementById("withdrawPopup").style.display = "flex";
-  }
-  function closeWithdrawPopup() {
-    document.getElementById("withdrawPopup").style.display = "none";
-  }
-
-  function buyStarterbox() {
-    alert("Stripe-Zahlung wird implementiert…");
-    closePackagePopup();
-  }
-</script>
+    function openWithdraw() {
+      document.getElementById('withdrawPopup').style.display = 'flex';
+    }
+    function closeWithdraw() {
+      document.getElementById('withdrawPopup').style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>
