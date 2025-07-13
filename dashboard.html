@@ -3,162 +3,173 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard | Hashline</title>
+  <title>HashCore Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
     body {
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: #0c0c0c;
+      background-color: #0a0a0a;
       color: white;
       overflow-x: hidden;
     }
 
-    h1, h2 {
+    header {
+      padding: 20px;
       text-align: center;
-      margin-top: 30px;
-      color: #a259ff;
+      font-size: 2rem;
+      background: linear-gradient(90deg, #ff00cc, #333399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .dashboard {
+    .content {
       padding: 20px;
-      max-width: 1000px;
+      max-width: 1200px;
       margin: auto;
-      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
 
-    .box {
-      background: #1a1a1a;
-      border: 1px solid #2e2e2e;
-      border-radius: 15px;
+    .card {
+      background: #111;
+      border: 2px solid #ff00cc;
+      border-radius: 16px;
       padding: 20px;
-      margin: 20px 0;
-      box-shadow: 0 0 15px rgba(162, 89, 255, 0.3);
+      width: 280px;
+      transition: 0.3s;
+      box-shadow: 0 0 20px #ff00cc55;
     }
 
-    .box h3 {
-      margin-top: 0;
-      color: #fff;
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px #ff00ccaa;
     }
 
-    .box p {
-      margin: 5px 0;
-      color: #ccc;
+    .card h3 {
+      color: #ff00cc;
+      margin-bottom: 10px;
     }
 
-    .buy-button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: #a259ff;
+    .btn {
+      background: #ff00cc;
       color: white;
       border: none;
+      padding: 10px 16px;
       border-radius: 10px;
       cursor: pointer;
+      margin-top: 10px;
+      transition: 0.2s;
     }
 
-    .popup {
+    .btn:hover {
+      background: #e600a8;
+    }
+
+    /* Popup-Stil */
+    .popup-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(3px);
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.8);
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      z-index: 9999;
     }
 
-    .popup-content {
-      background: #1a1a1a;
+    .popup {
+      background: #111;
+      border: 2px solid #ff00cc;
+      border-radius: 16px;
       padding: 30px;
-      border-radius: 15px;
-      max-width: 500px;
       text-align: center;
-      box-shadow: 0 0 20px #ff00ff;
-    }
-
-    .popup-content h2 {
-      color: #ff00ff;
-    }
-
-    .close-btn {
-      margin-top: 20px;
-      background: #ff00ff;
       color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 30px #ff00cc88;
     }
 
-    @media (max-width: 600px) {
-      .box, .popup-content {
-        margin: 10px;
-      }
+    .popup h2 {
+      color: #ff00cc;
+      margin-bottom: 10px;
+    }
+
+    .popup p {
+      margin-bottom: 20px;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-<div class="popup" id="starterPopup">
-  <div class="popup-content">
-    <h2>Starterbox erforderlich!</h2>
-    <p>Du musst eine Starterbox kaufen, um das Dashboard freizuschalten.</p>
-    <button class="close-btn" onclick="closePopup()">Starterbox kaufen (Demo)</button>
-  </div>
-</div>
+  <header>HashCore Dashboard</header>
 
-<h1>Willkommen bei Hashline</h1>
-<h2>Cloud Mining Angebote</h2>
-
-<div class="dashboard" id="dashboard">
-  <!-- Beispielangebot 1 -->
-  <div class="box">
-    <h3>ASIC Miner – NiceHash</h3>
-    <p>Preis: CHF 2'499.–</p>
-    <p>Hashrate: 110 TH/s</p>
-    <button class="buy-button">Kaufen (Demo)</button>
+  <!-- Starterbox Popup -->
+  <div id="starterPopup" class="popup-overlay">
+    <div class="popup">
+      <h2>Starterbox erforderlich</h2>
+      <p>Um HashCore nutzen zu können, musst du zuerst die Starterbox für CHF 49.– aktivieren.</p>
+      <button class="btn" onclick="buyStarter()">Jetzt kaufen</button>
+    </div>
   </div>
 
-  <!-- Beispielangebot 2 -->
-  <div class="box">
-    <h3>GPU Rig – CoinMiningCentral</h3>
-    <p>Preis: CHF 1'499.–</p>
-    <p>Hashrate: 800 MH/s</p>
-    <button class="buy-button">Kaufen (Demo)</button>
+  <div class="content" id="dashboardContent" class="hidden">
+    <!-- Demo-Pakete -->
+    <div class="card">
+      <h3>NiceHash S19 Pro</h3>
+      <p>110 TH/s – CHF 2'399.–</p>
+      <button class="btn">Kaufen</button>
+    </div>
+    <div class="card">
+      <h3>CoinMining Z15</h3>
+      <p>420 KSol/s – CHF 3'150.–</p>
+      <button class="btn">Kaufen</button>
+    </div>
+    <div class="card">
+      <h3>MinerBros L7 Bundle</h3>
+      <p>9.5 GH/s – CHF 5'799.–</p>
+      <button class="btn">Kaufen</button>
+    </div>
+    <div class="card">
+      <h3>HashCore Pro Paket</h3>
+      <p>300 TH/s – CHF 7'999.–</p>
+      <button class="btn">Kaufen</button>
+    </div>
+    <div class="card">
+      <h3>Zusatzbox 1 Monat</h3>
+      <p>CHF 99.– / Monat</p>
+      <button class="btn">Aktivieren</button>
+    </div>
   </div>
 
-  <!-- Beispielangebot 3 -->
-  <div class="box">
-    <h3>Starterbox – Hashline</h3>
-    <p>Einmalig: CHF 49.–</p>
-    <p>Provision: CHF 10.– pro Weiterempfehlung</p>
-    <button class="buy-button">Kaufen (Demo)</button>
-  </div>
+  <script>
+    let hasStarterbox = false; // später aus Supabase
 
-  <!-- Beispielangebot 4 -->
-  <div class="box">
-    <h3>MinerBros Bundle</h3>
-    <p>Preis: CHF 3'299.–</p>
-    <p>Hashrate: 145 TH/s</p>
-    <button class="buy-button">Kaufen (Demo)</button>
-  </div>
-</div>
+    window.onload = () => {
+      if (!hasStarterbox) {
+        document.getElementById("starterPopup").style.display = "flex";
+        document.getElementById("dashboardContent").style.display = "none";
+      } else {
+        document.getElementById("starterPopup").style.display = "none";
+        document.getElementById("dashboardContent").style.display = "flex";
+      }
+    };
 
-<script>
-  // Nur Demo: Blockiere Dashboard bis Starterbox gekauft
-  let hasStarterbox = false;
-
-  window.onload = function() {
-    if (!hasStarterbox) {
-      document.getElementById("starterPopup").style.display = "flex";
+    function buyStarter() {
+      hasStarterbox = true;
+      document.getElementById("starterPopup").style.display = "none";
+      document.getElementById("dashboardContent").style.display = "flex";
+      alert("Starterbox aktiviert! (Demo)");
     }
-  };
-
-  function closePopup() {
-    document.getElementById("starterPopup").style.display = "none";
-    hasStarterbox = true;
-  }
-</script>
-
+  </script>
 </body>
 </html>
