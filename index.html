@@ -3,97 +3,169 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GrowEmpire – Login & Registrierung</title>
+  <title>GrowEmpire Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0e0e0e;
+      background: url("assets/hanf.png") no-repeat center center fixed;
+      background-size: cover;
       color: white;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
+      backdrop-filter: brightness(0.5);
     }
-    .form-box {
-      width: 100%;
-      max-width: 400px;
-      background: #1c1c1c;
+
+    .container {
+      background: rgba(0, 0, 0, 0.8);
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+      width: 90%;
+      max-width: 400px;
     }
-    .form-box h1 {
-      margin-bottom: 20px;
-      font-size: 22px;
+
+    h2 {
       text-align: center;
+      margin-bottom: 20px;
     }
-    .form-box input[type="text"],
-    .form-box input[type="password"],
-    .form-box input[type="email"] {
+
+    input, label, button {
       width: 100%;
+      margin-bottom: 15px;
       padding: 10px;
-      margin: 8px 0;
-      background: #2a2a2a;
       border: none;
       border-radius: 5px;
+    }
+
+    input {
+      background: #222;
       color: white;
     }
-    .form-box label {
+
+    button {
+      background-color: #27ae60;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .switch-mode {
+      text-align: center;
+      cursor: pointer;
+      color: #aaa;
       font-size: 14px;
     }
-    .form-box .agb {
-      margin: 10px 0;
-    }
-    .form-box button {
-      width: 100%;
-      padding: 10px;
-      background: #2ecc71;
-      color: black;
-      border: none;
-      border-radius: 5px;
-      margin-top: 15px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .switch-form {
-      margin-top: 15px;
+
+    .error {
+      color: red;
       text-align: center;
-      font-size: 13px;
+      margin-bottom: 10px;
     }
-    .switch-form a {
-      color: #2ecc71;
-      cursor: pointer;
+
+    .agb-box {
+      display: flex;
+      align-items: center;
+    }
+
+    .agb-box input {
+      width: auto;
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="form-box" id="login-box">
-    <h1>Login</h1>
-    <input type="email" placeholder="E-Mail" />
-    <input type="password" placeholder="Passwort" />
-    <button onclick="alert('Login erfolgreich – Weiterleitung zum Dashboard...')">Login</button>
-    <div class="switch-form">Noch kein Konto? <a onclick="switchForm(true)">Registrieren</a></div>
-  </div>
+  <div class="container">
+    <h2 id="form-title">Login</h2>
+    <div class="error" id="error-msg"></div>
+    <input type="email" id="email" placeholder="E-Mail" required />
+    <input type="password" id="password" placeholder="Passwort" required />
 
-  <div class="form-box" id="register-box" style="display:none;">
-    <h1>Registrieren</h1>
-    <input type="text" placeholder="Name" />
-    <input type="text" placeholder="Adresse" />
-    <input type="email" placeholder="E-Mail" />
-    <input type="password" placeholder="Passwort" />
-    <input type="password" placeholder="Passwort bestätigen" />
-    <div class="agb">
-      <label><input type="checkbox" required /> Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a></label>
+    <div id="register-fields" style="display: none;">
+      <input type="text" id="name" placeholder="Vor- und Nachname" />
+      <input type="text" id="address" placeholder="Adresse" />
+      <input type="password" id="confirm-password" placeholder="Passwort bestätigen" />
+      <div class="agb-box">
+        <input type="checkbox" id="agb" />
+        <label for="agb">Ich akzeptiere die <a href="agb.html" target="_blank" style="color:#27ae60;">AGB</a></label>
+      </div>
     </div>
-    <button onclick="alert('Registrierung erfolgreich – Bitte einloggen')">Registrieren</button>
-    <div class="switch-form">Bereits ein Konto? <a onclick="switchForm(false)">Login</a></div>
+
+    <button onclick="handleAuth()">Weiter</button>
+    <div class="switch-mode" onclick="toggleMode()">Noch kein Account? Registrieren</div>
   </div>
 
   <script>
-    function switchForm(showRegister) {
-      document.getElementById('login-box').style.display = showRegister ? 'none' : 'block';
-      document.getElementById('register-box').style.display = showRegister ? 'block' : 'none';
+    const supabase = supabase.createClient(
+      "https://rcmnzryqzfxhupnmpbak.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbW56cnlxemZ4aHVwbm1wYmFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNjI5NDcsImV4cCI6MjA2NzkzODk0N30.Oa5C2N9ny7eApN3eZ8cMOUXpsLIQuQV1HmAGpzo8C0o"
+    );
+
+    let mode = "login";
+
+    function toggleMode() {
+      const registerFields = document.getElementById("register-fields");
+      const title = document.getElementById("form-title");
+      const switchText = document.querySelector(".switch-mode");
+
+      if (mode === "login") {
+        mode = "register";
+        registerFields.style.display = "block";
+        title.textContent = "Registrieren";
+        switchText.textContent = "Schon registriert? Login";
+      } else {
+        mode = "login";
+        registerFields.style.display = "none";
+        title.textContent = "Login";
+        switchText.textContent = "Noch kein Account? Registrieren";
+      }
+    }
+
+    async function handleAuth() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const errorMsg = document.getElementById("error-msg");
+
+      if (mode === "login") {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          errorMsg.textContent = error.message;
+        } else {
+          window.location.href = "dashboard.html";
+        }
+      } else {
+        const name = document.getElementById("name").value;
+        const address = document.getElementById("address").value;
+        const confirm = document.getElementById("confirm-password").value;
+        const agb = document.getElementById("agb").checked;
+
+        if (password !== confirm) {
+          errorMsg.textContent = "Passwörter stimmen nicht überein.";
+          return;
+        }
+
+        if (!agb) {
+          errorMsg.textContent = "AGB müssen akzeptiert werden.";
+          return;
+        }
+
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { name, address },
+          },
+        });
+
+        if (error) {
+          errorMsg.textContent = error.message;
+        } else {
+          alert("Registrierung erfolgreich! Bitte einloggen.");
+          toggleMode();
+        }
+      }
     }
   </script>
 </body>
