@@ -1,1 +1,114 @@
-<!DOCTYPE html><html><head><title>Dashboard</title></head><body><h2>Your Dashboard</h2></body></html>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>GrowEmpire Admin Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
+      color: white;
+      margin: 0; padding: 20px;
+    }
+    h1 { margin-bottom: 20px; }
+    .admin-panel {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: rgba(255,255,255,0.2);
+    }
+    button {
+      background-color: #00c36e;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #009f56;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h1>Admin Dashboard – GrowEmpire</h1>
+  <div class="admin-panel">
+    <h2>Nutzerübersicht</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>E-Mail</th>
+          <th>Lizenz</th>
+          <th>Level</th>
+          <th>Partnerzahl</th>
+          <th>Lizenz Ablauf</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+        <tr><td colspan="6">Lade Daten...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const supabaseUrl = 'https://rcmnzryqzfxhupnmpbak.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbW56cnlxemZ4aHVwbm1wYmFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNjI5NDcsImV4cCI6MjA2NzkzODk0N30.Oa5C2N9ny7eApN3eZ8cMOUXpsLIQuQV1HmAGpzo8C0o'
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function loadUsers() {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '<tr><td colspan="6">Lade Daten...</td></tr>';
+
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select(`id,email,license_type,license_expiry,level,partner_count`);
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="6">Fehler beim Laden: ${error.message}</td></tr>`;
+        return;
+      }
+
+      if (!profiles || profiles.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">Keine Nutzer gefunden.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      profiles.forEach(user => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${user.email || '–'}</td>
+            <td>${user.license_type || '–'}</td>
+            <td>${user.level || 0}</td>
+            <td>${user.partner_count || 0}</td>
+            <td>${user.license_expiry ? new Date(user.license_expiry).toLocaleDateString() : 'Lifetime'}</td>
+            <td><button onclick="releasePayout('${user.id}')">Auszahlung freigeben</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function releasePayout(userId) {
+      alert('Auszahlung für Nutzer ' + userId + ' wurde freigegeben (Platzhalter).');
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>
