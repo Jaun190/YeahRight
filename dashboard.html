@@ -53,8 +53,6 @@
     .btn:hover {
       background: #c4b5fd;
     }
-
-    /* Pink Starterbox Popup */
     .popup-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -114,25 +112,30 @@
     </div>
     <div class="card">
       <h3>Paket kaufen</h3>
-      <button class="btn" onclick="buyHashrate(100)">100 MH/s – CHF 5.–</button>
-      <button class="btn" onclick="buyHashrate(500)">500 MH/s – CHF 25.–</button>
-      <button class="btn" onclick="buyHashrate(1000)">1 GH/s – CHF 50.–</button>
+      <button class="btn" onclick="buyHashrate(100)">100 MH/s – CHF 5.-</button>
+      <button class="btn" onclick="buyHashrate(500)">500 MH/s – CHF 25.-</button>
+      <button class="btn" onclick="buyHashrate(1000)">1 GH/s – CHF 50.-</button>
+      <button class="btn" onclick="buyHashrate(2000)">2 GH/s – CHF 90.-</button>
+    </div>
+    <div class="card">
+      <h3>Auszahlen</h3>
+      <button class="btn" onclick="alert('Auszahlung beantragt! (Fake-Logik)')">Jetzt auszahlen</button>
     </div>
   </div>
 </div>
 
-<!-- Pink Starterbox Pflicht-Popup -->
+<!-- Starterbox Pflicht Popup -->
 <div class="popup-overlay" id="starterPopup">
   <div class="popup">
     <h2>Starterbox benötigt</h2>
-    <p>Bitte kaufe die Starterlizenz für CHF 49.–, um das Dashboard nutzen zu können.</p>
+    <p>Bitte kaufe die Starterlizenz für CHF 49.- um alle Funktionen nutzen zu können.</p>
     <button onclick="closeStarterPopup()">Starterbox kaufen (Fake)</button>
   </div>
 </div>
 
 <script>
   let hasStarter = false;
-  let totalHashrate = 0; // in MH/s
+  let totalHashrate = 0;
 
   function updateDashboard() {
     document.getElementById("hashrate").innerText = totalHashrate + " MH/s";
@@ -142,6 +145,10 @@
   }
 
   function buyHashrate(amount) {
+    if (!hasStarter) {
+      document.getElementById("starterPopup").style.display = "flex";
+      return;
+    }
     totalHashrate += amount;
     updateDashboard();
   }
@@ -151,7 +158,7 @@
     document.getElementById("starterPopup").style.display = "none";
   }
 
-  window.onload = function() {
+  window.onload = function () {
     if (!hasStarter) {
       document.getElementById("starterPopup").style.display = "flex";
     }
