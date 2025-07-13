@@ -8,91 +8,89 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom right, #0f0f0f, #1a1a1a);
-      color: white;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      color: #fff;
+      overflow: hidden;
     }
+
     .login-container {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
-      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
       max-width: 400px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
+
     h2 {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 25px;
     }
-    input[type="email"],
-    input[type="password"] {
+
+    input {
       width: 100%;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
+      padding: 12px;
+      margin: 8px 0;
       border: none;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.1);
-      color: white;
+      border-radius: 5px;
+      background: #eee;
     }
+
     button {
       width: 100%;
-      padding: 0.8rem;
-      background-color: #00cc66;
+      padding: 12px;
+      background: #28a745;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 5px;
+      margin-top: 15px;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.3s;
     }
-    .error {
-      color: #ff5050;
-      margin-bottom: 1rem;
+
+    button:hover {
+      background: #218838;
+    }
+
+    .agb {
+      margin-top: 12px;
+      font-size: 0.85rem;
       text-align: center;
     }
-    a {
-      color: #00cc66;
-      display: block;
-      text-align: center;
-      margin-top: 1rem;
+
+    .agb a {
+      color: #ccc;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <h2>Login bei GrowEmpire</h2>
-    <div id="error" class="error"></div>
-    <input type="email" id="email" placeholder="E-Mail" />
-    <input type="password" id="password" placeholder="Passwort" />
-    <button onclick="login()">Einloggen</button>
-    <a href="register.html">Noch kein Konto? Jetzt registrieren</a>
+    <h2>GrowEmpire Login</h2>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="E-Mail" required />
+      <input type="password" id="password" placeholder="Passwort" required />
+      <button type="submit">Login</button>
+    </form>
+    <div class="agb">
+      Mit dem Login akzeptierst du unsere <a href="agb.html" target="_blank">AGB</a>.
+    </div>
   </div>
 
   <script>
-    async function login() {
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const errorDiv = document.getElementById("error");
 
-      const { data, error } = await fetch("https://rcmnzryqzfxhupnmpbak.supabase.co/auth/v1/token?grant_type=password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbW56cnlxemZ4aHVwbm1wYmFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNjI5NDcsImV4cCI6MjA2NzkzODk0N30.Oa5C2N9ny7eApN3eZ8cMOUXpsLIQuQV1HmAGpzo8C0o",
-          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbW56cnlxemZ4aHVwbm1wYmFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNjI5NDcsImV4cCI6MjA2NzkzODk0N30.Oa5C2N9ny7eApN3eZ8cMOUXpsLIQuQV1HmAGpzo8C0o"
-        },
-        body: JSON.stringify({ email, password })
-      }).then(res => res.json());
-
-      if (data?.access_token) {
-        localStorage.setItem("token", data.access_token);
-        window.location.href = "dashboard.html";
-      } else {
-        errorDiv.textContent = error?.message || "Fehler beim Login";
-      }
-    }
+      // TODO: Supabase login hier einbauen
+      console.log("Login attempt:", email, password);
+    });
   </script>
 </body>
 </html>
