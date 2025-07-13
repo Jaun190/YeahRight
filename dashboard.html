@@ -4,154 +4,152 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HashCore Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(180deg, #1a112d, #0f0a1f);
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(ellipse at center, #0d0d0d 0%, #000000 100%);
       color: #fff;
       overflow-x: hidden;
     }
     header {
-      background-color: #2d1f4d;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 20px;
+      text-align: center;
+      background: #1a1a1a;
+      border-bottom: 2px solid #444;
     }
     header h1 {
+      color: #a066ff;
       font-size: 2rem;
-      color: #ad85ff;
     }
-    .content {
-      padding: 2rem;
-      max-width: 1200px;
+    .dashboard-container {
+      padding: 30px;
+      max-width: 900px;
       margin: auto;
     }
     .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #ad85ff22;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      padding: 20px;
+      margin-bottom: 20px;
       border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 0 20px #ad85ff33;
+      box-shadow: 0 0 15px rgba(160, 102, 255, 0.2);
     }
     .card h2 {
-      color: #ad85ff;
+      color: #a066ff;
     }
-    .button {
-      padding: 0.8rem 1.5rem;
-      background: #ad85ff;
-      border: none;
+    .select {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      background: #0d0d0d;
+      color: #fff;
+      border: 1px solid #a066ff;
       border-radius: 8px;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
     }
-    .popup {
-      display: none;
+    #popup {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0,0,0,0.8);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
-    .popup-content {
-      background: #1f132d;
-      border: 2px solid #ff00ff;
-      border-radius: 16px;
-      padding: 2rem;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 0 30px #ff00ff88;
+    #popup-content {
+      background: #000;
+      border: 2px solid #ff44ff;
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 25px #ff44ff;
     }
-    .popup-content h3 {
-      margin-top: 0;
-      color: #ffb3ff;
+    #popup-content h2 {
+      color: #ff44ff;
     }
-    .referral, .earnings {
-      margin-top: 1rem;
+    button {
+      background: #a066ff;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
     }
-    input[type="range"] {
-      width: 100%;
+    button:hover {
+      background: #c38cff;
     }
-    .hashrate-output {
-      font-weight: bold;
-      margin-top: 0.5rem;
+    .ref-link {
+      background: #0a0a0a;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px dashed #555;
+      word-break: break-all;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>HashCore Dashboard</h1>
-  <button class="button" onclick="copyReferral()">Referral-Link kopieren</button>
-</header>
+  <header>
+    <h1>HashCore Dashboard</h1>
+  </header>
 
-<div class="content">
+  <div class="dashboard-container">
 
-  <div class="card">
-    <h2>Deine Hashrate wählen</h2>
-    <input type="range" min="50" max="1000" value="100" step="50" id="hashSlider" oninput="updateHashrate()"/>
-    <div class="hashrate-output" id="hashOutput">100 H/s – Preis: CHF 40.–</div>
-    <button class="button">Jetzt kaufen</button>
+    <div class="card">
+      <h2>Meine Hashpower</h2>
+      <select class="select" id="hashrate-select">
+        <option value="29">100 GH/s – CHF 29.–</option>
+        <option value="99">500 GH/s – CHF 99.–</option>
+        <option value="149">1 TH/s – CHF 149.–</option>
+      </select>
+      <p>Gewählter Preis: <span id="price">CHF 29.–</span></p>
+    </div>
+
+    <div class="card">
+      <h2>Referral-Link</h2>
+      <div class="ref-link">https://hashcore.io/register?ref=meinname</div>
+      <p>Provision: CHF 50.– bei Lizenz + CHF 100.– Hashpower-Kauf</p>
+    </div>
+
+    <div class="card">
+      <h2>Auszahlungsbereich</h2>
+      <p>Verfügbarer Gewinn: CHF 0.–</p>
+      <button onclick="alert('Demnächst verfügbar')">Auszahlung beantragen</button>
+    </div>
+
   </div>
 
-  <div class="card earnings">
-    <h2>Provisionen</h2>
-    <p>Du erhältst CHF 50.– für jeden geworbenen Nutzer mit Lizenz + CHF 100.– Hashpower.</p>
-    <p>Gesamtverdienst: <strong>CHF 0.–</strong> (Testdaten)</p>
+  <div id="popup">
+    <div id="popup-content">
+      <h2>Starter-Lizenz erforderlich</h2>
+      <p>Bevor du Hashpower kaufen oder verdienen kannst, musst du die CHF 49.– Starter-Lizenz aktivieren.</p>
+      <button onclick="buyLicense()">Jetzt Lizenz kaufen</button>
+    </div>
   </div>
 
-  <div class="card referral">
-    <h2>Dein Referral-Link</h2>
-    <input type="text" id="refLink" value="https://hashcore.ch/signup?ref=deinname" readonly style="width:100%;padding:8px;border-radius:8px;" />
-  </div>
+  <script>
+    const hasLicense = false; // später durch Supabase ersetzen
 
-  <div class="card">
-    <h2>Auszahlung beantragen</h2>
-    <button class="button" onclick="alert('Bitte identifiziere dich. Funktion folgt in finaler Version.')">Auszahlung anfordern</button>
-  </div>
-
-</div>
-
-<!-- Pflicht-Popup für Starterlizenz -->
-<div class="popup" id="licensePopup">
-  <div class="popup-content">
-    <h3>Starter Lizenz erforderlich</h3>
-    <p>Du musst zuerst die Starter-Lizenz für CHF 49.– erwerben, um dein Dashboard freizuschalten.</p>
-    <button class="button" onclick="closePopup()">Lizenz kaufen</button>
-  </div>
-</div>
-
-<script>
-  const userHasLicense = false;
-
-  function updateHashrate() {
-    const value = document.getElementById('hashSlider').value;
-    const price = value * 0.4;
-    document.getElementById('hashOutput').textContent = `${value} H/s – Preis: CHF ${price.toFixed(2)}.–`;
-  }
-
-  function copyReferral() {
-    const link = document.getElementById("refLink");
-    link.select();
-    link.setSelectionRange(0, 99999);
-    document.execCommand("copy");
-    alert("Referral-Link kopiert!");
-  }
-
-  function closePopup() {
-    document.getElementById("licensePopup").style.display = "none";
-  }
-
-  window.onload = function () {
-    if (!userHasLicense) {
-      document.getElementById("licensePopup").style.display = "flex";
+    const popup = document.getElementById('popup');
+    if (hasLicense) {
+      popup.style.display = 'none';
     }
-  };
-</script>
+
+    const priceDisplay = document.getElementById('price');
+    document.getElementById('hashrate-select').addEventListener('change', function() {
+      const selected = this.value;
+      priceDisplay.textContent = `CHF ${selected}.–`;
+    });
+
+    function buyLicense() {
+      alert("Lizenz gekauft (Fake)");
+      popup.style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>
