@@ -18,7 +18,7 @@
     }
 
     .hashcore {
-      color: violet;
+      color: #9b59b6; /* Avolon violett */
     }
 
     .dashboard {
@@ -33,7 +33,7 @@
       background: #1e1e2e;
       padding: 2rem;
       border-radius: 1rem;
-      box-shadow: 0 0 20px violet;
+      box-shadow: 0 0 20px #8e44ad; /* Avolon violett glow */
       width: 300px;
       text-align: center;
     }
@@ -55,7 +55,7 @@
       padding: 0.75rem 1.5rem;
       border: none;
       border-radius: 5px;
-      background: violet;
+      background: #9b59b6;
       color: white;
       font-weight: bold;
       cursor: pointer;
@@ -63,7 +63,7 @@
     }
 
     button:hover {
-      background: #ff00ff;
+      background: #8e44ad;
     }
 
     .popup {
@@ -82,8 +82,8 @@
     .popup-content {
       background: #111;
       padding: 2rem;
-      border: 2px solid hotpink;
-      box-shadow: 0 0 30px hotpink;
+      border: 2px solid #9b59b6;
+      box-shadow: 0 0 30px #9b59b6;
       border-radius: 1rem;
       text-align: center;
       width: 90%;
@@ -94,7 +94,6 @@
 <body>
 
   <script>
-    // Lizenz prüfen (Fake-Schutz)
     if (!localStorage.getItem("hasLicense")) {
       setTimeout(() => {
         document.getElementById("payoutPopup").style.display = "flex";
@@ -126,7 +125,7 @@
     </div>
   </section>
 
-  <!-- Pinker Popup für Lizenz oder Auszahlung -->
+  <!-- Avolon-Stil Popup -->
   <div id="payoutPopup" class="popup">
     <div class="popup-content">
       <h2>🚨 Starterlizenz erforderlich</h2>
