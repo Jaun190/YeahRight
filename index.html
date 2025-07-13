@@ -24,34 +24,26 @@
       padding: 20px;
     }
 
-    .login-box {
-      display: flex;
+    .form-box {
       background: rgba(0, 0, 0, 0.75);
       border-radius: 16px;
       padding: 40px;
-      gap: 40px;
       box-shadow: 0 0 30px #a75fff;
-      flex-wrap: wrap;
-      max-width: 900px;
       width: 100%;
+      max-width: 400px;
     }
 
-    .section {
-      flex: 1;
-      min-width: 300px;
-    }
-
-    .section h2 {
+    h2 {
       text-align: center;
-      margin-bottom: 20px;
       color: #a75fff;
+      margin-bottom: 20px;
     }
 
     input[type="email"],
     input[type="password"] {
       width: 100%;
       padding: 12px;
-      margin: 8px 0;
+      margin: 10px 0;
       border: none;
       border-radius: 6px;
       background: #222;
@@ -65,23 +57,37 @@
       border: none;
       color: white;
       font-weight: bold;
-      cursor: pointer;
       border-radius: 6px;
       margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .switch-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .switch-link a {
+      color: #a75fff;
+      cursor: pointer;
+      text-decoration: underline;
     }
 
     .checkbox {
       margin-top: 10px;
+      font-size: 13px;
     }
 
-    .checkbox label {
-      font-size: 13px;
+    .checkbox input {
+      transform: scale(1.2);
+      margin-right: 6px;
     }
 
     .checkbox a {
       color: #a75fff;
-      text-decoration: underline;
       cursor: pointer;
+      text-decoration: underline;
     }
 
     .popup {
@@ -122,44 +128,42 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
-    @media (max-width: 768px) {
-      .login-box {
-        flex-direction: column;
-        gap: 30px;
-      }
-    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="login-box">
-    
-    <!-- LOGIN -->
-    <div class="section">
+  <div class="form-box">
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
       <h2>Login</h2>
-      <input type="email" placeholder="E-Mail" id="loginEmail" />
-      <input type="password" placeholder="Passwort" id="loginPassword" />
+      <input type="email" placeholder="E-Mail" id="loginEmail">
+      <input type="password" placeholder="Passwort" id="loginPassword">
       <button class="btn" onclick="login()">Login</button>
+      <div class="switch-link">
+        Noch kein Konto? <a onclick="showRegister()">Hier registrieren</a>
+      </div>
     </div>
 
-    <!-- REGISTRIEREN -->
-    <div class="section">
+    <!-- REGISTRIERFORMULAR -->
+    <div id="registerForm" style="display: none;">
       <h2>Registrieren</h2>
-      <input type="email" placeholder="E-Mail" id="regEmail" />
-      <input type="password" placeholder="Passwort" id="regPassword" />
-      <input type="password" placeholder="Passwort bestätigen" id="regConfirm" />
-      
+      <input type="email" placeholder="E-Mail" id="regEmail">
+      <input type="password" placeholder="Passwort" id="regPassword">
+      <input type="password" placeholder="Passwort bestätigen" id="regConfirm">
       <div class="checkbox">
-        <input type="checkbox" id="agbCheck" />
-        <label for="agbCheck">
+        <label>
+          <input type="checkbox" id="agbCheck">
           Ich akzeptiere die <a onclick="openPopup()">AGB</a> und <a onclick="openPopup()">Datenschutz</a>.
         </label>
       </div>
-
       <button class="btn" onclick="register()">Registrieren</button>
+      <div class="switch-link">
+        Bereits registriert? <a onclick="showLogin()">Zum Login</a>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -167,7 +171,9 @@
 <div id="popup" class="popup">
   <h3>AGB & Datenschutz</h3>
   <p>
-    Diese Plattform ist ein rechtlich geschütztes Angebot aus der Schweiz. Mit der Registrierung akzeptierst du die geltenden Nutzungsbedingungen sowie die Datenschutzrichtlinien. Deine Daten werden streng vertraulich behandelt und nicht an Dritte weitergegeben. Für detaillierte Informationen zu Pflichten, Verantwortungen und Rückerstattungsregeln lies bitte die vollständigen AGB auf unserer offiziellen Seite.
+    Diese Plattform ist ein rechtlich geschütztes Angebot mit Sitz in der Schweiz.
+    Mit der Registrierung stimmst du unseren Nutzungsbedingungen und Datenschutzrichtlinien zu.
+    Deine Daten werden vertraulich behandelt und nicht weitergegeben.
   </p>
   <div class="close-popup">
     <button onclick="closePopup()">Schließen</button>
@@ -175,6 +181,16 @@
 </div>
 
 <script>
+  function showRegister() {
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "block";
+  }
+
+  function showLogin() {
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "block";
+  }
+
   function openPopup() {
     document.getElementById("popup").style.display = "block";
   }
@@ -187,7 +203,6 @@
     const email = document.getElementById("loginEmail").value;
     const pass = document.getElementById("loginPassword").value;
     if (email && pass) {
-      // Platzhalter für Login-Prüfung
       window.location.href = "dashboard.html";
     } else {
       alert("Bitte E-Mail und Passwort eingeben.");
@@ -201,12 +216,11 @@
     const agb = document.getElementById("agbCheck").checked;
 
     if (!agb) {
-      alert("Du musst die AGB und Datenschutz akzeptieren.");
+      alert("Bitte akzeptiere die AGB und Datenschutz.");
       return;
     }
 
     if (email && pass && pass === confirm) {
-      // Registrierung erfolgreich
       alert("Registrierung erfolgreich!");
       window.location.href = "dashboard.html";
     } else {
