@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="de">
+<!DOCTYPE html><html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,148 +7,123 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #0a0a0a;
+      background: #0a0a0a;
       color: white;
-    }
-
-    header {
-      padding: 20px;
-      background: linear-gradient(to right, #5500cc, #220033);
-      text-align: center;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .content {
-      padding: 30px;
-      text-align: center;
-    }
-
-    button {
-      background: #7f00ff;
-      color: white;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      box-shadow: 0 0 16px #9900ff;
-      margin-top: 30px;
-    }
-
-    /* Popup */
-    .popup-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      display: none;
-      justify-content: center;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      z-index: 9999;
-    }
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 30px 20px;
+    }h1 {
+  font-size: 2.2rem;
+  background: linear-gradient(90deg, #8f00ff, #ff00ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+  text-align: center;
+}
 
-    .popup {
-      background-color: #1a1a1a;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px 4px #ff00ff;
-      width: 90%;
-      max-width: 400px;
-      text-align: left;
-      position: relative;
-    }
+.card {
+  background: #111;
+  border-radius: 20px;
+  box-shadow: 0 0 20px #8f00ff44;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  margin-bottom: 2rem;
+  border: 2px solid #ff00ea;
+}
 
-    .popup h2 {
-      color: #ff66ff;
-      margin-bottom: 20px;
-    }
+.card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
 
-    .popup label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
+.card p {
+  margin-bottom: 1rem;
+  color: #ccc;
+}
 
-    .popup input, .popup select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      background-color: #333;
-      color: white;
-      margin-top: 5px;
-    }
+.btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  background: linear-gradient(90deg, #8f00ff, #ff00ea);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 0 15px #8f00ff88;
+  text-align: center;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
 
-    .popup .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      color: white;
-      font-size: 22px;
-      cursor: pointer;
-    }
+.btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px #ff00ea99;
+}
 
-    .balance {
-      margin-top: 20px;
-      color: #cccccc;
-      font-size: 16px;
-    }
+.info-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.popup {
+  background: #0f0f0f;
+  border-radius: 20px;
+  padding: 2rem;
+  border: 2px solid #ff00ea;
+  box-shadow: 0 0 20px #ff00ea99;
+  text-align: center;
+  max-width: 500px;
+}
+
+.popup h2 {
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.popup p {
+  color: #ccc;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  .btn {
+    padding: 0.8rem 1.5rem;
+  }
+}
+
   </style>
 </head>
 <body>
-
-  <header>
-    HashCore Dashboard
-  </header>
-
-  <div class="content">
+  <h1>HashCore Dashboard</h1>
+  <div class="info-section">
     <p>Willkommen im HashCore Dashboard. Hier verwaltest du deine Hashrate, Lizenzen und Einnahmen.</p>
-    <button onclick="openPopup()">💸 Auszahlung beantragen</button>
-  </div>
-
-  <!-- Popup -->
-  <div class="popup-overlay" id="popup">
-    <div class="popup">
-      <span class="close" onclick="closePopup()">×</span>
-      <h2>Auszahlung beantragen</h2>
-
-      <label for="wallet">Wallet-Adresse</label>
-      <input type="text" id="wallet" placeholder="z. B. bc1q..." />
-
-      <label for="currency">Kryptowährung</label>
-      <select id="currency">
-        <option>Bitcoin (BTC)</option>
-        <option>Ethereum (ETH)</option>
-        <option>Litecoin (LTC)</option>
-      </select>
-
-      <div class="balance">Aktueller Kontostand: <strong>CHF 128.50</strong></div>
-
-      <button onclick="submitPayout()">Bestätigen</button>
-    </div>
-  </div>
-
-  <script>
-    function openPopup() {
-      document.getElementById("popup").style.display = "flex";
-    }
-
-    function closePopup() {
-      document.getElementById("popup").style.display = "none";
-    }
-
-    function submitPayout() {
-      const wallet = document.getElementById("wallet").value;
-      const currency = document.getElementById("currency").value;
-      if (!wallet) {
-        alert("Bitte Wallet-Adresse eingeben.");
-        return;
-      }
-      alert(`Auszahlung angefragt!\nWallet: ${wallet}\nWährung: ${currency}`);
-      closePopup();
-    }
-  </script>
-
-</body>
+  </div>  <!-- Lizenz-Popup -->  <div class="popup">
+    <h2>🔐 Starterlizenz erforderlich</h2>
+    <p>Um das Dashboard zu nutzen, musst du zuerst die Starterlizenz für CHF 49.– kaufen.</p>
+    <a href="#" class="btn">Lizenz jetzt kaufen</a>
+  </div>  <!-- Aktionen -->  <div class="card">
+    <h2>🚀 Hashrate kaufen</h2>
+    <p>Erhöhe deine Mining-Leistung durch den Kauf zusätzlicher Hashrate.</p>
+    <a href="#" class="btn">Jetzt kaufen</a>
+  </div>  <div class="card">
+    <h2>🎯 Referral-Link</h2>
+    <p>Empfehle HashCore weiter und erhalte CHF 10.– pro Empfehlung.</p>
+    <a href="#" class="btn">Link kopieren</a>
+  </div>  <div class="card">
+    <h2>💰 Auszahlung</h2>
+    <p>Fordere deine Einnahmen ganz einfach an.</p>
+    <a href="#" class="btn">Auszahlung beantragen</a>
+  </div>  <div class="card">
+    <h2>📊 Statistiken</h2>
+    <p>Überblick über Hashrate, Umsatz, Level und Lizenzstatus.</p>
+    <a href="#" class="btn">Details ansehen</a>
+  </div></body>
 </html>
