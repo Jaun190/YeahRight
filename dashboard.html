@@ -2,157 +2,143 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HashCore Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(145deg, #0e0e1a, #1c1c2e);
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0a0a0a;
       color: white;
-      overflow-x: hidden;
     }
 
     header {
+      padding: 20px;
+      background: linear-gradient(to right, #5500cc, #220033);
       text-align: center;
-      padding: 2rem;
-      font-size: 2.5rem;
-      color: #fff;
-      text-shadow: 0 0 10px #a200ff;
-    }
-
-    .dashboard-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-      gap: 2rem;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(15px);
-      border-radius: 20px;
-      padding: 2rem;
-      width: 90%;
-      max-width: 700px;
-      box-shadow: 0 0 20px rgba(162, 0, 255, 0.3);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
-    }
-
-    .button {
-      background: linear-gradient(90deg, #a200ff, #5f00ba);
-      color: white;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 12px;
+      font-size: 28px;
       font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 0 15px #a200ff;
-      transition: 0.2s ease-in-out;
+      letter-spacing: 1px;
     }
 
-    .button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px #a200ff;
+    .content {
+      padding: 30px;
+      text-align: center;
+    }
+
+    button {
+      background: #6600ff;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 0 12px #9900ff;
+    }
+
+    /* Popup */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
     }
 
     .popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      backdrop-filter: blur(10px);
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+      background-color: #1a1a1a;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px 3px #ff00ff;
+      width: 90%;
+      max-width: 400px;
+      text-align: left;
+      position: relative;
     }
 
-    .popup-content {
-      background: rgba(0, 0, 0, 0.6);
-      border: 2px solid #ff00cc;
-      border-radius: 20px;
-      padding: 2rem;
-      text-align: center;
+    .popup h2 {
+      color: #ff66ff;
+      margin-bottom: 20px;
+    }
+
+    .popup label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .popup input, .popup select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      background-color: #333;
       color: white;
-      box-shadow: 0 0 25px #ff00cc;
-      max-width: 500px;
+      margin-top: 5px;
+    }
+
+    .popup .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .balance {
+      margin-top: 20px;
+      color: #cccccc;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
 
-  <header>HashCore Dashboard</header>
+  <header>
+    HashCore Dashboard
+  </header>
 
-  <div class="dashboard-container">
-    <div class="card">
-      <h2>Hashrate kaufen</h2>
-      <p>Wähle deine gewünschte Leistung:</p>
-      <select>
-        <option>100 MH/s – CHF 29.–</option>
-        <option>500 MH/s – CHF 99.–</option>
-        <option>1 GH/s – CHF 179.–</option>
+  <div class="content">
+    <p>Willkommen im HashCore Dashboard. Hier verwaltest du deine Hashrate, Lizenzen und Einnahmen.</p>
+    <button onclick="openPopup()">💸 Auszahlung beantragen</button>
+  </div>
+
+  <!-- Popup -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup">
+      <span class="close" onclick="closePopup()">×</span>
+      <h2>Auszahlung beantragen</h2>
+
+      <label for="wallet">Wallet-Adresse</label>
+      <input type="text" id="wallet" placeholder="z. B. bc1q..." />
+
+      <label for="currency">Kryptowährung</label>
+      <select id="currency">
+        <option>Bitcoin (BTC)</option>
+        <option>Ethereum (ETH)</option>
+        <option>Litecoin (LTC)</option>
       </select>
-      <br><br>
-      <button class="button">Jetzt kaufen</button>
-    </div>
 
-    <div class="card">
-      <h2>Partnerprogramm</h2>
-      <p>Erhalte CHF 50.– Provision bei Kauf einer Starterlizenz + Hashrate (ab CHF 100.–) deines Partners.</p>
-      <button class="button">Referral-Link kopieren</button>
-    </div>
+      <div class="balance">Aktueller Auszahlungsbetrag: <strong>CHF 128.50</strong></div>
 
-    <div class="card">
-      <h2>Auszahlung</h2>
-      <p>Dein aktueller Ertrag: CHF 138.–</p>
-      <button class="button" onclick="openWalletPopup()">Auszahlung anfordern</button>
-    </div>
-  </div>
-
-  <!-- POPUP: Starterlizenz erforderlich -->
-  <div class="popup" id="starterPopup">
-    <div class="popup-content">
-      <h2>Starterlizenz erforderlich</h2>
-      <p>Um das Dashboard zu nutzen, musst du zuerst die Starterlizenz für CHF 49.– kaufen.</p>
-      <button class="button">Lizenz jetzt kaufen</button>
-    </div>
-  </div>
-
-  <!-- POPUP: Wallet Adresse -->
-  <div class="popup" id="walletPopup" style="display: none;">
-    <div class="popup-content">
-      <h2>Wallet-Adresse eingeben</h2>
-      <input type="text" placeholder="Deine BTC / USDT-Adresse" style="padding: 10px; width: 80%; border-radius: 8px; border: none; margin-top: 1rem;">
-      <br><br>
-      <button class="button">Auszahlung anfordern</button>
+      <button onclick="alert('Auszahlung angefragt!')">Bestätigen</button>
     </div>
   </div>
 
   <script>
-    function openWalletPopup() {
-      document.getElementById("walletPopup").style.display = "flex";
+    function openPopup() {
+      document.getElementById("popup").style.display = "flex";
     }
 
-    // Simuliert: Zeige Starterlizenz-Popup, wenn Lizenz fehlt
-    window.onload = function () {
-      const hasLicense = false; // ← später durch echte Prüfung ersetzen
-      if (!hasLicense) {
-        document.getElementById("starterPopup").style.display = "flex";
-      } else {
-        document.getElementById("starterPopup").style.display = "none";
-      }
-    };
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+    }
   </script>
 
 </body>
