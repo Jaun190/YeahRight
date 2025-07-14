@@ -18,7 +18,6 @@
       text-align: center;
       font-size: 28px;
       font-weight: bold;
-      letter-spacing: 1px;
     }
 
     .content {
@@ -27,15 +26,15 @@
     }
 
     button {
-      background: #6600ff;
+      background: #7f00ff;
       color: white;
       padding: 15px 30px;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 0 12px #9900ff;
+      box-shadow: 0 0 16px #9900ff;
+      margin-top: 30px;
     }
 
     /* Popup */
@@ -53,8 +52,8 @@
     .popup {
       background-color: #1a1a1a;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px 3px #ff00ff;
+      border-radius: 15px;
+      box-shadow: 0 0 20px 4px #ff00ff;
       width: 90%;
       max-width: 400px;
       text-align: left;
@@ -125,9 +124,9 @@
         <option>Litecoin (LTC)</option>
       </select>
 
-      <div class="balance">Aktueller Auszahlungsbetrag: <strong>CHF 128.50</strong></div>
+      <div class="balance">Aktueller Kontostand: <strong>CHF 128.50</strong></div>
 
-      <button onclick="alert('Auszahlung angefragt!')">Bestätigen</button>
+      <button onclick="submitPayout()">Bestätigen</button>
     </div>
   </div>
 
@@ -138,6 +137,17 @@
 
     function closePopup() {
       document.getElementById("popup").style.display = "none";
+    }
+
+    function submitPayout() {
+      const wallet = document.getElementById("wallet").value;
+      const currency = document.getElementById("currency").value;
+      if (!wallet) {
+        alert("Bitte Wallet-Adresse eingeben.");
+        return;
+      }
+      alert(`Auszahlung angefragt!\nWallet: ${wallet}\nWährung: ${currency}`);
+      closePopup();
     }
   </script>
 
