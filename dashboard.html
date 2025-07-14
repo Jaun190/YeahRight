@@ -1,144 +1,140 @@
-<!DOCTYPE html><html lang="de">
+<!DOCTYPE html>
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HashCore Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashline Dashboard</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background: radial-gradient(circle at center, #0e0e0e 0%, #000 100%);
+      background: radial-gradient(circle, #0f0f1a, #000);
       font-family: 'Segoe UI', sans-serif;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
       color: #fff;
-    }.container {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 40px 20px 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
+      margin-bottom: 30px;
+    }
 
-.card {
-  background: #111;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
-  border: 1px solid rgba(168, 85, 247, 0.4);
-}
+    .section {
+      border: 2px solid #6c2bff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 25px;
+      background: rgba(30, 0, 60, 0.5);
+      box-shadow: 0 0 15px #a946ff;
+    }
 
-h1, h2 {
-  font-weight: 700;
-  color: #c084fc;
-}
+    .section h2 {
+      margin-top: 0;
+      color: #ff66cc;
+      display: flex;
+      align-items: center;
+      font-size: 22px;
+    }
 
-p {
-  font-size: 1rem;
-  color: #d1d5db;
-}
+    .section h2::before {
+      content: "📊";
+      margin-right: 10px;
+    }
 
-.glow-button {
-  background: linear-gradient(to right, #8b5cf6, #ec4899);
-  border: none;
-  color: white;
-  padding: 14px 24px;
-  font-size: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.7);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: block;
-  margin: 16px auto 0;
-}
+    .stats-grid {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
 
-.glow-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(236, 72, 153, 0.8);
-}
+    .stat-box {
+      flex: 1;
+      margin: 0 5px;
+      padding: 15px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      text-align: center;
+      box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+    }
 
-.slider {
-  width: 100%;
-  margin: 20px 0;
-}
+    .stat-title {
+      font-weight: bold;
+      color: #ccc;
+      margin-bottom: 5px;
+    }
 
-.popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
+    .stat-value {
+      font-size: 18px;
+      color: #fff;
+    }
 
-.popup-content {
-  background: #111;
-  padding: 32px;
-  border-radius: 20px;
-  border: 2px solid #f0f;
-  box-shadow: 0 0 40px rgba(255, 0, 255, 0.5);
-  text-align: center;
-}
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background: #ff66cc;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ff66cc;
+      cursor: pointer;
+      text-align: center;
+    }
 
-.footer {
-  text-align: center;
-  padding: 32px 16px;
-  background: #0e0e0e;
-  font-size: 0.9rem;
-  color: #aaa;
-}
+    input[type="range"] {
+      width: 100%;
+      margin: 15px 0;
+    }
 
+    .ref-section h2::before {
+      content: "🔗";
+    }
+
+    .hash-section h2::before {
+      content: "💎";
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 style="text-align:center;">HashCore Dashboard</h1><div class="card">
-  <h2>Willkommen zurück!</h2>
-  <p>Übersicht über deine Hashrate, Lizenzstatus, Referrals und Einnahmen.</p>
-</div>
 
-<div class="card">
-  <h2>Hashrate kaufen</h2>
-  <p>Wähle deine gewünschte Hashrate:</p>
-  <input type="range" min="0" max="1000" value="100" class="slider" id="hashrateRange">
-  <p><span id="hashrateValue">100</span> MH/s – <span id="priceValue">CHF 49.–</span></p>
-  <button class="glow-button">Jetzt kaufen</button>
-</div>
+  <h1>🌐 HASHLINE DASHBOARD</h1>
 
-<div class="card">
-  <h2>Referral-System</h2>
-  <p>Du erhältst CHF 50.– für jeden Nutzer, der eine Starter-Lizenz + Hashpower kauft.</p>
-</div>
-
-<div class="card">
-  <h2>Auszahlen</h2>
-  <p>Fordere deine Auszahlungen bequem über dein Dashboard an. Auszahlung ab CHF 100.– möglich.</p>
-</div>
-
-  </div>  <div class="popup" id="licensePopup">
-    <div class="popup-content">
-      <h2>Starterlizenz erforderlich</h2>
-      <p>Um das Dashboard zu nutzen, musst du zuerst die Starterlizenz für CHF 49.– kaufen.</p>
-      <button class="glow-button" onclick="window.location.href='/lizenz'">Lizenz jetzt kaufen</button>
+  <!-- Statistiken -->
+  <div class="section">
+    <h2>Deine Statistiken</h2>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-title">Hashrate</div>
+        <div class="stat-value">0 TH/s</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-title">Verdient</div>
+        <div class="stat-value">CHF 0.–</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-title">Referral Bonus</div>
+        <div class="stat-value">CHF 0.–</div>
+      </div>
     </div>
-  </div>  <div class="footer">
-    <strong>HashCore</strong><br>
-    Dorfstrasse 233<br>
-    3433 Schwanden i.E<br>
-    <a href="mailto:jaun190@gmail.com" style="color:#bbb; text-decoration:none">jaun190@gmail.com</a><br>
-    <br>
-    <a href="/impressum" style="color:#bbb;">Impressum</a> | <a href="/agb" style="color:#bbb;">AGB</a> | <a href="/datenschutz" style="color:#bbb;">Datenschutz</a>
-  </div>  <script>
-    const slider = document.getElementById('hashrateRange');
-    const hashrateValue = document.getElementById('hashrateValue');
-    const priceValue = document.getElementById('priceValue');
+  </div>
 
-    slider.oninput = function() {
-      hashrateValue.textContent = this.value;
-      priceValue.textContent = `CHF ${(this.value * 0.49).toFixed(2)}.–`;
-    };
-  </script></body>
+  <!-- Hashrate kaufen -->
+  <div class="section hash-section">
+    <h2>Hashrate kaufen</h2>
+    <label for="hashrateRange">Wähle Hashrate (TH/s):</label>
+    <input type="range" id="hashrateRange" min="1" max="100" value="1" />
+    <p>Preis: CHF 100.–</p>
+    <button class="btn">Jetzt kaufen</button>
+  </div>
+
+  <!-- Referral-Link -->
+  <div class="section ref-section">
+    <h2>Referral-Link</h2>
+    <input type="text" readonly value="https://hashline.app/register?ref=deinname" style="width:100%; padding:10px; border-radius:8px;" />
+  </div>
+
+</body>
 </html>
