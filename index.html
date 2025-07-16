@@ -73,6 +73,11 @@
     color: #4caf50;
     margin-top: 0.5rem;
   }
+  a {
+    color: #7b2cbf;
+    cursor: pointer;
+    text-decoration: underline;
+  }
   #mainContent {
     width: 100%;
     max-width: 400px;
@@ -85,30 +90,30 @@
 
 <div id="loginSection" class="card">
   <h2>Login</h2>
-  <input type="email" id="loginEmail" placeholder="E-Mail" />
-  <input type="password" id="loginPassword" placeholder="Passwort" />
+  <input type="email" id="loginEmail" placeholder="E-Mail" autocomplete="username" />
+  <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
   <div class="checkbox-label">
     <input type="checkbox" id="loginAccept" />
-    <label for="loginAccept">Ich akzeptiere die <a href="#" target="_blank" style="color: #7b2cbf;">AGB</a></label>
+    <label for="loginAccept">Ich akzeptiere die <a href="#" target="_blank">AGB</a></label>
   </div>
   <button id="loginBtn">Login</button>
   <p id="loginError" class="error"></p>
   <p id="loginSuccess" class="success"></p>
-  <p>Noch kein Konto? <a href="#" id="showRegister">Hier registrieren</a></p>
+  <p>Noch kein Konto? <a id="showRegister">Hier registrieren</a></p>
 </div>
 
 <div id="registerSection" class="card" style="display:none;">
   <h2>Registrierung</h2>
-  <input type="email" id="registerEmail" placeholder="E-Mail" />
-  <input type="password" id="registerPassword" placeholder="Passwort" />
+  <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
+  <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
   <div class="checkbox-label">
     <input type="checkbox" id="registerAccept" />
-    <label for="registerAccept">Ich akzeptiere die <a href="#" target="_blank" style="color: #7b2cbf;">AGB</a></label>
+    <label for="registerAccept">Ich akzeptiere die <a href="#" target="_blank">AGB</a></label>
   </div>
   <button id="registerBtn">Registrieren</button>
   <p id="registerError" class="error"></p>
   <p id="registerSuccess" class="success"></p>
-  <p>Schon ein Konto? <a href="#" id="showLogin">Hier einloggen</a></p>
+  <p>Schon ein Konto? <a id="showLogin">Hier einloggen</a></p>
 </div>
 
 <div id="userSection" class="card" style="display:none;">
@@ -163,7 +168,7 @@
   const userEmail = document.getElementById('userEmail');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  // Zeige Registrierungsformular
+  // Umschalten Login <-> Registrierung
   showRegister.addEventListener('click', (e) => {
     e.preventDefault();
     loginSection.style.display = 'none';
@@ -171,7 +176,6 @@
     clearMessages();
   });
 
-  // Zeige Loginformular
   showLogin.addEventListener('click', (e) => {
     e.preventDefault();
     registerSection.style.display = 'none';
@@ -179,7 +183,7 @@
     clearMessages();
   });
 
-  // Login-Funktion
+  // Login Funktion
   loginBtn.addEventListener('click', () => {
     clearMessages();
     if (!loginEmail.value || !loginPassword.value) {
@@ -191,21 +195,21 @@
       return;
     }
     signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
-      .then((userCredential) => {
+      .then(userCredential => {
         if (!userCredential.user.emailVerified) {
           loginError.textContent = 'Bitte bestätige zuerst deine E-Mail-Adresse.';
-          auth.signOut();
+          signOut(auth);
           return;
         }
         loginSuccess.textContent = 'Login erfolgreich!';
         updateUI(userCredential.user);
       })
-      .catch((error) => {
+      .catch(error => {
         loginError.textContent = `Anmeldung fehlgeschlagen: ${error.message}`;
       });
   });
 
-  // Registrierung
+  // Registrierung Funktion
   registerBtn.addEventListener('click', () => {
     clearMessages();
     if (!registerEmail.value || !registerPassword.value) {
@@ -217,15 +221,14 @@
       return;
     }
     createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value)
-      .then((userCredential) => {
-        sendEmailVerification(userCredential.user)
-          .then(() => {
-            registerSuccess.textContent = 'Registrierung erfolgreich! Bitte überprüfe deine E-Mails zur Bestätigung.';
-            registerSection.style.display = 'none';
-            loginSection.style.display = 'block';
-          });
+      .then(userCredential => {
+        sendEmailVerification(userCredential.user).then(() => {
+          registerSuccess.textContent = 'Registrierung erfolgreich! Bitte überprüfe deine E-Mail zur Bestätigung.';
+          registerSection.style.display = 'none';
+          loginSection.style.display = 'block';
+        });
       })
-      .catch((error) => {
+      .catch(error => {
         registerError.textContent = `Registrierung fehlgeschlagen: ${error.message}`;
       });
   });
@@ -237,7 +240,7 @@
     });
   });
 
-  // UI updaten je nach Loginstatus
+  // UI aktualisieren
   function updateUI(user) {
     clearMessages();
     if (user) {
@@ -253,10 +256,11 @@
       loginPassword.value = '';
       registerEmail.value = '';
       registerPassword.value = '';
+      loginAccept.checked = false;
+      registerAccept.checked = false;
     }
   }
 
-  // Aktuellen Auth-Zustand prüfen
   onAuthStateChanged(auth, (user) => {
     updateUI(user);
   });
