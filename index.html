@@ -2,152 +2,78 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GrowChain Dashboard</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at top left, #1b0033, #0a001a);
-      color: white;
-      overflow-x: hidden;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
     }
-    header {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2rem;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      box-shadow: 0 0 20px violet;
+    .dashboard {
+      padding: 40px;
     }
-    .container {
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #7b2cbf;
-      box-shadow: 0 0 15px #7b2cbf;
-      padding: 1.5rem;
-      border-radius: 1rem;
-    }
-    .glow-button {
-      padding: 0.7rem 1.5rem;
-      border: none;
-      border-radius: 6px;
-      background-color: #7b2cbf;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 15px #7b2cbf;
-    }
-    .glow-button:hover {
-      background-color: #9d4edd;
-    }
-    .popup {
+    .popup-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.85);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
     }
-    .popup-content {
-      border: 2px solid hotpink;
-      padding: 2rem;
-      background: #0a001a;
-      border-radius: 1rem;
+    .popup {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      width: 90%;
       max-width: 400px;
-      text-align: center;
-      color: white;
-      box-shadow: 0 0 20px hotpink;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
-    footer {
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #aaa;
-      background: #110022;
-      margin-top: 4rem;
+    .popup h2 {
+      margin-top: 0;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      background: #00b300;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .btn:hover {
+      background: #009900;
     }
   </style>
 </head>
 <body>
 
-<header>💠 Hashcore Dashboard</header>
-<div class="container">
-
-  <!-- Lizenz Popup wird später durch JS angezeigt -->
-  <div class="card">
-    <h2>⚙️ Deine Hashrate</h2>
-    <p>Aktuelle Hashrate: <strong id="currentHashrate">750 MH/s</strong></p>
-    <input type="range" id="hashrateSlider" min="100" max="100000" value="750" />
-    <p>Preis: <strong id="hashratePrice">CHF 349.–</strong></p>
-    <button class="glow-button" onclick="buyHashrate()">Jetzt Hashrate kaufen</button>
-  </div>
-
-  <div class="card">
-    <h2>📈 Referrals</h2>
-    <p>Empfohlene Partner: <strong>12</strong></p>
-    <p>Provision: <strong>CHF 600.–</strong></p>
-    <button class="glow-button">Referral-Link kopieren</button>
-  </div>
-
-  <div class="card">
-    <h2>💸 Auszahlung</h2>
-    <p>Guthaben: <strong>CHF 428.–</strong></p>
-    <button class="glow-button">Auszahlen</button>
-  </div>
-
+<div class="dashboard">
+  <h1>Willkommen im GrowChain Dashboard</h1>
+  <p>Deine Hashrate, Pflanzen und Level werden hier angezeigt.</p>
 </div>
 
-<!-- LIZENZ-Popup -->
-<div id="licensePopup" class="popup">
-  <div class="popup-content">
-    <h2>🔒 Lizenz erforderlich</h2>
-    <p>Du musst zuerst eine Lizenz kaufen, um Hashcore nutzen zu können.</p>
-    <p><strong>Preis: CHF 49.–</strong></p>
-    <a href="https://buy.stripe.com/YOUR_REAL_LIZENZ_LINK" class="glow-button">Lizenz kaufen</a>
+<!-- Lizenz-Popup (erscheint nur wenn Lizenz nicht vorhanden) -->
+<div class="popup-overlay" id="licensePopup" style="display:none;">
+  <div class="popup">
+    <h2>GrowChain Lizenz erforderlich</h2>
+    <p>Um das Dashboard freizuschalten, musst du die Hashcore Lizenz erwerben.</p>
+    <a class="btn" href="https://buy.stripe.com/4gM00ieLk9Fu2x1eLGf7i00" target="_blank">Lizenz für CHF 49.– kaufen</a>
   </div>
 </div>
-
-<footer>
-  Hashcore • Dorfstrasse 233 • 3433 Schwanden I.E • jaun190@gmail.com
-</footer>
 
 <script>
-  const slider = document.getElementById('hashrateSlider');
-  const priceLabel = document.getElementById('hashratePrice');
-  const hashrateLabel = document.getElementById('currentHashrate');
+  // Beispielhafte Supabase-Überprüfung (ersetzen durch echte Prüfung!)
+  const userHasLicense = false; // Ändert sich nach erfolgreichem Kauf über Supabase-Abfrage
 
-  // Dummy Zustand: Lizenz noch nicht gekauft
-  let licensePaid = false;
-
-  // Hashrate Preisberechnung (Beispiel: 100 MH/s = CHF 49.–)
-  slider.addEventListener('input', () => {
-    const hashrate = parseInt(slider.value);
-    const price = (hashrate * 0.465).toFixed(2); // z.B. 100 MH/s = CHF 46.50
-    priceLabel.innerText = `CHF ${price}.–`;
-    hashrateLabel.innerText = `${hashrate} MH/s`;
-  });
-
-  function buyHashrate() {
-    if (!licensePaid) {
-      document.getElementById('licensePopup').style.display = 'flex';
-    } else {
-      window.location.href = "https://buy.stripe.com/YOUR_HASHRATE_KAUF_LINK";
+  window.onload = () => {
+    if (!userHasLicense) {
+      document.getElementById("licensePopup").style.display = "flex";
     }
-  }
-
-  // Wenn Lizenz gekauft wurde → popup ausblenden
-  // Beispiel: Du musst diese Variable später nach Lizenzkauf per Server-Check setzen
-  // licensePaid = true;
+  };
 </script>
 
 </body>
