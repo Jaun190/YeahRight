@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hashcore Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #1b0033, #0a001a);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      box-shadow: 0 0 20px violet;
+    }
+
+    .container {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #7b2cbf;
+      box-shadow: 0 0 15px #7b2cbf;
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
+
+    .glow-button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #7b2cbf;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 15px #7b2cbf;
+    }
+
+    .glow-button:hover {
+      background-color: #894edd;
+    }
+
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .popup-content {
+      border: 2px solid hotpink;
+      padding: 2rem;
+      background: #0a001a;
+      border-radius: 1rem;
+      max-width: 400px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 0 20px hotpink;
+    }
+
+    footer {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: #aaa;
+      background: #110022;
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>💠 Hashcore Dashboard</header>
+
+<div class="container">
+  <div class="card">
+    <h2>⚡ Deine Hashrate</h2>
+    <p>Aktuelle Hashrate: <strong>750 MH/s</strong></p>
+    <input type="range" min="100" max="10000" value="750" />
+    <p>Preis: CHF <strong>349.–</strong></p>
+    <button class="glow-button">Jetzt Hashrate kaufen</button>
+  </div>
+
+  <div class="card">
+    <h2>👥 Referrals</h2>
+    <p>Empfohlene Partner: <strong>12</strong></p>
+    <p>Provision: <strong>CHF 600.–</strong></p>
+    <button class="glow-button">Referral-Link kopieren</button>
+  </div>
+
+  <div class="card">
+    <h2>💸 Auszahlung</h2>
+    <p>Dein Guthaben: <strong>428.–</strong></p>
+    <button class="glow-button" onclick="openWalletPopup()">Auszahlen</button>
+  </div>
+</div>
+
+<div id="licensePopup" class="popup" style="display:none;">
+  <div class="popup-content">
+    <h2>🔐 Lizenz erforderlich</h2>
+    <p>Du musst eine Lizenz kaufen, um Hashcore nutzen zu können.</p>
+    <p>Preis: <strong>CHF 49.–</strong></p>
+    <button class="glow-button" onclick="buyLicense()">Lizenz kaufen</button>
+  </div>
+</div>
+
+<div id="walletPopup" class="popup" style="display:none;">
+  <div class="popup-content">
+    <h2>💳 Wallet-Adresse eingeben</h2>
+    <input type="text" placeholder="z. B. 1qxyz..." style="width:100%;padding:0.5rem;margin:1rem;border-radius:5px;" />
+    <button class="glow-button" onclick="closeWalletPopup()">Bestätigen</button>
+  </div>
+</div>
+
+<footer>
+  Hashcore • Dorfstrasse 233 • 3433 Schwanden i.E • jaun190@gmail.com
+</footer>
+
+<script>
+  function openWalletPopup() {
+    document.getElementById('walletPopup').style.display = 'flex';
+  }
+
+  function closeWalletPopup() {
+    document.getElementById('walletPopup').style.display = 'none';
+  }
+
+  function buyLicense() {
+    localStorage.setItem("licensePaid", "true");
+    document.getElementById("licensePopup").style.display = "none";
+    // Optional: Redirect to Stripe Checkout
+    window.location.href = "https://buy.stripe.com/test_4gw4iXgFS2gq2qkcMM";
+  }
+
+  window.onload = function () {
+    const licensePaid = localStorage.getItem("licensePaid");
+    if (!licensePaid) {
+      document.getElementById("licensePopup").style.display = "flex";
+    }
+  };
+</script>
+
+</body>
+</html>
