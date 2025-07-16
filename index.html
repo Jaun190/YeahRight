@@ -199,8 +199,15 @@
   async function checkUser() {
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {
-      loginPopup.style.display = 'none'
-      mainContent.style.display = 'flex'
+      const user = session.user
+      if (!user.email_confirmed_at) {
+        errorMessage.textContent = 'Bitte bestätige zuerst deine E-Mail-Adresse.'
+        loginPopup.style.display = 'flex'
+        mainContent.style.display = 'none'
+      } else {
+        loginPopup.style.display = 'none'
+        mainContent.style.display = 'flex'
+      }
     } else {
       loginPopup.style.display = 'flex'
       mainContent.style.display = 'none'
@@ -213,61 +220,4 @@
     errorMessage.textContent = ''
     successMessage.textContent = ''
 
-    if (!emailInput.value || !passwordInput.value) {
-      errorMessage.textContent = 'Bitte E-Mail und Passwort eingeben.'
-      return
-    }
-    if (!agbCheckbox.checked) {
-      errorMessage.textContent = 'Bitte akzeptiere die AGB.'
-      return
-    }
-
-    // Erst Login versuchen
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: emailInput.value,
-      password: passwordInput.value,
-    })
-
-    if (error && error.status === 400) {
-      // Nutzer nicht gefunden, Registrierung starten
-      const { data: signupData, error: signupError } = await supabase.auth.signUp({
-        email: emailInput.value,
-        password: passwordInput.value,
-      })
-      if (signupError) {
-        errorMessage.textContent = signupError.message
-      } else {
-        successMessage.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.'
-      }
-    } else if (error) {
-      errorMessage.textContent = error.message
-    } else {
-      successMessage.textContent = 'Login erfolgreich!'
-      setTimeout(() => {
-        loginPopup.style.display = 'none'
-        mainContent.style.display = 'flex'
-      }, 1000)
-    }
-  })
-
-  window.copyReferral = () => {
-    navigator.clipboard.writeText('https://hashcore.io/?ref=deinName')
-    refStatus.innerText = 'Referral-Link kopiert!'
-  }
-
-  window.submitPayout = () => {
-    const value = document.getElementById('walletInput').value
-    if (!value) {
-      payoutStatus.innerText = '⚠ Bitte eine Adresse eingeben.'
-      return
-    }
-    payoutStatus.innerText = '✅ Auszahlungsanfrage gesendet.'
-  }
-</script>
-
-<footer>
-  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
-</footer>
-
-</body>
-</html>
+    if (!emailInput.value ||
