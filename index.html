@@ -128,7 +128,8 @@
     auth.signInWithEmailAndPassword(email, password)
       .then(userCredential => {
         showMessage('Login erfolgreich! Willkommen ' + userCredential.user.email);
-        // Hier kannst du weiterleiten oder Dashboard anzeigen
+        // Weiterleitung zum Dashboard:
+        window.location.href = 'dashboard.html';
       })
       .catch(error => {
         showMessage('Fehler: ' + error.message, true);
@@ -138,8 +139,8 @@
   // Auth Status prüfen (optional)
   auth.onAuthStateChanged(user => {
     if (user) {
-      showMessage('Eingeloggt als: ' + user.email);
-      // Hier z.B. Dashboard anzeigen oder weiterleiten
+      // Automatisch weiterleiten, falls bereits eingeloggt:
+      window.location.href = 'dashboard.html';
     } else {
       showMessage('');
     }
