@@ -47,14 +47,6 @@
   .glow-button:hover {
     background-color: #894edd;
   }
-  input[type="text"], input[type="email"], input[type="password"] {
-    width: 100%;
-    padding: 0.6rem;
-    border-radius: 5px;
-    border: none;
-    margin: 0.5rem 0;
-    font-size: 1rem;
-  }
   footer {
     padding: 1rem;
     text-align: center;
@@ -67,72 +59,13 @@
     font-size: 0.85rem;
     color: #ccc;
   }
-  #loginPopup {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  #loginPopupContent {
-    background: #220044;
-    padding: 2rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 0 20px #7b2cbf;
-  }
-  #loginPopupContent h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  #agbCheckbox {
-    margin-right: 0.5rem;
-  }
-  #errorMessage {
-    color: #f44336;
-    margin-top: 0.5rem;
-  }
-  #successMessage {
-    color: #4caf50;
-    margin-top: 0.5rem;
-  }
-  #logoutButton {
-    margin: 1rem 0 0 0;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    background-color: #7b2cbf;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    box-shadow: 0 0 15px #7b2cbf;
-  }
-  #logoutButton:hover {
-    background-color: #894edd;
-  }
 </style>
 </head>
 <body>
 
 <header>⚡ Hashcore Dashboard</header>
 
-<!-- Login / Registrierung Popup -->
-<div id="loginPopup">
-  <div id="loginPopupContent">
-    <h2>Login / Registrierung</h2>
-    <input type="email" id="emailInput" placeholder="E-Mail" />
-    <input type="password" id="passwordInput" placeholder="Passwort" />
-    <label><input type="checkbox" id="agbCheckbox" /> Ich akzeptiere die <a href="#" target="_blank">AGB</a></label>
-    <button class="glow-button" id="authButton">Login / Registrieren</button>
-    <p id="errorMessage"></p>
-    <p id="successMessage"></p>
-  </div>
-</div>
-
-<!-- Hauptinhalt (Dashboard) -->
-<div class="container" id="mainContent" style="display:none;">
+<div class="container" id="mainContent">
   <!-- Hashpower kaufen -->
   <div class="card">
     <h2>⚡ Hashpower kaufen</h2>
@@ -154,7 +87,7 @@
         <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank"><button class="glow-button">Kaufen</button></a>
       </li>
     </ul>
-    <p class="small">⚠️ Mehrmals kaufen für mehr Hashpower!</p>
+    <p class="small">⚠ Mehrmals kaufen für mehr Hashpower!</p>
   </div>
 
   <!-- Referrals -->
@@ -174,119 +107,35 @@
     <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
     <p class="small" id="payoutStatus"></p>
   </div>
-
-  <!-- Logout-Button -->
-  <button id="logoutButton">Logout</button>
 </div>
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+<footer>
+  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
+</footer>
 
-  const supabaseUrl = 'https://zudmonossxcfpbltkuq.supabase.co'
-  const supabaseKey = 'dein-public-anon-key-hier' // Hier musst du deinen tatsächlichen Public-Anon-Key einfügen
-  const supabase = createClient(supabaseUrl, supabaseKey)
-
-  const loginPopup = document.getElementById('loginPopup')
-  const mainContent = document.getElementById('mainContent')
-  const emailInput = document.getElementById('emailInput')
-  const passwordInput = document.getElementById('passwordInput')
-  const agbCheckbox = document.getElementById('agbCheckbox')
-  const errorMessage = document.getElementById('errorMessage')
-  const successMessage = document.getElementById('successMessage')
-  const refStatus = document.getElementById('refStatus')
-  const payoutStatus = document.getElementById('payoutStatus')
-  const logoutButton = document.getElementById('logoutButton')
-  const authButton = document.getElementById('authButton')
-
-  async function checkUser() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session) {
-      loginPopup.style.display = 'none'
-      mainContent.style.display = 'flex'
-    } else {
-      loginPopup.style.display = 'flex'
-      mainContent.style.display = 'none'
-    }
-  }
-
-  authButton.addEventListener('click', async () => {
-    errorMessage.textContent = ''
-    successMessage.textContent = ''
-
-    if (!emailInput.value || !passwordInput.value) {
-      errorMessage.textContent = 'Bitte E-Mail und Passwort eingeben.'
-      return
-    }
-    if (!agbCheckbox.checked) {
-      errorMessage.textContent = 'Bitte akzeptiere die AGB.'
-      return
-    }
-
-    // Login Versuch
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: emailInput.value,
-      password: passwordInput.value,
-    })
-
-    if (signInError) {
-      // Falls User nicht existiert, registrieren
-      if (signInError.status === 400) {
-        const { error: signUpError } = await supabase.auth.signUp({
-          email: emailInput.value,
-          password: passwordInput.value,
-        })
-        if (signUpError) {
-          errorMessage.textContent = 'Registrierung fehlgeschlagen: ' + signUpError.message
-          return
-        } else {
-          successMessage.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.'
-          return
-        }
-      } else {
-        errorMessage.textContent = 'Anmeldung fehlgeschlagen: ' + signInError.message
-        return
-      }
-    }
-
-    successMessage.textContent = 'Login erfolgreich!'
-    loginPopup.style.display = 'none'
-    mainContent.style.display = 'flex'
-  })
-
-  logoutButton.addEventListener('click', async () => {
-    await supabase.auth.signOut()
-    loginPopup.style.display = 'flex'
-    mainContent.style.display = 'none'
-  })
-
+<script>
   function copyReferral() {
-    const referralLink = window.location.href + '?ref=' + encodeURIComponent(emailInput.value)
+    const referralLink = window.location.href + '?ref=' + encodeURIComponent('deine-email@example.com');
     navigator.clipboard.writeText(referralLink)
       .then(() => {
-        refStatus.textContent = 'Referral-Link kopiert!'
-        setTimeout(() => refStatus.textContent = '', 3000)
+        document.getElementById('refStatus').textContent = 'Referral-Link kopiert!';
+        setTimeout(() => { document.getElementById('refStatus').textContent = ''; }, 3000);
       })
       .catch(() => {
-        refStatus.textContent = 'Kopieren fehlgeschlagen.'
-      })
+        document.getElementById('refStatus').textContent = 'Kopieren fehlgeschlagen.';
+      });
   }
 
   function submitPayout() {
-    const wallet = document.getElementById('walletInput').value
+    const wallet = document.getElementById('walletInput').value;
     if (!wallet) {
-      payoutStatus.textContent = 'Bitte gib eine gültige Adresse ein.'
-      return
+      document.getElementById('payoutStatus').textContent = 'Bitte gib eine gültige Adresse ein.';
+      return;
     }
-    payoutStatus.textContent = 'Auszahlung angefordert: ' + wallet
+    document.getElementById('payoutStatus').textContent = 'Auszahlung angefordert: ' + wallet;
     // Hier müsste die Auszahlungslogik implementiert werden
   }
-
-  checkUser()
 </script>
-
-<footer>
-  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E. · jaun190@gmail.com
-</footer>
 
 </body>
 </html>
