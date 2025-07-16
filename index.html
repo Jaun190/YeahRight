@@ -93,9 +93,9 @@
   <div class="container">
     <div class="card">
       <h2>⚙️ Deine Hashrate</h2>
-      <p>Aktuelle Hashrate: <strong id="selectedHashrate">750</strong> MH/s</p>
-      <input id="hashrateSlider" type="range" min="100" max="10000" value="750" />
-      <p>Preis: CHF <strong id="hashratePrice">349.–</strong></p>
+      <p>Aktuelle Hashrate: <strong>750 MH/s</strong></p>
+      <input type="range" min="100" max="10000" value="750" />
+      <p>Preis: CHF <strong>349.–</strong></p>
       <a href="https://buy.stripe.com/4gM00ieLk9Fu2x1eLGf7i00">
         <button class="glow-button">Jetzt Hashrate kaufen</button>
       </a>
@@ -128,30 +128,14 @@
     </div>
   </div>
 
-  <!-- Lizenzpflicht Popup -->
-  <div id="licensePopup" class="popup" style="display: none;">
-    <div class="popup-content">
-      <h2>🔒 Lizenz erforderlich</h2>
-      <p>Du musst eine Lizenz kaufen, um Hashcore nutzen zu können.</p>
-      <p>Preis: <strong>CHF 49.–</strong></p>
-      <a href="https://buy.stripe.com/4gM00ieLk9Fu2x1eLGf7i00">
-        <button class="glow-button">Lizenz kaufen</button>
-      </a>
-    </div>
-  </div>
-
   <footer>
     Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
   </footer>
 
   <script>
-    const hasLicense = false; // Hier: Lizenzstatus manuell setzen
-
+    // Popup deaktiviert für Admin-Test
     window.addEventListener('DOMContentLoaded', () => {
-      if (!hasLicense) {
-        document.getElementById('licensePopup').style.display = 'flex';
-      }
-      updateHashratePrice();
+      // Lizenzprüfung vorübergehend deaktiviert
       loadNiceHashDevices();
     });
 
@@ -163,16 +147,7 @@
       document.getElementById('walletPopup').style.display = 'none';
     }
 
-    document.getElementById("hashrateSlider").addEventListener("input", updateHashratePrice);
-
-    function updateHashratePrice() {
-      const slider = document.getElementById("hashrateSlider");
-      const value = parseInt(slider.value);
-      const preis = Math.round(value * 0.5); // Beispielrechnung: CHF 0.50 pro MH/s
-      document.getElementById("selectedHashrate").innerText = value;
-      document.getElementById("hashratePrice").innerText = `${preis}.–`;
-    }
-
+    // Nicehash Geräte laden
     async function loadNiceHashDevices() {
       const container = document.getElementById('nicehash-devices');
       try {
