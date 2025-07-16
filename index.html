@@ -3,89 +3,147 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Login / Registrierung</title>
+<title>Hashcore Dashboard</title>
 <style>
   body {
-    background: linear-gradient(135deg, #1e1e3f, #3c1361);
-    font-family: Arial, sans-serif;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top left, #1b0033, #0a001a);
+    color: white;
+    overflow-x: hidden;
   }
-  #container {
-    background: #2a1e4b;
-    padding: 30px;
-    border-radius: 12px;
-    width: 320px;
-    box-shadow: 0 0 20px #7b45f4;
+  header {
+    background: rgba(255,255,255,0.05);
+    padding: 2rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    box-shadow: 0 0 20px violet;
   }
-  input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 8px;
+  .container {
+    padding: 2rem;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #7b2cbf;
+    box-shadow: 0 0 15px #7b2cbf;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+  }
+  .glow-button {
+    padding: 0.75rem 1.5rem;
     border: none;
+    border-radius: 6px;
+    background-color: #7b2cbf;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px #7b2cbf;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .glow-button:hover {
+    background-color: #894edd;
+  }
+  input[type="email"], input[type="password"], input[type="text"] {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 5px;
+    border: none;
+    margin: 0.5rem 0;
     font-size: 1rem;
   }
-  button {
-    margin-top: 15px;
-    width: 100%;
-    padding: 12px;
-    background: #7b45f4;
-    border: none;
-    border-radius: 8px;
+  footer {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #aaa;
+    background: #110022;
+    margin-top: 4rem;
+  }
+  .small {
+    font-size: 0.85rem;
+    color: #ccc;
+  }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
     color: white;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  button:hover {
-    background: #9046ff;
-  }
-  #message {
-    margin-top: 15px;
-    min-height: 24px;
-  }
-  label {
-    display: block;
-    margin-top: 10px;
     font-size: 0.9rem;
   }
-  #confirmPassword {
-    margin-top: 10px;
-  }
-  .switch-mode {
-    margin-top: 15px;
-    text-align: center;
+  .checkbox-label input {
+    margin-right: 0.5rem;
     cursor: pointer;
-    color: #aabbff;
+  }
+  .error {
+    color: #f44336;
+    margin-top: 0.5rem;
+  }
+  .success {
+    color: #4caf50;
+    margin-top: 0.5rem;
+  }
+  a.agb-link {
+    color: #5e8bff;
+    text-decoration: underline;
+  }
+  button.link-button {
+    background: none;
+    border: none;
+    color: #5e8bff;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
     text-decoration: underline;
   }
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 </head>
 <body>
 
-<div id="container">
-  <h2 id="formTitle">Login</h2>
+<header>⚡ Hashcore Dashboard</header>
 
-  <input id="email" type="email" placeholder="E-Mail" />
-  <input id="password" type="password" placeholder="Passwort" />
-  <input id="confirmPassword" type="password" placeholder="Passwort bestätigen" style="display:none" />
+<div class="container">
+  <!-- Login Form -->
+  <div id="loginForm">
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="E-Mail" autocomplete="username" />
+    <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
+    <label class="checkbox-label" for="loginAccept">
+      <input type="checkbox" id="loginAccept" />
+      Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>
+    </label>
+    <button class="glow-button" id="loginBtn">Login</button>
+    <p id="loginError" class="error"></p>
+    <p>Kein Konto? <button class="link-button" id="showRegisterBtn">Hier registrieren</button></p>
+  </div>
 
-  <label><input type="checkbox" id="agbCheckbox" /> Ich akzeptiere die <a href="#" target="_blank" style="color:#aabbff;">AGB</a></label>
-
-  <button id="submitBtn">Login</button>
-
-  <div id="message"></div>
-  <div class="switch-mode" id="switchMode">Noch kein Konto? Hier registrieren</div>
+  <!-- Register Form -->
+  <div id="registerForm" style="display:none;">
+    <h2>Registrieren</h2>
+    <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
+    <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
+    <label class="checkbox-label" for="registerAccept">
+      <input type="checkbox" id="registerAccept" />
+      Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>
+    </label>
+    <button class="glow-button" id="registerBtn">Registrieren</button>
+    <p id="registerError" class="error"></p>
+    <p>Schon Konto? <button class="link-button" id="showLoginBtn">Hier einloggen</button></p>
+  </div>
 </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<footer>
+  Hashcore · Dorfstrasse 233 · 3433 Schwanden i.E · jaun190@gmail.com
+</footer>
 
 <script>
+  // Firebase Config hier rein kopieren
   const firebaseConfig = {
     apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
     authDomain: "hashcore-f4d96.firebaseapp.com",
@@ -95,94 +153,97 @@
     appId: "1:386291046348:web:e3aa80fd0ef77900786f69"
   };
 
+  // Firebase initialisieren
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
-  const confirmPasswordInput = document.getElementById('confirmPassword');
-  const agbCheckbox = document.getElementById('agbCheckbox');
-  const submitBtn = document.getElementById('submitBtn');
-  const messageDiv = document.getElementById('message');
-  const switchMode = document.getElementById('switchMode');
-  const formTitle = document.getElementById('formTitle');
+  // Elemente aus DOM
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const loginEmail = document.getElementById('loginEmail');
+  const loginPassword = document.getElementById('loginPassword');
+  const loginAccept = document.getElementById('loginAccept');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginError = document.getElementById('loginError');
 
-  let isLoginMode = true;
+  const registerEmail = document.getElementById('registerEmail');
+  const registerPassword = document.getElementById('registerPassword');
+  const registerAccept = document.getElementById('registerAccept');
+  const registerBtn = document.getElementById('registerBtn');
+  const registerError = document.getElementById('registerError');
 
-  function showMessage(msg, error = false) {
-    messageDiv.textContent = msg;
-    messageDiv.style.color = error ? '#ff4c4c' : '#aaffaa';
+  const showRegisterBtn = document.getElementById('showRegisterBtn');
+  const showLoginBtn = document.getElementById('showLoginBtn');
+
+  // Fehlermeldungen zurücksetzen
+  function clearMessages() {
+    loginError.textContent = '';
+    registerError.textContent = '';
   }
 
-  switchMode.addEventListener('click', () => {
-    isLoginMode = !isLoginMode;
-    if (isLoginMode) {
-      formTitle.textContent = 'Login';
-      submitBtn.textContent = 'Login';
-      confirmPasswordInput.style.display = 'none';
-      switchMode.textContent = 'Noch kein Konto? Hier registrieren';
-    } else {
-      formTitle.textContent = 'Registrieren';
-      submitBtn.textContent = 'Registrieren';
-      confirmPasswordInput.style.display = 'block';
-      switchMode.textContent = 'Bereits ein Konto? Hier einloggen';
-    }
-    messageDiv.textContent = '';
-    emailInput.value = '';
-    passwordInput.value = '';
-    confirmPasswordInput.value = '';
-    agbCheckbox.checked = false;
+  // Zwischen Login und Register umschalten
+  showRegisterBtn.addEventListener('click', e => {
+    e.preventDefault();
+    clearMessages();
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
   });
 
-  submitBtn.addEventListener('click', () => {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-    const confirmPassword = confirmPasswordInput.value.trim();
+  showLoginBtn.addEventListener('click', e => {
+    e.preventDefault();
+    clearMessages();
+    registerForm.style.display = 'none';
+    loginForm.style.display = 'block';
+  });
 
-    if (!email || !password) {
-      showMessage('Bitte E-Mail und Passwort eingeben.', true);
+  // Login Event
+  loginBtn.addEventListener('click', async () => {
+    clearMessages();
+    if (!loginEmail.value || !loginPassword.value) {
+      loginError.textContent = 'Bitte E-Mail und Passwort eingeben.';
       return;
     }
-
-    if (!agbCheckbox.checked) {
-      showMessage('Bitte akzeptiere die AGB.', true);
+    if (!loginAccept.checked) {
+      loginError.textContent = 'Bitte akzeptiere die AGB.';
       return;
     }
-
-    if (!isLoginMode && password !== confirmPassword) {
-      showMessage('Passwörter stimmen nicht überein.', true);
-      return;
-    }
-
-    if (isLoginMode) {
-      // Login
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          showMessage('Login erfolgreich! Weiterleitung...');
-          setTimeout(() => {
-            window.location.href = 'dashboard.html';
-          }, 1000);
-        })
-        .catch(error => {
-          showMessage('Fehler: ' + error.message, true);
-        });
-    } else {
-      // Registrierung
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          showMessage('Registrierung erfolgreich! Bitte überprüfe deine E-Mails und logge dich ein.');
-          emailInput.value = '';
-          passwordInput.value = '';
-          confirmPasswordInput.value = '';
-          agbCheckbox.checked = false;
-          // Optional: Automatisch zum Login-Modus wechseln
-          switchMode.click();
-        })
-        .catch(error => {
-          showMessage('Fehler: ' + error.message, true);
-        });
+    try {
+      const userCredential = await auth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value);
+      if (!userCredential.user.emailVerified) {
+        loginError.textContent = 'Bitte bestätige zuerst deine E-Mail-Adresse.';
+        await auth.signOut();
+        return;
+      }
+      // Weiterleitung nach dashboard.html
+      window.location.href = 'dashboard.html';
+    } catch (error) {
+      loginError.textContent = 'Login fehlgeschlagen: ' + error.message;
     }
   });
+
+  // Registrierung Event
+  registerBtn.addEventListener('click', async () => {
+    clearMessages();
+    if (!registerEmail.value || !registerPassword.value) {
+      registerError.textContent = 'Bitte E-Mail und Passwort eingeben.';
+      return;
+    }
+    if (!registerAccept.checked) {
+      registerError.textContent = 'Bitte akzeptiere die AGB.';
+      return;
+    }
+    try {
+      const userCredential = await auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value);
+      await userCredential.user.sendEmailVerification();
+      alert('Registrierung erfolgreich! Bitte bestätige deine E-Mail.');
+      // Nach Registrierung auf Login-Form zurücksetzen
+      registerForm.style.display = 'none';
+      loginForm.style.display = 'block';
+    } catch (error) {
+      registerError.textContent = 'Registrierung fehlgeschlagen: ' + error.message;
+    }
+  });
+
 </script>
 
 </body>
