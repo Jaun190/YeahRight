@@ -7,207 +7,206 @@
 <style>
   body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #002f6c, #00509e);
-    color: #e0e7ff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top left, #1b0033, #0a001a);
+    color: white;
+    overflow-x: hidden;
   }
   header {
-    width: 100%;
-    max-width: 420px;
-    font-size: 2.4rem;
-    font-weight: 700;
+    background: rgba(255,255,255,0.05);
+    padding: 2rem;
     text-align: center;
-    padding: 1rem 0;
-    color: #bbdefb;
-    text-shadow: 0 0 8px #82b1ff;
-    user-select: none;
+    font-size: 2rem;
+    font-weight: bold;
+    box-shadow: 0 0 20px violet;
+  }
+  .container {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 420px;
+    margin: 0 auto;
   }
   .card {
-    background: rgba(10, 33, 64, 0.85);
-    border-radius: 12px;
-    box-shadow: 0 0 18px rgba(0, 82, 204, 0.8);
-    border: 1.5px solid #0b3d91;
-    padding: 2rem;
-    width: 100%;
-    max-width: 420px;
-    margin-top: 2rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #7b2cbf;
+    box-shadow: 0 0 15px #7b2cbf;
+    padding: 1.5rem;
+    border-radius: 1rem;
   }
-  button {
-    background-color: #1a73e8;
-    color: white;
-    font-size: 1.1rem;
+  .glow-button {
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 8px;
-    padding: 0.85rem 1.5rem;
+    border-radius: 6px;
+    background-color: #7b2cbf;
+    color: white;
+    font-size: 1rem;
     cursor: pointer;
-    box-shadow: 0 0 14px #2979ff;
-    margin-top: 1rem;
+    box-shadow: 0 0 15px #7b2cbf;
+    margin-top: 0.5rem;
     width: 100%;
-    transition: background-color 0.3s ease;
   }
-  button:hover {
-    background-color: #4a90e2;
+  .glow-button:hover {
+    background-color: #894edd;
   }
   input[type="email"], input[type="password"], input[type="text"] {
     width: 100%;
-    padding: 0.65rem;
-    border-radius: 8px;
-    border: 1px solid #1a73e8;
-    margin-top: 0.75rem;
+    padding: 0.6rem;
+    border-radius: 5px;
+    border: none;
+    margin: 0.5rem 0;
     font-size: 1rem;
-    background-color: #003366;
-    color: #cfd8dc;
-    outline: none;
   }
-  input[type="email"]:focus,
-  input[type="password"]:focus,
-  input[type="text"]:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 6px #4a90e2;
+  footer {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #aaa;
+    background: #110022;
+    margin-top: 4rem;
+  }
+  .small {
+    font-size: 0.85rem;
+    color: #ccc;
+  }
+  #loginPopup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  #loginPopupContent {
+    background: #220044;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 20px #7b2cbf;
+  }
+  #loginPopupContent h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
   }
   .checkbox-label {
-    margin-top: 0.75rem;
     display: flex;
     align-items: center;
-    color: #bbdefb;
+    margin-top: 0.5rem;
+    color: white;
     font-size: 0.9rem;
   }
   .checkbox-label input {
     margin-right: 0.5rem;
     cursor: pointer;
   }
-  a.button-link {
-    color: #82b1ff;
-    text-decoration: underline;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
-    font: inherit;
-    font-weight: 600;
-  }
-  a.button-link:hover {
-    color: #bbdefb;
-  }
   .error {
-    color: #ff5252;
+    color: #f44336;
     margin-top: 0.5rem;
   }
   .success {
-    color: #81c784;
+    color: #4caf50;
     margin-top: 0.5rem;
   }
-  #loginPopup {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 36, 91, 0.95);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+  a.agb-link {
+    color: #5e8bff;
+    text-decoration: underline;
   }
-  #loginPopupContent {
-    background: #002f6c;
-    padding: 2rem 2.5rem;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 420px;
-    box-shadow: 0 0 25px #2979ff;
-    color: #e0e7ff;
-    user-select: none;
-  }
-  ul {
-    padding-left: 1.2rem;
+  button.link-button {
+    background: none;
+    border: none;
+    color: #5e8bff;
+    cursor: pointer;
+    padding: 0;
     font-size: 1rem;
-    color: #bbdefb;
-  }
-  ul li {
-    margin-bottom: 1rem;
-  }
-  p.small {
-    font-size: 0.8rem;
-    color: #90caf9;
+    margin-top: 1rem;
+    text-decoration: underline;
   }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js"></script>
 </head>
 <body>
 
 <header>⚡ Hashcore Dashboard</header>
 
-<!-- Login Popup -->
+<!-- Login/Registrierung Popup -->
 <div id="loginPopup">
   <div id="loginPopupContent">
+    <!-- Login Form -->
     <div id="loginForm">
       <h2>Login</h2>
       <input type="email" id="loginEmail" placeholder="E-Mail" autocomplete="username" />
       <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
       <label class="checkbox-label" for="loginAccept">
         <input type="checkbox" id="loginAccept" />
-        Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" rel="noopener noreferrer">AGB</a>
+        Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>
       </label>
-      <button id="loginBtn">Login</button>
+      <button class="glow-button" id="loginBtn">Login</button>
       <p id="loginError" class="error"></p>
-      <p>Kein Konto? <button class="button-link" id="showRegisterBtn">Hier registrieren</button></p>
+      <p>Kein Konto? <button class="link-button" id="showRegisterBtn">Hier registrieren</button></p>
     </div>
-    <div id="registerForm" style="display:none; margin-top:1rem;">
+
+    <!-- Register Form -->
+    <div id="registerForm" style="display:none;">
       <h2>Registrieren</h2>
       <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
       <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
       <label class="checkbox-label" for="registerAccept">
         <input type="checkbox" id="registerAccept" />
-        Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" rel="noopener noreferrer">AGB</a>
+        Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>
       </label>
-      <button id="registerBtn">Registrieren</button>
+      <button class="glow-button" id="registerBtn">Registrieren</button>
       <p id="registerError" class="error"></p>
-      <p>Schon Konto? <button class="button-link" id="showLoginBtn">Hier einloggen</button></p>
+      <p>Schon Konto? <button class="link-button" id="showLoginBtn">Hier einloggen</button></p>
     </div>
   </div>
 </div>
 
-<!-- Main Dashboard -->
-<div id="mainContent" style="display:none; width: 100%; max-width: 420px;">
+<!-- Haupt Dashboard -->
+<div class="container" id="mainContent" style="display:none;">
 
+  <!-- Hashpower kaufen -->
   <div class="card">
     <h2>⚡ Hashpower kaufen</h2>
-    <p>Wähle einen Algorithmus. Für mehr Einheiten mehrfach kaufen.</p>
+    <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
     <ul>
       <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br/>
-        <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank"><button>Kaufen</button></a>
+        <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank"><button class="glow-button">Kaufen</button></a>
       </li>
       <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br/>
-        <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank"><button>Kaufen</button></a>
+        <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank"><button class="glow-button">Kaufen</button></a>
       </li>
       <li><strong>Etchash:</strong> 1 Einheit = CHF 52.-<br/>
-        <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank"><button>Kaufen</button></a>
+        <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank"><button class="glow-button">Kaufen</button></a>
       </li>
       <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br/>
-        <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank"><button>Kaufen</button></a>
+        <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank"><button class="glow-button">Kaufen</button></a>
       </li>
       <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br/>
-        <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank"><button>Kaufen</button></a>
+        <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank"><button class="glow-button">Kaufen</button></a>
       </li>
     </ul>
     <p class="small">⚠ Mehrmals kaufen für mehr Hashpower!</p>
   </div>
 
+  <!-- Referrals -->
   <div class="card">
     <h2>🧑‍🤝‍🧑 Referrals</h2>
     <p>Empfohlene Partner: <strong>12</strong></p>
     <p>Provision: <strong>CHF 600.-</strong> (50.- pro Kauf)</p>
-    <button onclick="copyReferral()">Referral-Link kopieren</button>
+    <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
     <p id="refStatus" class="small"></p>
   </div>
 
+  <!-- Auszahlung -->
   <div class="card">
     <h2>💸 Auszahlung</h2>
     <p>Dein Guthaben: <strong>CHF 428.-</strong></p>
     <input type="text" id="walletInput" placeholder="IBAN oder Krypto-Adresse hier eingeben" />
-    <button onclick="submitPayout()">Auszahlung anfordern</button>
+    <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
     <p id="payoutStatus" class="small"></p>
   </div>
 
@@ -294,7 +293,7 @@
         return;
       }
       loginPopup.style.display = 'none';
-      mainContent.style.display = 'block';
+      mainContent.style.display = 'flex';
     } catch (error) {
       loginError.textContent = `Login fehlgeschlagen: ${error.message}`;
     }
@@ -324,7 +323,7 @@
   onAuthStateChanged(auth, (user) => {
     if (user && user.emailVerified) {
       loginPopup.style.display = 'none';
-      mainContent.style.display = 'block';
+      mainContent.style.display = 'flex';
     } else {
       loginPopup.style.display = 'flex';
       mainContent.style.display = 'none';
@@ -350,6 +349,10 @@
     payoutStatus.style.color = '#81c784';
   };
 </script>
+
+<footer>
+  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
+</footer>
 
 </body>
 </html>
