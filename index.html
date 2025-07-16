@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hashcore Dashboard</title>
   <style>
     body {
@@ -12,7 +12,6 @@
       color: white;
       overflow-x: hidden;
     }
-
     header {
       background: rgba(255, 255, 255, 0.05);
       padding: 2rem;
@@ -21,14 +20,12 @@
       font-weight: bold;
       box-shadow: 0 0 20px violet;
     }
-
     .container {
       padding: 2rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #7b2cbf;
@@ -36,7 +33,6 @@
       padding: 1.5rem;
       border-radius: 1rem;
     }
-
     .glow-button {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -47,35 +43,15 @@
       cursor: pointer;
       box-shadow: 0 0 15px #7b2cbf;
     }
-
     .glow-button:hover {
       background-color: #894edd;
     }
-
-    .popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
+    select {
+      margin: 0.5rem 0 1rem 0;
+      padding: 0.5rem;
+      border-radius: 6px;
+      width: 100%;
     }
-
-    .popup-content {
-      border: 2px solid hotpink;
-      padding: 2rem;
-      background: #0a001a;
-      border-radius: 1rem;
-      max-width: 400px;
-      text-align: center;
-      color: white;
-      box-shadow: 0 0 20px hotpink;
-    }
-
     footer {
       padding: 1rem;
       text-align: center;
@@ -87,95 +63,126 @@
   </style>
 </head>
 <body>
-
   <header>⚡ Hashcore Dashboard</header>
 
   <div class="container">
     <div class="card">
-      <h2>⚙️ Deine Hashrate</h2>
-      <p>Aktuelle Hashrate: <strong>750 MH/s</strong></p>
-      <input type="range" min="100" max="10000" value="750" />
-      <p>Preis: CHF <strong>349.–</strong></p>
-      <a href="https://buy.stripe.com/4gM00ieLk9Fu2x1eLGf7i00">
-        <button class="glow-button">Jetzt Hashrate kaufen</button>
-      </a>
-    </div>
+      <h2>⚙️ Hashpower kaufen</h2>
 
-    <div class="card">
-      <h2>👥 Referrals</h2>
-      <p>Empfohlene Partner: <strong>12</strong></p>
-      <p>Provision: <strong>CHF 600.–</strong></p>
-      <button class="glow-button">Referral-Link kopieren</button>
-    </div>
+      <label>SHA-256 (1 Th/s):</label>
+      <select onchange="buyHashrate(this.value)">
+        <option value="">Einheit wählen</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=1">1</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=2">2</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=3">3</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=4">4</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=5">5</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=6">6</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=7">7</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=8">8</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=9">9</option>
+        <option value="https://buy.stripe.com/4gM00ieLk9Fu2x1eLG?quantity=10">10</option>
+      </select>
 
-    <div class="card">
-      <h2>💰 Auszahlung</h2>
-      <p>Dein Guthaben: <strong>CHF 428.–</strong></p>
-      <button class="glow-button" onclick="openWalletPopup()">Auszahlen</button>
+      <label>Scrypt (1 Mh/s):</label>
+      <select onchange="buyHashrate(this.value)">
+        <option value="">Einheit wählen</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=1">1</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=2">2</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=3">3</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=4">4</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=5">5</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=6">6</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=7">7</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=8">8</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=9">9</option>
+        <option value="https://buy.stripe.com/cN2aHH2rd2xy1xieLY?quantity=10">10</option>
+      </select>
+
+      <label>Etchash (1 Mh/s):</label>
+      <select onchange="buyHashrate(this.value)">
+        <option value="">Einheit wählen</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=1">1</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=2">2</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=3">3</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=4">4</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=5">5</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=6">6</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=7">7</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=8">8</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=9">9</option>
+        <option value="https://buy.stripe.com/28o2aFgXP69xdkEcMR?quantity=10">10</option>
+      </select>
+
+      <label>KawPow (1 Mh/s):</label>
+      <select onchange="buyHashrate(this.value)">
+        <option value="">Einheit wählen</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=1">1</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=2">2</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=3">3</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=4">4</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=5">5</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=6">6</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=7">7</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=8">8</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=9">9</option>
+        <option value="https://buy.stripe.com/aEUbLU2rd4OX6zqaEH?quantity=10">10</option>
+      </select>
+
+      <label>Octopus (1 Mh/s):</label>
+      <select onchange="buyHashrate(this.value)">
+        <option value="">Einheit wählen</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=1">1</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=2">2</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=3">3</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=4">4</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=5">5</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=6">6</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=7">7</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=8">8</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=9">9</option>
+        <option value="https://buy.stripe.com/6oEaHH2rdgAV4oI8wE?quantity=10">10</option>
+      </select>
     </div>
 
     <div class="card" id="nicehash-devices">
-      <p>🖥 Nicehash Geräte werden geladen…</p>
-    </div>
-  </div>
-
-  <!-- Wallet-Adresse Popup -->
-  <div id="walletPopup" class="popup" style="display: none;">
-    <div class="popup-content">
-      <h2>📬 Wallet-Adresse eingeben</h2>
-      <input type="text" placeholder="z. B. 1qyxy…" style="width:100%;padding:0.5rem;margin:1rem 0;border-radius:5px;" />
-      <button class="glow-button" onclick="closeWalletPopup()">Bestätigen</button>
+      <h2>🛠️ Nicehash Geräte</h2>
+      <p>Geräte werden geladen …</p>
     </div>
   </div>
 
   <footer>
-    Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
+    Hashcore – Dorfstrasse 233 – 3433 Schwanden i. E · jaun190@gmail.com
   </footer>
 
   <script>
-    // Popup deaktiviert für Admin-Test
-    window.addEventListener('DOMContentLoaded', () => {
-      // Lizenzprüfung vorübergehend deaktiviert
-      loadNiceHashDevices();
-    });
-
-    function openWalletPopup() {
-      document.getElementById('walletPopup').style.display = 'flex';
+    function buyHashrate(url) {
+      if (url) window.location.href = url;
     }
 
-    function closeWalletPopup() {
-      document.getElementById('walletPopup').style.display = 'none';
-    }
-
-    // Nicehash Geräte laden
-    async function loadNiceHashDevices() {
+    async function loadNicehashDevices() {
       const container = document.getElementById('nicehash-devices');
       try {
         const response = await fetch('https://api2.nicehash.com/main/api/v2/public/mining/devices');
         const data = await response.json();
-
-        if (!data.devices || data.devices.length === 0) {
-          container.innerHTML = "<p>⚠️ Keine Geräte gefunden.</p>";
+        if (!data || !data.devices || data.devices.length === 0) {
+          container.innerHTML += "<p>⚠️ Keine Geräte gefunden.</p>";
           return;
         }
-
-        container.innerHTML = "<h2>🖥 NiceHash Geräte</h2>";
-        data.devices.slice(0, 5).forEach(device => {
-          const div = document.createElement('div');
-          div.innerHTML = `
-            <strong>${device.name}</strong><br/>
-            Hersteller: ${device.brand}<br/>
-            Algorithmus: ${device.algorithm.algorithm}<br/>
-            Hashrate: ${device.algorithm.displayHashrate}<br/>
-            Stromverbrauch: ${device.powerConsumption} W
-            <hr style="opacity:0.2;" />
-          `;
-          container.appendChild(div);
-        });
-      } catch (error) {
-        container.innerHTML = "<p>⚠️ Fehler beim Laden der Geräte.</p>";
+        const list = data.devices.slice(0, 5).map(device => `
+          <div style="margin-top:1rem;opacity:0.9;">
+            <strong>${device.name}</strong><br>
+            Algorithmus: ${device.algorithm.algorithm}<br>
+            Hashrate: ${device.algorithm.displayHashrate}<br>
+            Verbrauch: ${device.powerConsumption} W
+          </div>
+        `).join('');
+        container.innerHTML += list;
+      } catch (e) {
+        container.innerHTML += "<p>⚠️ Fehler beim Laden der Geräte.</p>";
       }
     }
+    document.addEventListener('DOMContentLoaded', loadNicehashDevices);
   </script>
 </body>
 </html>
