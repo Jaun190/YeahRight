@@ -1,178 +1,124 @@
-<!DOCTYPE html>
-<html lang="de">
+<!DOCTYPE html><html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore Dashboard</title>
+  <title>HashCore Dashboard</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at top left, #1b0033, #0a001a);
+      background: #0d0d0d;
       color: white;
-      overflow-x: hidden;
-    }
-    header {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2rem;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      box-shadow: 0 0 20px violet;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
     }
     .container {
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1a1a1a;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
     }
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #7b2cbf;
-      box-shadow: 0 0 15px #7b2cbf;
-      padding: 1.5rem;
-      border-radius: 1rem;
+    h1, h2 {
+      text-align: center;
     }
-    .glow-button {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 6px;
-      background-color: #7b2cbf;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 15px #7b2cbf;
-    }
-    .glow-button:hover {
-      background-color: #894edd;
+    label, input, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
     }
     .popup {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.85);
-      display: none;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
+      z-index: 999;
     }
     .popup-content {
-      border: 2px solid hotpink;
-      padding: 2rem;
-      background: #0a001a;
-      border-radius: 1rem;
-      max-width: 400px;
-      width: 100%;
+      background: #111;
+      padding: 30px;
+      border-radius: 12px;
       text-align: center;
-      color: white;
-      box-shadow: 0 0 20px hotpink;
     }
-    footer {
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #aaa;
-      background: #110022;
-      margin-top: 4rem;
+    .glow-button {
+      background: #00ff8c;
+      color: black;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
     }
   </style>
-  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-
-  <header>💻 Hashcore Dashboard</header>
-
   <div class="container">
-    <div class="card">
-      <h2>⚡️ Deine Hashrate</h2>
-      <p>Aktuelle Hashrate: <strong>750 MH/s</strong></p>
-      <input type="range" min="100" max="10000" value="750" />
-      <p>Preis: CHF <strong>49.–</strong></p>
-      <button class="glow-button" onclick="openLicensePopup()">Jetzt Hashrate kaufen</button>
-    </div>
+    <h1>🧠 HashCore Dashboard</h1><h2>💸 Hashrate kaufen</h2>
+<label for="hashrate">Wähle deine Hashrate (MH/s):</label>
+<input type="number" id="hashrate" min="100" max="10000" step="100" value="1000" />
+<p>Preis: <span id="priceDisplay">CHF 490.00</span></p>
+<button class="glow-button" onclick="openHashratePopup()">Jetzt kaufen</button>
 
-    <div class="card">
-      <h2>📣 Referrals</h2>
-      <p>Empfohlene Partner: <strong>12</strong></p>
-      <p>Provision: <strong>CHF 600.–</strong></p>
-      <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
-    </div>
+<h2>🔐 Lizenz</h2>
+<button class="glow-button" onclick="openLicensePopup()">Lizenz kaufen – CHF 49.–</button>
 
-    <div class="card">
-      <h2>💰 Auszahlung</h2>
-      <p>Dein Guthaben: <strong>428.–</strong></p>
-      <button class="glow-button" onclick="openWalletPopup()">Auszahlen</button>
-    </div>
-  </div>
+<h2>👥 Referral</h2>
+<p>Wenn dein geworbener Partner eine Lizenz & Hashrate kauft, erhältst du CHF 50.– Provision!</p>
 
-  <!-- Wallet Popup -->
-  <div id="walletPopup" class="popup">
+  </div>  <!-- Lizenz Popup -->  <div id="licensePopup" class="popup" style="display:none;">
     <div class="popup-content">
-      <h2>💸 Wallet-Adresse eingeben</h2>
-      <input type="text" placeholder="z. B. 1qy..." style="width:100%;padding:0.5rem;margin:1rem 0;border-radius:5px;" />
-      <button class="glow-button" onclick="closeWalletPopup()">Bestätigen</button>
-    </div>
-  </div>
-
-  <!-- Lizenzkauf Popup -->
-  <div id="licensePopup" class="popup">
-    <div class="popup-content">
-      <h2>🔐 Lizenz erforderlich</h2>
-      <p>Um das System zu nutzen, musst du zuerst eine Lizenz für CHF 49.– erwerben.</p>
-      <button class="glow-button" onclick="buyLicense()">Lizenz kaufen</button>
-      <br><br>
+      <h2>⚠️ Lizenz erforderlich</h2>
+      <p>Lizenzpreis: CHF 49.–</p>
+      <button class="glow-button" onclick="window.location.href='https://buy.stripe.com/14kaHo3KD8MK23S6op'">Lizenz kaufen</button><br><br>
       <button class="glow-button" onclick="closeLicensePopup()">Abbrechen</button>
     </div>
-  </div>
+  </div>  <!-- Hashrate Popup -->  <div id="hashratePopup" class="popup" style="display:none;">
+    <div class="popup-content">
+      <h2>💸 Hashrate Checkout</h2>
+      <p id="finalHashrate"></p>
+      <p id="finalPrice"></p>
+      <button id="stripeCheckoutBtn" class="glow-button">Mit Stripe zahlen</button><br><br>
+      <button class="glow-button" onclick="closeHashratePopup()">Abbrechen</button>
+    </div>
+  </div>  <script>
+    const hashrateInput = document.getElementById('hashrate');
+    const priceDisplay = document.getElementById('priceDisplay');
 
-  <footer>
-    Hashcore • Dorfstrasse 233 • 3433 Schwanden i. E • jaun190@gmail.com
-  </footer>
-
-  <script>
-    const stripe = Stripe("pk_live_51Rcj8xCmBXPX4k4Hrv1DHJbvYpwgAi3Tf83I7mAtTu2iIpwLUGbnDhigjrJy2AspWD8IEcTKTDvjRIKMjoAoAIyh00nXARFEQJ");
-
-    function buyLicense() {
-      stripe.redirectToCheckout({
-        lineItems: [{
-          price: "price_1RlSGXCmBXPX4k4HlS0UwEzf",
-          quantity: 1,
-        }],
-        mode: "payment",
-        successUrl: "https://hashcore.ch/success.html",
-        cancelUrl: "https://hashcore.ch/index.html",
-      });
+    hashrateInput.addEventListener('input', updatePrice);
+    function updatePrice() {
+      const rate = parseInt(hashrateInput.value);
+      const price = (rate * 0.49).toFixed(2);
+      priceDisplay.textContent = `CHF ${price}`;
     }
 
     function openLicensePopup() {
-      document.getElementById("licensePopup").style.display = "flex";
+      document.getElementById('licensePopup').style.display = 'flex';
     }
-
     function closeLicensePopup() {
-      document.getElementById("licensePopup").style.display = "none";
+      document.getElementById('licensePopup').style.display = 'none';
     }
 
-    function openWalletPopup() {
-      document.getElementById("walletPopup").style.display = "flex";
-    }
+    function openHashratePopup() {
+      const rate = parseInt(hashrateInput.value);
+      const price = (rate * 0.49).toFixed(2);
+      document.getElementById('finalHashrate').innerText = `${rate} MH/s`;
+      document.getElementById('finalPrice').innerText = `CHF ${price}`;
 
-    function closeWalletPopup() {
-      document.getElementById("walletPopup").style.display = "none";
-    }
-
-    function copyReferral() {
-      const link = "https://hashcore.ch/?ref=123456";
-      navigator.clipboard.writeText(link);
-      alert("Referral-Link kopiert!");
-    }
-
-    window.onload = function () {
-      if (!localStorage.getItem("hasLicense")) {
-        openLicensePopup();
+      // Stripe Link vorbereiten (hier Platzhalter-Link, später dynamisch generieren mit Backend)
+      const stripeLink = 'https://buy.stripe.com/test_dummy';
+      document.getElementById('stripeCheckoutBtn').onclick = function () {
+        window.location.href = stripeLink;
       }
+
+      document.getElementById('hashratePopup').style.display = 'flex';
     }
-  </script>
-</body>
+    function closeHashratePopup() {
+      document.getElementById('hashratePopup').style.display = 'none';
+    }
+
+    updatePrice();
+  </script></body>
 </html>
