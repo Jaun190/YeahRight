@@ -44,13 +44,13 @@
     font-size: 1rem;
     cursor: pointer;
     box-shadow: 0 0 15px #7b2cbf;
-    margin-top: 0.5rem;
     width: 100%;
+    margin-top: 0.5rem;
   }
   .glow-button:hover {
     background-color: #894edd;
   }
-  input[type="email"], input[type="password"], input[type="text"] {
+  input[type="email"], input[type="password"] {
     width: 100%;
     padding: 0.6rem;
     border-radius: 5px;
@@ -58,43 +58,10 @@
     margin: 0.5rem 0;
     font-size: 1rem;
   }
-  footer {
-    padding: 1rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: #aaa;
-    background: #110022;
-    margin-top: 4rem;
-  }
-  .small {
-    font-size: 0.85rem;
-    color: #ccc;
-  }
-  #loginPopup {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  #loginPopupContent {
-    background: #220044;
-    padding: 2rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 0 20px #7b2cbf;
-  }
-  #loginPopupContent h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
   .checkbox-label {
     display: flex;
     align-items: center;
-    margin-top: 0.5rem;
+    margin: 0.5rem 0;
     color: white;
     font-size: 0.9rem;
   }
@@ -110,119 +77,88 @@
     color: #4caf50;
     margin-top: 0.5rem;
   }
-  a.agb-link {
+  .agb-link {
     color: #5e8bff;
     text-decoration: underline;
   }
-  button.link-button {
-    background: none;
-    border: none;
-    color: #5e8bff;
-    cursor: pointer;
-    padding: 0;
-    font-size: 1rem;
-    margin-top: 1rem;
-    text-decoration: underline;
+  footer {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #aaa;
+    background: #110022;
+    margin-top: 4rem;
   }
 </style>
-<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 </head>
 <body>
 
 <header>⚡ Hashcore Dashboard</header>
 
-<!-- Login/Registrierung Popup -->
-<div id="loginPopup">
-  <div id="loginPopupContent">
-    <!-- Login Form -->
-    <div id="loginForm">
-      <h2>Login</h2>
-      <input type="email" id="loginEmail" placeholder="E-Mail" autocomplete="username" />
-      <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
-      <label class="checkbox-label" for="loginAccept">
-        <input type="checkbox" id="loginAccept" />
-        Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>
-      </label>
-      <button class="glow-button" id="loginBtn">Login</button>
-      <p id="loginError" class="error"></p>
-      <p>Kein Konto? <button class="link-button" id="showRegisterBtn">Hier registrieren</button></p>
+<div class="container">
+
+  <!-- Register Form -->
+  <div id="registerForm">
+    <h2>Registrieren</h2>
+    <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
+    <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
+    <label class="checkbox-label" for="registerAccept">
+      <input type="checkbox" id="registerAccept" />
+      Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>.
+    </label>
+    <button class="glow-button" id="registerBtn">Registrieren</button>
+    <p id="registerError" class="error"></p>
+    <p id="registerSuccess" class="success"></p>
+  </div>
+
+  <!-- Haupt Dashboard -->
+  <div id="mainContent" style="display:none;">
+    <!-- Beispiel Dashboard-Inhalt -->
+    <div class="card">
+      <h2>⚡ Hashpower kaufen</h2>
+      <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
+      <ul>
+        <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.<br/>
+          <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8niF7101" target="_blank"><button class="glow-button">Kaufen</button></a>
+        </li>
+        <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.<br/>
+          <a href="https://buy.stripe.com/9B62qelcKRGZ8nif7103" target="_blank"><button class="glow-button">Kaufen</button></a>
+        </li>
+        <li><strong>Etcash:</strong> 1 Einheit = CHF 52.<br/>
+          <a href="https://buy.stripe.com/cNli28qFp018y3x5b6f7104" target="_blank"><button class="glow-button">Kaufen</button></a>
+        </li>
+        <li><strong>KawPow:</strong> 1 Einheit = CHF 78.<br/>
+          <a href="https://buy.stripe.com/4gMaEW0U41afjNavqf7105" target="_blank"><button class="glow-button">Kaufen</button></a>
+        </li>
+        <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.<br/>
+          <a href="https://buy.stripe.com/aFa00I46GdVK4F9cDyf7106" target="_blank"><button class="glow-button">Kaufen</button></a>
+        </li>
+      </ul>
+      <p class="small">▲ Mehrmals kaufen für mehr Hashpower!</p>
     </div>
 
-    <!-- Register Form -->
-    <div id="registerForm" style="display:none;">
-      <h2>Registrieren</h2>
-      <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
-      <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
-      <label class="checkbox-label" for="registerAccept">
-        <input type="checkbox" id="registerAccept" />
-        Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>
-      </label>
-      <button class="glow-button" id="registerBtn">Registrieren</button>
-      <p id="registerError" class="error"></p>
-      <p>Schon Konto? <button class="link-button" id="showLoginBtn">Hier einloggen</button></p>
+    <div class="card">
+      <h2>👥 Referrals</h2>
+      <p>Empfohlene Partner: <strong>12</strong></p>
+      <p>Provision: <strong>CHF 600.-</strong> (50.- pro Kauf)</p>
+      <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
+      <p id="refStatus" class="small"></p>
     </div>
-  </div>
-</div>
 
-<!-- Haupt Dashboard -->
-<div class="container" id="mainContent" style="display:none;">
-
-  <!-- Hashpower kaufen -->
-  <div class="card">
-    <h2>⚡ Hashpower kaufen</h2>
-    <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
-    <ul>
-      <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br/>
-        <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank"><button class="glow-button">Kaufen</button></a>
-      </li>
-      <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br/>
-        <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank"><button class="glow-button">Kaufen</button></a>
-      </li>
-      <li><strong>Etchash:</strong> 1 Einheit = CHF 52.-<br/>
-        <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank"><button class="glow-button">Kaufen</button></a>
-      </li>
-      <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br/>
-        <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank"><button class="glow-button">Kaufen</button></a>
-      </li>
-      <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br/>
-        <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank"><button class="glow-button">Kaufen</button></a>
-      </li>
-    </ul>
-    <p class="small">⚠ Mehrmals kaufen für mehr Hashpower!</p>
-  </div>
-
-  <!-- Referrals -->
-  <div class="card">
-    <h2>🧑‍🤝‍🧑 Referrals</h2>
-    <p>Empfohlene Partner: <strong>12</strong></p>
-    <p>Provision: <strong>CHF 600.-</strong> (50.- pro Kauf)</p>
-    <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
-    <p id="refStatus" class="small"></p>
-  </div>
-
-  <!-- Auszahlung -->
-  <div class="card">
-    <h2>💸 Auszahlung</h2>
-    <p>Dein Guthaben: <strong>CHF 428.-</strong></p>
-    <input type="text" id="walletInput" placeholder="IBAN oder Krypto-Adresse hier eingeben" />
-    <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
-    <p id="payoutStatus" class="small"></p>
+    <div class="card">
+      <h2>💸 Auszahlung</h2>
+      <p>Dein Guthaben: <strong>CHF 428.-</strong></p>
+      <input type="text" id="walletInput" placeholder="IBAN oder Krypto-Adresse hier eingeben" />
+      <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
+      <p id="payoutStatus" class="small"></p>
+    </div>
   </div>
 
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
-  import {
-    getAuth,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    sendEmailVerification,
-    signOut,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
-
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
     authDomain: "hashcore-f4d96.firebaseapp.com",
@@ -232,126 +168,46 @@
     appId: "1:386291046348:web:e3aa80fd0ef77900786f69"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  const loginPopup = document.getElementById('loginPopup');
-  const mainContent = document.getElementById('mainContent');
-
-  const loginForm = document.getElementById('loginForm');
-  const registerForm = document.getElementById('registerForm');
-
-  const loginEmail = document.getElementById('loginEmail');
-  const loginPassword = document.getElementById('loginPassword');
-  const loginAccept = document.getElementById('loginAccept');
-  const loginBtn = document.getElementById('loginBtn');
-  const loginError = document.getElementById('loginError');
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
   const registerEmail = document.getElementById('registerEmail');
   const registerPassword = document.getElementById('registerPassword');
   const registerAccept = document.getElementById('registerAccept');
   const registerBtn = document.getElementById('registerBtn');
   const registerError = document.getElementById('registerError');
-
-  const showRegisterBtn = document.getElementById('showRegisterBtn');
-  const showLoginBtn = document.getElementById('showLoginBtn');
-
-  function clearMessages() {
-    loginError.textContent = '';
-    registerError.textContent = '';
-  }
-
-  showRegisterBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    loginForm.style.display = 'none';
-    registerForm.style.display = 'block';
-    clearMessages();
-  });
-
-  showLoginBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    registerForm.style.display = 'none';
-    loginForm.style.display = 'block';
-    clearMessages();
-  });
-
-  loginBtn.addEventListener('click', async () => {
-    clearMessages();
-    if (!loginEmail.value || !loginPassword.value) {
-      loginError.textContent = 'Bitte E-Mail und Passwort eingeben.';
-      return;
-    }
-    if (!loginAccept.checked) {
-      loginError.textContent = 'Bitte akzeptiere die AGB.';
-      return;
-    }
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value);
-      if (!userCredential.user.emailVerified) {
-        loginError.textContent = 'Bitte bestätige zuerst deine E-Mail-Adresse.';
-        await signOut(auth);
-        return;
-      }
-      loginPopup.style.display = 'none';
-      mainContent.style.display = 'flex';
-    } catch (error) {
-      loginError.textContent = `Login fehlgeschlagen: ${error.message}`;
-    }
-  });
+  const registerSuccess = document.getElementById('registerSuccess');
+  const registerForm = document.getElementById('registerForm');
+  const mainContent = document.getElementById('mainContent');
 
   registerBtn.addEventListener('click', async () => {
-    clearMessages();
+    registerError.textContent = '';
+    registerSuccess.textContent = '';
+
     if (!registerEmail.value || !registerPassword.value) {
       registerError.textContent = 'Bitte E-Mail und Passwort eingeben.';
       return;
     }
+
     if (!registerAccept.checked) {
       registerError.textContent = 'Bitte akzeptiere die AGB.';
       return;
     }
+
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value);
-      await sendEmailVerification(userCredential.user);
-      alert('Registrierung erfolgreich! Bitte bestätige deine E-Mail.');
+      const userCredential = await auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value);
+      await userCredential.user.sendEmailVerification();
+      registerSuccess.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.';
       registerForm.style.display = 'none';
-      loginForm.style.display = 'block';
-    } catch (error) {
-      registerError.textContent = `Registrierung fehlgeschlagen: ${error.message}`;
-    }
-  });
-
-  onAuthStateChanged(auth, (user) => {
-    if (user && user.emailVerified) {
-      loginPopup.style.display = 'none';
       mainContent.style.display = 'flex';
-    } else {
-      loginPopup.style.display = 'flex';
-      mainContent.style.display = 'none';
+    } catch (error) {
+      registerError.textContent = 'Registrierung fehlgeschlagen: ' + error.message;
     }
   });
-
-  window.copyReferral = function() {
-    const referralLink = 'https://hashcore.io/?ref=deinName';
-    navigator.clipboard.writeText(referralLink).then(() => {
-      document.getElementById('refStatus').textContent = 'Referral-Link kopiert!';
-    });
-  };
-
-  window.submitPayout = function() {
-    const wallet = document.getElementById('walletInput').value.trim();
-    const payoutStatus = document.getElementById('payoutStatus');
-    if (!wallet) {
-      payoutStatus.textContent = '⚠ Bitte eine Adresse eingeben.';
-      payoutStatus.style.color = '#ff5252';
-      return;
-    }
-    payoutStatus.textContent = '✅ Auszahlungsanfrage gesendet.';
-    payoutStatus.style.color = '#81c784';
-  };
 </script>
 
 <footer>
-  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
+  Hashcore · Dorfstrasse 233 · 3433 Schwanden i.E · jaun190@gmail.com
 </footer>
 
 </body>
