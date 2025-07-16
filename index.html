@@ -3,149 +3,68 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hashcore Dashboard</title>
+<title>Login mit Handy | Hashcore</title>
+
 <style>
   body {
-    margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top left, #1b0033, #0a001a);
+    background: linear-gradient(135deg, #1b0033, #0a001a);
     color: white;
-    overflow-x: hidden;
-  }
-  header {
-    background: rgba(255,255,255,0.05);
     padding: 2rem;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    box-shadow: 0 0 20px violet;
+    max-width: 400px;
+    margin: auto;
   }
-  .container {
-    padding: 2rem;
-    max-width: 420px;
-    margin: 0 auto;
-  }
-  .card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid #7b2cbf;
-    box-shadow: 0 0 15px #7b2cbf;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    margin-bottom: 2rem;
-  }
-  .glow-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 6px;
-    background-color: #7b2cbf;
-    color: white;
+  input, button {
     font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 0 15px #7b2cbf;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
     width: 100%;
-    margin-top: 0.5rem;
-  }
-  .glow-button:hover {
-    background-color: #894edd;
-  }
-  input[type="email"], input[type="password"], input[type="text"] {
-    width: 100%;
-    padding: 0.6rem;
     border-radius: 5px;
     border: none;
-    margin: 0.5rem 0;
-    font-size: 1rem;
   }
-  footer {
-    padding: 1rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: #aaa;
-    background: #110022;
-    margin-top: 4rem;
-  }
-  .small {
-    font-size: 0.85rem;
-    color: #ccc;
-  }
-  .checkbox-label {
-    display: flex;
-    align-items: center;
-    margin-top: 0.5rem;
+  button {
+    background-color: #7b2cbf;
     color: white;
-    font-size: 0.9rem;
-  }
-  .checkbox-label input {
-    margin-right: 0.5rem;
     cursor: pointer;
   }
-  .error {
-    color: #f44336;
+  button:hover {
+    background-color: #894edd;
+  }
+  #errorMsg {
+    color: #ff5555;
     margin-top: 0.5rem;
-  }
-  .success {
-    color: #4caf50;
-    margin-top: 0.5rem;
-  }
-  a.agb-link {
-    color: #5e8bff;
-    text-decoration: underline;
-  }
-  button.link-button {
-    background: none;
-    border: none;
-    color: #5e8bff;
-    cursor: pointer;
-    padding: 0;
-    font-size: 1rem;
-    text-decoration: underline;
   }
 </style>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js"></script>
 </head>
+
 <body>
 
-<header>⚡ Hashcore Dashboard</header>
+<h1>Login mit Handynummer</h1>
 
-<div class="container">
-  <!-- Login Form -->
-  <div id="loginForm">
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" placeholder="E-Mail" autocomplete="username" />
-    <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
-    <label class="checkbox-label" for="loginAccept">
-      <input type="checkbox" id="loginAccept" />
-      Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>
-    </label>
-    <button class="glow-button" id="loginBtn">Login</button>
-    <p id="loginError" class="error"></p>
-    <p>Kein Konto? <button class="link-button" id="showRegisterBtn">Hier registrieren</button></p>
-  </div>
+<!-- ReCaptcha Container, wird unsichtbar -->
+<div id="recaptcha-container"></div>
 
-  <!-- Register Form -->
-  <div id="registerForm" style="display:none;">
-    <h2>Registrieren</h2>
-    <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
-    <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
-    <label class="checkbox-label" for="registerAccept">
-      <input type="checkbox" id="registerAccept" />
-      Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>
-    </label>
-    <button class="glow-button" id="registerBtn">Registrieren</button>
-    <p id="registerError" class="error"></p>
-    <p>Schon Konto? <button class="link-button" id="showLoginBtn">Hier einloggen</button></p>
-  </div>
-</div>
+<!-- Eingabe Handynummer -->
+<input type="text" id="phoneNumber" placeholder="+49 170 1234567" />
 
-<footer>
-  Hashcore · Dorfstrasse 233 · 3433 Schwanden i.E · jaun190@gmail.com
-</footer>
+<!-- Button SMS-Code anfordern -->
+<button id="sendCodeBtn">SMS-Code senden</button>
+
+<!-- Eingabe SMS-Code, erst sichtbar nach Codeanforderung -->
+<input type="text" id="verificationCode" placeholder="SMS-Code eingeben" style="display:none;" />
+
+<!-- Button Code verifizieren -->
+<button id="verifyCodeBtn" style="display:none;">Einloggen</button>
+
+<p id="errorMsg"></p>
 
 <script>
-  // Firebase Config hier rein kopieren
+  // Firebase konfigurieren (deine config einfügen)
   const firebaseConfig = {
-    apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
+    apiKey: "API_KEY_HERE",
     authDomain: "hashcore-f4d96.firebaseapp.com",
     projectId: "hashcore-f4d96",
     storageBucket: "hashcore-f4d96.appspot.com",
@@ -154,96 +73,71 @@
   };
 
   // Firebase initialisieren
-  firebase.initializeApp(firebaseConfig);
+  const app = firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // Elemente aus DOM
-  const loginForm = document.getElementById('loginForm');
-  const registerForm = document.getElementById('registerForm');
-  const loginEmail = document.getElementById('loginEmail');
-  const loginPassword = document.getElementById('loginPassword');
-  const loginAccept = document.getElementById('loginAccept');
-  const loginBtn = document.getElementById('loginBtn');
-  const loginError = document.getElementById('loginError');
-
-  const registerEmail = document.getElementById('registerEmail');
-  const registerPassword = document.getElementById('registerPassword');
-  const registerAccept = document.getElementById('registerAccept');
-  const registerBtn = document.getElementById('registerBtn');
-  const registerError = document.getElementById('registerError');
-
-  const showRegisterBtn = document.getElementById('showRegisterBtn');
-  const showLoginBtn = document.getElementById('showLoginBtn');
-
-  // Fehlermeldungen zurücksetzen
-  function clearMessages() {
-    loginError.textContent = '';
-    registerError.textContent = '';
-  }
-
-  // Zwischen Login und Register umschalten
-  showRegisterBtn.addEventListener('click', e => {
-    e.preventDefault();
-    clearMessages();
-    loginForm.style.display = 'none';
-    registerForm.style.display = 'block';
-  });
-
-  showLoginBtn.addEventListener('click', e => {
-    e.preventDefault();
-    clearMessages();
-    registerForm.style.display = 'none';
-    loginForm.style.display = 'block';
-  });
-
-  // Login Event
-  loginBtn.addEventListener('click', async () => {
-    clearMessages();
-    if (!loginEmail.value || !loginPassword.value) {
-      loginError.textContent = 'Bitte E-Mail und Passwort eingeben.';
-      return;
-    }
-    if (!loginAccept.checked) {
-      loginError.textContent = 'Bitte akzeptiere die AGB.';
-      return;
-    }
-    try {
-      const userCredential = await auth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value);
-      if (!userCredential.user.emailVerified) {
-        loginError.textContent = 'Bitte bestätige zuerst deine E-Mail-Adresse.';
-        await auth.signOut();
-        return;
-      }
-      // Weiterleitung nach dashboard.html
-      window.location.href = 'dashboard.html';
-    } catch (error) {
-      loginError.textContent = 'Login fehlgeschlagen: ' + error.message;
+  // ReCaptcha unsichtbar einrichten
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+    size: 'invisible',
+    callback: () => {
+      console.log('ReCaptcha erfolgreich');
     }
   });
 
-  // Registrierung Event
-  registerBtn.addEventListener('click', async () => {
-    clearMessages();
-    if (!registerEmail.value || !registerPassword.value) {
-      registerError.textContent = 'Bitte E-Mail und Passwort eingeben.';
-      return;
-    }
-    if (!registerAccept.checked) {
-      registerError.textContent = 'Bitte akzeptiere die AGB.';
-      return;
-    }
-    try {
-      const userCredential = await auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value);
-      await userCredential.user.sendEmailVerification();
-      alert('Registrierung erfolgreich! Bitte bestätige deine E-Mail.');
-      // Nach Registrierung auf Login-Form zurücksetzen
-      registerForm.style.display = 'none';
-      loginForm.style.display = 'block';
-    } catch (error) {
-      registerError.textContent = 'Registrierung fehlgeschlagen: ' + error.message;
-    }
-  });
+  const sendCodeBtn = document.getElementById('sendCodeBtn');
+  const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+  const phoneNumberInput = document.getElementById('phoneNumber');
+  const verificationCodeInput = document.getElementById('verificationCode');
+  const errorMsg = document.getElementById('errorMsg');
 
+  let confirmationResult;
+
+  sendCodeBtn.onclick = () => {
+    errorMsg.textContent = '';
+    const phoneNumber = phoneNumberInput.value;
+    if (!phoneNumber) {
+      errorMsg.textContent = 'Bitte gib eine Handynummer ein.';
+      return;
+    }
+
+    // SMS-Code anfordern
+    auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
+      .then((result) => {
+        confirmationResult = result;
+        errorMsg.textContent = 'SMS-Code gesendet! Bitte Code eingeben.';
+        verificationCodeInput.style.display = 'block';
+        verifyCodeBtn.style.display = 'block';
+        sendCodeBtn.style.display = 'none';
+      })
+      .catch((error) => {
+        errorMsg.textContent = 'Fehler beim Senden: ' + error.message;
+        window.recaptchaVerifier.render().then(widgetId => {
+          grecaptcha.reset(widgetId);
+        });
+      });
+  };
+
+  verifyCodeBtn.onclick = () => {
+    const code = verificationCodeInput.value;
+    if (!code) {
+      errorMsg.textContent = 'Bitte gib den SMS-Code ein.';
+      return;
+    }
+
+    // Code verifizieren
+    confirmationResult.confirm(code)
+      .then((result) => {
+        const user = result.user;
+        errorMsg.textContent = 'Login erfolgreich! Weiterleitung...';
+        // Nach 1 Sekunde weiterleiten
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1000);
+      })
+      .catch((error) => {
+        errorMsg.textContent = 'Falscher Code: ' + error.message;
+      });
+  };
 </script>
 
 </body>
