@@ -1,194 +1,273 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hashcore Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at top left, #1b0033, #0a001a);
-      color: white;
-      overflow-x: hidden;
-    }
-    header {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2rem;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      box-shadow: 0 0 20px violet;
-    }
-    .container {
-      padding: 2rem;
-      max-width: 400px;
-      margin: 3rem auto;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      box-shadow: 0 0 20px #7b2cbf;
-    }
-    input[type="email"], input[type="password"] {
-      width: 100%;
-      padding: 0.6rem;
-      margin-bottom: 1rem;
-      border-radius: 5px;
-      border: none;
-      font-size: 1rem;
-    }
-    button {
-      background-color: #7b2cbf;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      box-shadow: 0 0 15px #7b2cbf;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #894edd;
-    }
-    #logoutBtn {
-      margin-top: 1rem;
-      background-color: #d62828;
-      box-shadow: 0 0 15px #d62828;
-    }
-    #logoutBtn:hover {
-      background-color: #f94144;
-    }
-    .message {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      min-height: 1.2rem;
-    }
-    .error {
-      color: #ff5555;
-    }
-    .success {
-      color: #4caf50;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hashcore Dashboard</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top left, #1b0033, #0a001a);
+    color: white;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  header {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 1rem 0;
+    box-shadow: 0 0 20px violet;
+    width: 100%;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #7b2cbf;
+    box-shadow: 0 0 15px #7b2cbf;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin: 1rem 0;
+    width: 350px;
+  }
+  button {
+    background-color: #7b2cbf;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px #7b2cbf;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+  button:hover {
+    background-color: #894edd;
+  }
+  input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+  }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+  .checkbox-label input {
+    margin-right: 0.5rem;
+  }
+  .error {
+    color: #f44336;
+    margin-top: 0.5rem;
+  }
+  .success {
+    color: #4caf50;
+    margin-top: 0.5rem;
+  }
+  #mainContent {
+    width: 100%;
+    max-width: 400px;
+  }
+</style>
 </head>
 <body>
-  <header>⚡ Hashcore Dashboard</header>
 
-  <div class="container" id="authContainer">
-    <h2>Login / Registrierung</h2>
-    <input type="email" id="emailInput" placeholder="E-Mail" />
-    <input type="password" id="passwordInput" placeholder="Passwort" />
-    <label><input type="checkbox" id="agbCheckbox" /> Ich akzeptiere die <a href="#" style="color:#7b2cbf;" target="_blank">AGB</a></label>
-    <button id="authButton">Login / Registrieren</button>
-    <div class="message" id="message"></div>
+<header>⚡ Hashcore Dashboard</header>
+
+<div id="loginSection" class="card">
+  <h2>Login</h2>
+  <input type="email" id="loginEmail" placeholder="E-Mail" />
+  <input type="password" id="loginPassword" placeholder="Passwort" />
+  <div class="checkbox-label">
+    <input type="checkbox" id="loginAccept" />
+    <label for="loginAccept">Ich akzeptiere die <a href="#" target="_blank" style="color: #7b2cbf;">AGB</a></label>
   </div>
+  <button id="loginBtn">Login</button>
+  <p id="loginError" class="error"></p>
+  <p id="loginSuccess" class="success"></p>
+  <p>Noch kein Konto? <a href="#" id="showRegister">Hier registrieren</a></p>
+</div>
 
-  <div class="container" id="userContainer" style="display:none;">
-    <h2>Willkommen, <span id="userEmail"></span></h2>
-    <button id="logoutBtn">Logout</button>
+<div id="registerSection" class="card" style="display:none;">
+  <h2>Registrierung</h2>
+  <input type="email" id="registerEmail" placeholder="E-Mail" />
+  <input type="password" id="registerPassword" placeholder="Passwort" />
+  <div class="checkbox-label">
+    <input type="checkbox" id="registerAccept" />
+    <label for="registerAccept">Ich akzeptiere die <a href="#" target="_blank" style="color: #7b2cbf;">AGB</a></label>
   </div>
+  <button id="registerBtn">Registrieren</button>
+  <p id="registerError" class="error"></p>
+  <p id="registerSuccess" class="success"></p>
+  <p>Schon ein Konto? <a href="#" id="showLogin">Hier einloggen</a></p>
+</div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      sendEmailVerification,
-      signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
+<div id="userSection" class="card" style="display:none;">
+  <h2>Willkommen, <span id="userEmail"></span></h2>
+  <button id="logoutBtn">Logout</button>
+</div>
 
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
-      authDomain: "hashcore-f4d96.firebaseapp.com",
-      projectId: "hashcore-f4d96",
-      storageBucket: "hashcore-f4d96.appspot.com",
-      messagingSenderId: "386291046348",
-      appId: "1:386291046348:web:e3aa80fd0ef77900786f69"
-    };
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    sendEmailVerification,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+  const firebaseConfig = {
+    apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
+    authDomain: "hashcore-f4d96.firebaseapp.com",
+    projectId: "hashcore-f4d96",
+    storageBucket: "hashcore-f4d96.appspot.com",
+    messagingSenderId: "386291046348",
+    appId: "1:386291046348:web:e3aa80fd0ef77900786f69"
+  };
 
-    const emailInput = document.getElementById('emailInput');
-    const passwordInput = document.getElementById('passwordInput');
-    const authButton = document.getElementById('authButton');
-    const message = document.getElementById('message');
-    const agbCheckbox = document.getElementById('agbCheckbox');
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    const authContainer = document.getElementById('authContainer');
-    const userContainer = document.getElementById('userContainer');
-    const userEmail = document.getElementById('userEmail');
-    const logoutBtn = document.getElementById('logoutBtn');
+  const loginSection = document.getElementById('loginSection');
+  const registerSection = document.getElementById('registerSection');
+  const userSection = document.getElementById('userSection');
 
-    authButton.addEventListener('click', async () => {
-      message.textContent = '';
-      if (!emailInput.value || !passwordInput.value) {
-        message.textContent = 'Bitte E-Mail und Passwort eingeben.';
-        message.className = 'message error';
-        return;
-      }
-      if (!agbCheckbox.checked) {
-        message.textContent = 'Bitte akzeptiere die AGB.';
-        message.className = 'message error';
-        return;
-      }
+  const loginEmail = document.getElementById('loginEmail');
+  const loginPassword = document.getElementById('loginPassword');
+  const loginAccept = document.getElementById('loginAccept');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginError = document.getElementById('loginError');
+  const loginSuccess = document.getElementById('loginSuccess');
+  const showRegister = document.getElementById('showRegister');
 
-      try {
-        // Versuche Login
-        const userCredential = await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+  const registerEmail = document.getElementById('registerEmail');
+  const registerPassword = document.getElementById('registerPassword');
+  const registerAccept = document.getElementById('registerAccept');
+  const registerBtn = document.getElementById('registerBtn');
+  const registerError = document.getElementById('registerError');
+  const registerSuccess = document.getElementById('registerSuccess');
+  const showLogin = document.getElementById('showLogin');
+
+  const userEmail = document.getElementById('userEmail');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // Zeige Registrierungsformular
+  showRegister.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginSection.style.display = 'none';
+    registerSection.style.display = 'block';
+    clearMessages();
+  });
+
+  // Zeige Loginformular
+  showLogin.addEventListener('click', (e) => {
+    e.preventDefault();
+    registerSection.style.display = 'none';
+    loginSection.style.display = 'block';
+    clearMessages();
+  });
+
+  // Login-Funktion
+  loginBtn.addEventListener('click', () => {
+    clearMessages();
+    if (!loginEmail.value || !loginPassword.value) {
+      loginError.textContent = 'Bitte E-Mail und Passwort eingeben.';
+      return;
+    }
+    if (!loginAccept.checked) {
+      loginError.textContent = 'Bitte akzeptiere die AGB.';
+      return;
+    }
+    signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
+      .then((userCredential) => {
         if (!userCredential.user.emailVerified) {
-          message.textContent = 'Bitte bestätige deine E-Mail-Adresse. Überprüfe deinen Posteingang.';
-          message.className = 'message error';
-          await signOut(auth);
+          loginError.textContent = 'Bitte bestätige zuerst deine E-Mail-Adresse.';
+          auth.signOut();
           return;
         }
-        // Login erfolgreich
-        message.textContent = 'Login erfolgreich!';
-        message.className = 'message success';
-      } catch (loginError) {
-        // Falls Login fehlschlägt, versuche Registrierung
-        if (loginError.code === 'auth/user-not-found') {
-          try {
-            const userCredential = await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-            // Email-Bestätigung senden
-            await sendEmailVerification(userCredential.user);
-            message.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.';
-            message.className = 'message success';
-            await signOut(auth);
-          } catch (signUpError) {
-            message.textContent = `Registrierung fehlgeschlagen: ${signUpError.message}`;
-            message.className = 'message error';
-          }
-        } else if (loginError.code === 'auth/wrong-password') {
-          message.textContent = 'Falsches Passwort.';
-          message.className = 'message error';
-        } else {
-          message.textContent = `Anmeldung fehlgeschlagen: ${loginError.message}`;
-          message.className = 'message error';
-        }
-      }
-    });
+        loginSuccess.textContent = 'Login erfolgreich!';
+        updateUI(userCredential.user);
+      })
+      .catch((error) => {
+        loginError.textContent = `Anmeldung fehlgeschlagen: ${error.message}`;
+      });
+  });
 
-    logoutBtn.addEventListener('click', async () => {
-      await signOut(auth);
-    });
+  // Registrierung
+  registerBtn.addEventListener('click', () => {
+    clearMessages();
+    if (!registerEmail.value || !registerPassword.value) {
+      registerError.textContent = 'Bitte E-Mail und Passwort eingeben.';
+      return;
+    }
+    if (!registerAccept.checked) {
+      registerError.textContent = 'Bitte akzeptiere die AGB.';
+      return;
+    }
+    createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value)
+      .then((userCredential) => {
+        sendEmailVerification(userCredential.user)
+          .then(() => {
+            registerSuccess.textContent = 'Registrierung erfolgreich! Bitte überprüfe deine E-Mails zur Bestätigung.';
+            registerSection.style.display = 'none';
+            loginSection.style.display = 'block';
+          });
+      })
+      .catch((error) => {
+        registerError.textContent = `Registrierung fehlgeschlagen: ${error.message}`;
+      });
+  });
 
-    onAuthStateChanged(auth, (user) => {
-      if (user && user.emailVerified) {
-        authContainer.style.display = 'none';
-        userContainer.style.display = 'block';
-        userEmail.textContent = user.email;
-      } else {
-        authContainer.style.display = 'block';
-        userContainer.style.display = 'none';
-      }
+  // Logout
+  logoutBtn.addEventListener('click', () => {
+    signOut(auth).then(() => {
+      updateUI(null);
     });
-  </script>
+  });
+
+  // UI updaten je nach Loginstatus
+  function updateUI(user) {
+    clearMessages();
+    if (user) {
+      loginSection.style.display = 'none';
+      registerSection.style.display = 'none';
+      userSection.style.display = 'block';
+      userEmail.textContent = user.email;
+    } else {
+      loginSection.style.display = 'block';
+      registerSection.style.display = 'none';
+      userSection.style.display = 'none';
+      loginEmail.value = '';
+      loginPassword.value = '';
+      registerEmail.value = '';
+      registerPassword.value = '';
+    }
+  }
+
+  // Aktuellen Auth-Zustand prüfen
+  onAuthStateChanged(auth, (user) => {
+    updateUI(user);
+  });
+
+  function clearMessages() {
+    loginError.textContent = '';
+    loginSuccess.textContent = '';
+    registerError.textContent = '';
+    registerSuccess.textContent = '';
+  }
+</script>
+
 </body>
 </html>
