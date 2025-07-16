@@ -101,85 +101,6 @@
     color: white;
   }
 </style>
-</head>
-<body>
-
-<header>⚡ Hashcore Dashboard</header>
-
-<!-- Login Popup -->
-<div id="loginPopup">
-  <div id="loginPopupContent">
-    <div id="loginForm">
-      <h2>Login</h2>
-      <input type="email" id="loginEmail" placeholder="E-Mail" autocomplete="username" />
-      <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
-      <div class="checkbox-label">
-        <input type="checkbox" id="loginAccept" />
-        <label for="loginAccept">Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" rel="noopener noreferrer">AGB</a></label>
-      </div>
-      <button id="loginBtn">Login</button>
-      <p id="loginError" class="error"></p>
-      <p>Kein Konto? <button class="button-link" id="showRegisterBtn">Hier registrieren</button></p>
-    </div>
-    <div id="registerForm" style="display:none; margin-top:1rem;">
-      <h2>Registrieren</h2>
-      <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
-      <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
-      <div class="checkbox-label">
-        <input type="checkbox" id="registerAccept" />
-        <label for="registerAccept">Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" rel="noopener noreferrer">AGB</a></label>
-      </div>
-      <button id="registerBtn">Registrieren</button>
-      <p id="registerError" class="error"></p>
-      <p>Schon Konto? <button class="button-link" id="showLoginBtn">Hier einloggen</button></p>
-    </div>
-  </div>
-</div>
-
-<!-- Main Dashboard -->
-<div id="mainContent" style="display:none; width: 100%; max-width: 400px;">
-
-  <div class="card">
-    <h2>⚡ Hashpower kaufen</h2>
-    <p>Wähle einen Algorithmus. Für mehr Einheiten mehrfach kaufen.</p>
-    <ul>
-      <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br/>
-        <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank"><button>Kaufen</button></a>
-      </li><br/>
-      <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br/>
-        <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank"><button>Kaufen</button></a>
-      </li><br/>
-      <li><strong>Etchash:</strong> 1 Einheit = CHF 52.-<br/>
-        <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank"><button>Kaufen</button></a>
-      </li><br/>
-      <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br/>
-        <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank"><button>Kaufen</button></a>
-      </li><br/>
-      <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br/>
-        <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank"><button>Kaufen</button></a>
-      </li>
-    </ul>
-    <p style="font-size:0.8rem; color:#ccc;">⚠ Mehrmals kaufen für mehr Hashpower!</p>
-  </div>
-
-  <div class="card">
-    <h2>🧑‍🤝‍🧑 Referrals</h2>
-    <p>Empfohlene Partner: <strong>12</strong></p>
-    <p>Provision: <strong>CHF 600.-</strong> (50.- pro Kauf)</p>
-    <button onclick="copyReferral()">Referral-Link kopieren</button>
-    <p id="refStatus" style="color:#ccc; margin-top:0.5rem;"></p>
-  </div>
-
-  <div class="card">
-    <h2>💸 Auszahlung</h2>
-    <p>Dein Guthaben: <strong>CHF 428.-</strong></p>
-    <input type="text" id="walletInput" placeholder="IBAN oder Krypto-Adresse hier eingeben" />
-    <button onclick="submitPayout()">Auszahlung anfordern</button>
-    <p id="payoutStatus" style="color:#ccc; margin-top:0.5rem;"></p>
-  </div>
-
-</div>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
   import {
@@ -203,124 +124,111 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const loginPopup = document.getElementById('loginPopup');
-  const loginForm = document.getElementById('loginForm');
-  const registerForm = document.getElementById('registerForm');
+  window.addEventListener('DOMContentLoaded', () => {
+    const loginPopup = document.getElementById('loginPopup');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginAccept = document.getElementById('loginAccept');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    const registerEmail = document.getElementById('registerEmail');
+    const registerPassword = document.getElementById('registerPassword');
+    const registerAccept = document.getElementById('registerAccept');
+    const registerBtn = document.getElementById('registerBtn');
+    const registerError = document.getElementById('registerError');
+    const showRegisterBtn = document.getElementById('showRegisterBtn');
+    const showLoginBtn = document.getElementById('showLoginBtn');
+    const mainContent = document.getElementById('mainContent');
 
-  const loginEmail = document.getElementById('loginEmail');
-  const loginPassword = document.getElementById('loginPassword');
-  const loginAccept = document.getElementById('loginAccept');
-  const loginBtn = document.getElementById('loginBtn');
-  const loginError = document.getElementById('loginError');
-
-  const registerEmail = document.getElementById('registerEmail');
-  const registerPassword = document.getElementById('registerPassword');
-  const registerAccept = document.getElementById('registerAccept');
-  const registerBtn = document.getElementById('registerBtn');
-  const registerError = document.getElementById('registerError');
-
-  const showRegisterBtn = document.getElementById('showRegisterBtn');
-  const showLoginBtn = document.getElementById('showLoginBtn');
-
-  const mainContent = document.getElementById('mainContent');
-  const refStatus = document.getElementById('refStatus');
-  const payoutStatus = document.getElementById('payoutStatus');
-  const walletInput = document.getElementById('walletInput');
-
-  // Umschalten Login / Register Formulare
-  showRegisterBtn.addEventListener('click', e => {
-    e.preventDefault();
-    loginForm.style.display = 'none';
-    registerForm.style.display = 'block';
-    clearMessages();
-  });
-
-  showLoginBtn.addEventListener('click', e => {
-    e.preventDefault();
-    registerForm.style.display = 'none';
-    loginForm.style.display = 'block';
-    clearMessages();
-  });
-
-  function clearMessages() {
-    loginError.textContent = '';
-    registerError.textContent = '';
-    refStatus.textContent = '';
-    payoutStatus.textContent = '';
-  }
-
-  // Login
-  loginBtn.addEventListener('click', () => {
-    clearMessages();
-    if (!loginEmail.value || !loginPassword.value) {
-      loginError.textContent = 'Bitte E-Mail und Passwort eingeben.';
-      return;
+    function clearMessages() {
+      loginError.textContent = '';
+      registerError.textContent = '';
     }
-    if (!loginAccept.checked) {
-      loginError.textContent = 'Bitte akzeptiere die AGB.';
-      return;
-    }
-    signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
-      .then(userCredential => {
+
+    showRegisterBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      clearMessages();
+    });
+
+    showLoginBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      registerForm.style.display = 'none';
+      loginForm.style.display = 'block';
+      clearMessages();
+    });
+
+    loginBtn.addEventListener('click', async () => {
+      clearMessages();
+      if (!loginEmail.value || !loginPassword.value) {
+        loginError.textContent = 'Bitte E-Mail und Passwort eingeben.';
+        return;
+      }
+      if (!loginAccept.checked) {
+        loginError.textContent = 'Bitte akzeptiere die AGB.';
+        return;
+      }
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value);
         if (!userCredential.user.emailVerified) {
           loginError.textContent = 'Bitte bestätige zuerst deine E-Mail-Adresse.';
-          signOut(auth);
+          await signOut(auth);
           return;
         }
         loginPopup.style.display = 'none';
         mainContent.style.display = 'block';
-      })
-      .catch(error => {
-        loginError.textContent = `Anmeldung fehlgeschlagen: ${error.message}`;
-      });
-  });
+      } catch (error) {
+        loginError.textContent = `Login fehlgeschlagen: ${error.message}`;
+      }
+    });
 
-  // Registrierung
-  registerBtn.addEventListener('click', () => {
-    clearMessages();
-    if (!registerEmail.value || !registerPassword.value) {
-      registerError.textContent = 'Bitte E-Mail und Passwort eingeben.';
-      return;
-    }
-    if (!registerAccept.checked) {
-      registerError.textContent = 'Bitte akzeptiere die AGB.';
-      return;
-    }
-    createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value)
-      .then(userCredential => {
-        sendEmailVerification(userCredential.user);
+    registerBtn.addEventListener('click', async () => {
+      clearMessages();
+      if (!registerEmail.value || !registerPassword.value) {
+        registerError.textContent = 'Bitte E-Mail und Passwort eingeben.';
+        return;
+      }
+      if (!registerAccept.checked) {
+        registerError.textContent = 'Bitte akzeptiere die AGB.';
+        return;
+      }
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value);
+        await sendEmailVerification(userCredential.user);
         alert('Registrierung erfolgreich! Bitte bestätige deine E-Mail.');
         registerForm.style.display = 'none';
         loginForm.style.display = 'block';
-      })
-      .catch(error => {
+      } catch (error) {
         registerError.textContent = `Registrierung fehlgeschlagen: ${error.message}`;
-      });
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.emailVerified) {
+        loginPopup.style.display = 'none';
+        mainContent.style.display = 'block';
+      } else {
+        loginPopup.style.display = 'flex';
+        mainContent.style.display = 'none';
+      }
+    });
   });
 
-  // Auth State Observer
-  onAuthStateChanged(auth, user => {
-    if (user && user.emailVerified) {
-      loginPopup.style.display = 'none';
-      mainContent.style.display = 'block';
-    } else {
-      loginPopup.style.display = 'flex';
-      mainContent.style.display = 'none';
-    }
-  });
-
-  // Referral kopieren
+  // Referral und Auszahlung Funktion
   function copyReferral() {
     const referralLink = 'https://hashcore.io/?ref=deinName';
     navigator.clipboard.writeText(referralLink).then(() => {
-      refStatus.textContent = 'Referral-Link kopiert!';
+      document.getElementById('refStatus').textContent = 'Referral-Link kopiert!';
     });
   }
 
-  // Auszahlung anfordern (platzhalter)
   function submitPayout() {
-    clearMessages();
-    const wallet = walletInput.value.trim();
+    const wallet = document.getElementById('walletInput').value.trim();
+    const payoutStatus = document.getElementById('payoutStatus');
+    payoutStatus.textContent = '';
     if (!wallet) {
       payoutStatus.textContent = '⚠ Bitte eine Adresse eingeben.';
       return;
