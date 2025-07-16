@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hashcore Dashboard</title>
   <style>
     body {
@@ -13,7 +12,6 @@
       color: white;
       overflow-x: hidden;
     }
-
     header {
       background: rgba(255, 255, 255, 0.05);
       padding: 2rem;
@@ -22,14 +20,12 @@
       font-weight: bold;
       box-shadow: 0 0 20px violet;
     }
-
     .container {
       padding: 2rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #7b2cbf;
@@ -37,7 +33,6 @@
       padding: 1.5rem;
       border-radius: 1rem;
     }
-
     .glow-button {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -48,11 +43,9 @@
       cursor: pointer;
       box-shadow: 0 0 15px #7b2cbf;
     }
-
     .glow-button:hover {
-      background-color: #9d4edd;
+      background-color: #894edd;
     }
-
     .popup {
       position: fixed;
       top: 0;
@@ -60,23 +53,22 @@
       width: 100vw;
       height: 100vh;
       background-color: rgba(0, 0, 0, 0.85);
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       z-index: 9999;
     }
-
     .popup-content {
       border: 2px solid hotpink;
       padding: 2rem;
       background: #0a001a;
       border-radius: 1rem;
       max-width: 400px;
+      width: 100%;
       text-align: center;
       color: white;
       box-shadow: 0 0 20px hotpink;
     }
-
     footer {
       padding: 1rem;
       text-align: center;
@@ -86,104 +78,101 @@
       margin-top: 4rem;
     }
   </style>
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
-  <header>🔷 Hashcore Dashboard</header>
+  <header>💻 Hashcore Dashboard</header>
 
   <div class="container">
     <div class="card">
-      <h2>⚙️ Deine Hashrate</h2>
+      <h2>⚡️ Deine Hashrate</h2>
       <p>Aktuelle Hashrate: <strong>750 MH/s</strong></p>
       <input type="range" min="100" max="10000" value="750" />
-      <p>Preis: CHF <strong>349.–</strong></p>
-      <button class="glow-button">Jetzt Hashrate kaufen</button>
+      <p>Preis: CHF <strong>49.–</strong></p>
+      <button class="glow-button" onclick="openLicensePopup()">Jetzt Hashrate kaufen</button>
     </div>
 
     <div class="card">
-      <h2>🧑‍🤝‍🧑 Referrals</h2>
+      <h2>📣 Referrals</h2>
       <p>Empfohlene Partner: <strong>12</strong></p>
       <p>Provision: <strong>CHF 600.–</strong></p>
-      <button class="glow-button">Referral-Link kopieren</button>
+      <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
     </div>
 
     <div class="card">
-      <h2>💸 Auszahlung</h2>
+      <h2>💰 Auszahlung</h2>
       <p>Dein Guthaben: <strong>428.–</strong></p>
       <button class="glow-button" onclick="openWalletPopup()">Auszahlen</button>
     </div>
-
-    <div class="card" id="nicehash-devices">
-      <h2>🖥️ NiceHash Geräte</h2>
-      <p>Geräte werden geladen...</p>
-    </div>
   </div>
 
-  <div id="walletPopup" class="popup" style="display:none;">
+  <!-- Wallet Popup -->
+  <div id="walletPopup" class="popup">
     <div class="popup-content">
-      <h2>💳 Wallet-Adresse eingeben</h2>
-      <input type="text" placeholder="z. B. 1qxyz..." style="width:100%;padding:0.5rem;margin:1rem 0;border-radius:5px;" />
+      <h2>💸 Wallet-Adresse eingeben</h2>
+      <input type="text" placeholder="z. B. 1qy..." style="width:100%;padding:0.5rem;margin:1rem 0;border-radius:5px;" />
       <button class="glow-button" onclick="closeWalletPopup()">Bestätigen</button>
     </div>
   </div>
 
+  <!-- Lizenzkauf Popup -->
   <div id="licensePopup" class="popup">
     <div class="popup-content">
-      <h2>🚫 Lizenz erforderlich</h2>
-      <p>Du musst eine Lizenz kaufen, um Hashcore nutzen zu können.</p>
-      <p>Preis: <strong>CHF 49.–</strong></p>
-      <button class="glow-button" onclick="closeLicensePopup()">Lizenz kaufen</button>
+      <h2>🔐 Lizenz erforderlich</h2>
+      <p>Um das System zu nutzen, musst du zuerst eine Lizenz für CHF 49.– erwerben.</p>
+      <button class="glow-button" onclick="buyLicense()">Lizenz kaufen</button>
+      <br><br>
+      <button class="glow-button" onclick="closeLicensePopup()">Abbrechen</button>
     </div>
   </div>
 
   <footer>
-    Hashcore · Dorfstrasse 233 · 3433 Schwanden i.E · jaun190@gmail.com
+    Hashcore • Dorfstrasse 233 • 3433 Schwanden i. E • jaun190@gmail.com
   </footer>
 
   <script>
+    const stripe = Stripe("pk_live_51Rcj8xCmBXPX4k4Hrv1DHJbvYpwgAi3Tf83I7mAtTu2iIpwLUGbnDhigjrJy2AspWD8IEcTKTDvjRIKMjoAoAIyh00nXARFEQJ");
+
+    function buyLicense() {
+      stripe.redirectToCheckout({
+        lineItems: [{
+          price: "price_1RlSGXCmBXPX4k4HlS0UwEzf",
+          quantity: 1,
+        }],
+        mode: "payment",
+        successUrl: "https://hashcore.ch/success.html",
+        cancelUrl: "https://hashcore.ch/index.html",
+      });
+    }
+
+    function openLicensePopup() {
+      document.getElementById("licensePopup").style.display = "flex";
+    }
+
     function closeLicensePopup() {
-      document.getElementById('licensePopup').style.display = 'none';
+      document.getElementById("licensePopup").style.display = "none";
     }
 
     function openWalletPopup() {
-      document.getElementById('walletPopup').style.display = 'flex';
+      document.getElementById("walletPopup").style.display = "flex";
     }
 
     function closeWalletPopup() {
-      document.getElementById('walletPopup').style.display = 'none';
+      document.getElementById("walletPopup").style.display = "none";
     }
 
-    async function loadNiceHashDevices() {
-      const container = document.getElementById('nicehash-devices');
-      try {
-        const response = await fetch('https://api2.nicehash.com/main/api/v2/public/mining/devices');
-        const data = await response.json();
+    function copyReferral() {
+      const link = "https://hashcore.ch/?ref=123456";
+      navigator.clipboard.writeText(link);
+      alert("Referral-Link kopiert!");
+    }
 
-        if (!data.devices || data.devices.length === 0) {
-          container.innerHTML += "<p>Keine Geräte gefunden.</p>";
-          return;
-        }
-
-        container.innerHTML = "<h2>🖥️ NiceHash Geräte</h2>";
-        data.devices.slice(0, 5).forEach(device => {
-          const div = document.createElement('div');
-          div.innerHTML = `
-            <strong>${device.name}</strong><br/>
-            Hersteller: ${device.brand}<br/>
-            Algorithmus: ${device.algorithm.algorithm}<br/>
-            Hashrate: ${device.algorithm.displayHashrate}<br/>
-            Stromverbrauch: ${device.powerConsumption} W
-            <hr style="opacity:0.2;" />
-          `;
-          container.appendChild(div);
-        });
-      } catch (error) {
-        container.innerHTML += "<p>Fehler beim Laden der Geräte.</p>";
+    window.onload = function () {
+      if (!localStorage.getItem("hasLicense")) {
+        openLicensePopup();
       }
     }
-
-    loadNiceHashDevices();
   </script>
-
 </body>
 </html>
