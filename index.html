@@ -65,10 +65,14 @@
   .checkbox-label input {
     margin-right: 0.5rem;
   }
-  a {
+  a.button-link {
     color: #7b2cbf;
     text-decoration: underline;
     cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
   }
   .error {
     color: #f44336;
@@ -115,7 +119,7 @@
       </div>
       <button id="loginBtn">Login</button>
       <p id="loginError" class="error"></p>
-      <p>Kein Konto? <a href="#" id="showRegister">Hier registrieren</a></p>
+      <p>Kein Konto? <button class="button-link" id="showRegisterBtn">Hier registrieren</button></p>
     </div>
     <div id="registerForm" style="display:none; margin-top:1rem;">
       <h2>Registrieren</h2>
@@ -127,7 +131,7 @@
       </div>
       <button id="registerBtn">Registrieren</button>
       <p id="registerError" class="error"></p>
-      <p>Schon Konto? <a href="#" id="showLogin">Hier einloggen</a></p>
+      <p>Schon Konto? <button class="button-link" id="showLoginBtn">Hier einloggen</button></p>
     </div>
   </div>
 </div>
@@ -215,8 +219,8 @@
   const registerBtn = document.getElementById('registerBtn');
   const registerError = document.getElementById('registerError');
 
-  const showRegisterLink = document.getElementById('showRegister');
-  const showLoginLink = document.getElementById('showLogin');
+  const showRegisterBtn = document.getElementById('showRegisterBtn');
+  const showLoginBtn = document.getElementById('showLoginBtn');
 
   const mainContent = document.getElementById('mainContent');
   const refStatus = document.getElementById('refStatus');
@@ -224,14 +228,14 @@
   const walletInput = document.getElementById('walletInput');
 
   // Umschalten Login / Register Formulare
-  showRegisterLink.addEventListener('click', e => {
+  showRegisterBtn.addEventListener('click', e => {
     e.preventDefault();
     loginForm.style.display = 'none';
     registerForm.style.display = 'block';
     clearMessages();
   });
 
-  showLoginLink.addEventListener('click', e => {
+  showLoginBtn.addEventListener('click', e => {
     e.preventDefault();
     registerForm.style.display = 'none';
     loginForm.style.display = 'block';
