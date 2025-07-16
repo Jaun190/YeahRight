@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="de">
+<!DOCTYPE html><html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hashcore Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       margin: 0;
@@ -13,23 +11,19 @@
       color: white;
       overflow-x: hidden;
     }
-
     header {
       background: rgba(255, 255, 255, 0.05);
       padding: 2rem;
       text-align: center;
       font-size: 2rem;
-      font-weight: bold;
       box-shadow: 0 0 20px violet;
     }
-
     .container {
       padding: 2rem;
-      display: none;
+      display: flex;
       flex-direction: column;
       gap: 2rem;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #7b2cbf;
@@ -37,7 +31,6 @@
       padding: 1.5rem;
       border-radius: 1rem;
     }
-
     .glow-button {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -49,19 +42,16 @@
       box-shadow: 0 0 15px #7b2cbf;
       margin-top: 0.5rem;
     }
-
     .glow-button:hover {
       background-color: #894edd;
     }
-
-    input[type="text"], input[type="email"], input[type="password"] {
+    input[type="text"] {
       width: 100%;
       padding: 0.6rem;
       border-radius: 5px;
       border: none;
       margin: 0.5rem 0;
     }
-
     footer {
       padding: 1rem;
       text-align: center;
@@ -70,190 +60,84 @@
       background: #110022;
       margin-top: 4rem;
     }
-
     .small {
       font-size: 0.85rem;
       color: #ccc;
     }
-
-    /* LOGIN POPUP STIL */
-    .popup {
+    #loginModal {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
       display: flex;
-      justify-content: center;
       align-items: center;
-      z-index: 9999;
+      justify-content: center;
+      z-index: 999;
     }
-
-    .popup-inner {
-      background: #1e003a;
+    .login-box {
+      background: #1f0033;
       padding: 2rem;
       border-radius: 1rem;
-      box-shadow: 0 0 30px #7b2cbf;
-      max-width: 400px;
-      width: 90%;
-    }
-
-    .popup h2 {
+      box-shadow: 0 0 20px #7b2cbf;
+      width: 300px;
       text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    label {
-      display: block;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-    }
-
-    .checkbox-label input {
-      margin-right: 0.5rem;
-    }
-
-    .checkbox-label a {
-      color: #7b2cbf;
-      text-decoration: underline;
-    }
-
-    #loginError {
-      color: #ff7777;
-      margin-top: 0.5rem;
-      font-size: 0.85rem;
     }
   </style>
 </head>
-<body>
-
-  <div class="popup" id="loginPopup">
-    <div class="popup-inner">
-      <h2>🔐 Login / Registrieren</h2>
-      <input type="email" id="email" placeholder="E-Mail" />
-      <input type="password" id="password" placeholder="Passwort" />
-      <label class="checkbox-label">
-        <input type="checkbox" id="agbCheck" />
-        Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>
-      </label>
-      <button class="glow-button" onclick="login()">Login / Registrieren</button>
-      <div id="loginError"></div>
-    </div>
+<body><div id="loginModal">
+  <div class="login-box">
+    <h2>Login</h2>
+    <input type="text" id="loginEmail" placeholder="E-Mail" /><br>
+    <input type="password" id="loginPassword" placeholder="Passwort" /><br>
+    <button class="glow-button" onclick="loginUser()">Einloggen</button>
+    <p class="small">Mit Login akzeptierst du unsere <a href="#">AGB</a></p>
   </div>
-
-  <header>⚡ Hashcore Dashboard</header>
-
-  <div class="container" id="dashboard">
-
-    <!-- Hashpower kaufen -->
-    <div class="card">
-      <h2>🔌 Hashpower kaufen</h2>
-      <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
-      <ul>
-        <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.–<br>
-          <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a></li><br>
-        <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.–<br>
-          <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a></li><br>
-        <li><strong>Etchash:</strong> 1 Einheit = CHF 52.–<br>
-          <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a></li><br>
-        <li><strong>KawPow:</strong> 1 Einheit = CHF 78.–<br>
-          <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a></li><br>
-        <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.–<br>
-          <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a></li>
-      </ul>
-    
-    
-      
-      
-      
-      
-      
-      
-      </p>
-    </div>
-
-    <!-- Referrals -->
-    <div class="card">
-      <h2>👥 Referrals</h2>
-      <p>Empfohlene Partner: <strong>12</strong></p>
-      <p>Provision: <strong>CHF 600.–</strong> (50.– pro Kauf)</p>
-      <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
-      <p class="small" id="refStatus"></p>
-    </div>
-
-    <!-- Auszahlung -->
-    <div class="card">
-      <h2>💰 Auszahlung</h2>
-      <p>Dein Guthaben: <strong>CHF 428.–</strong></p>
-      <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
-      <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
-      <p class="small" id="payoutStatus"></p>
-    </div>
-
+</div><header>⚡ Hashcore Dashboard</header><div class="container" id="dashboard" style="display:none">
+  <div class="card">
+    <h2>⚙️ Hashpower kaufen</h2>
+    <ul>
+      <li><strong>SHA-256 (1Th/s)</strong> = CHF 130.–<br><button class="glow-button">Kaufen</button></li>
+      <li><strong>Scrypt (500MH/s)</strong> = CHF 65.–<br><button class="glow-button">Kaufen</button></li>
+      <li><strong>Etchash (100MH/s)</strong> = CHF 52.–<br><button class="glow-button">Kaufen</button></li>
+      <li><strong>KawPow (100MH/s)</strong> = CHF 78.–<br><button class="glow-button">Kaufen</button></li>
+      <li><strong>Octobus (100MH/s)</strong> = CHF 58.50<br><button class="glow-button">Kaufen</button></li>
+    </ul>
   </div>
+  <div class="card">
+    <h2>🔑 Lizenz</h2>
+    <p><strong>Hashcore Lizenz</strong> = CHF 49.–</p>
+    <button class="glow-button">Lizenz kaufen</button>
+  </div>
+  <div class="card">
+    <h2>💸 Auszahlung</h2>
+    <p>Dein Guthaben: <strong>CHF 428.–</strong></p>
+    <input type="text" placeholder="IBAN oder Krypto-Adresse" id="walletInput">
+    <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
+    <p class="small" id="payoutStatus"></p>
+  </div>
+</div><footer>
+  Hashcore – Dorfstrasse 233 – 3433 Schwanden i.E – jaun190@gmail.com
+</footer><script>
+function loginUser() {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPassword').value;
+  if(email && pass) {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  } else {
+    alert('Bitte E-Mail und Passwort eingeben.');
+  }
+}
 
-  <footer>
-    Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
-  </footer>
-
-  <script>
-    const supabase = createClient("https://zudmonossxcfpbltkung.supabase.co", 
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1ZG1vbm9zc3hjZnBibHRrdW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzgyOTIsImV4cCI6MjA2ODI1NDI5Mn0.OU1QnxYtopKBsyHGyZaLph5ZRMK8NrAMvSIe8ZzPIpo");
-
-    async function login() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const agbChecked = document.getElementById('agbCheck').checked;
-
-      if (!agbChecked) {
-        document.getElementById('loginError').innerText = "⚠️ Du musst die AGB akzeptieren.";
-        return;
-      }
-
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        const { error: loginError, data: user } = await supabase.auth.signInWithPassword({ email, password });
-        if (loginError) {
-          document.getElementById('loginError').innerText = "❌ Fehler beim Login.";
-          return;
-        }
-      }
-
-      document.getElementById('loginPopup').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'flex';
-    }
-
-    function copyReferral() {
-      const dummyLink = 'https://hashcore.io/?ref=deinName';
-      navigator.clipboard.writeText(dummyLink);
-      document.getElementById('refStatus').innerText = "Referral-Link kopiert!";
-    }
-
-    function submitPayout() {
-      const value = document.getElementById('walletInput').value;
-      if (!value) {
-        document.getElementById('payoutStatus').innerText = "⚠️ Bitte eine Adresse eingeben.";
-        return;
-      }
-      document.getElementById('payoutStatus').innerText = "✅ Auszahlungsanfrage gesendet.";
-    }
-  </script>
-
-</body>
+function submitPayout() {
+  const value = document.getElementById('walletInput').value;
+  if (!value) {
+    document.getElementById('payoutStatus').innerText = '⚠️ Bitte eine Adresse eingeben.';
+    return;
+  }
+  document.getElementById('payoutStatus').innerText = '✅ Auszahlung gesendet.';
+}
+</script></body>
 </html>
