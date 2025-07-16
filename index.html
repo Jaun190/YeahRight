@@ -11,10 +11,10 @@
     background: radial-gradient(circle at top left, #1b0033, #0a001a);
     color: white;
     overflow-x: hidden;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
     padding: 2rem;
   }
   header {
@@ -26,13 +26,13 @@
     width: 100%;
   }
   .card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
     border: 1px solid #7b2cbf;
+    border-radius: 1rem;
     box-shadow: 0 0 15px #7b2cbf;
     padding: 1.5rem;
-    border-radius: 1rem;
-    margin: 1rem 0;
     width: 350px;
+    margin-top: 2rem;
   }
   button {
     background-color: #7b2cbf;
@@ -49,21 +49,26 @@
   button:hover {
     background-color: #894edd;
   }
-  input[type="email"], input[type="password"] {
+  input[type="email"], input[type="password"], input[type="text"] {
     width: 100%;
     padding: 0.5rem;
-    border-radius: 5px;
+    border-radius: 6px;
     border: none;
     margin-top: 0.5rem;
     font-size: 1rem;
   }
   .checkbox-label {
+    margin-top: 0.5rem;
     display: flex;
     align-items: center;
-    margin-top: 0.5rem;
   }
   .checkbox-label input {
     margin-right: 0.5rem;
+  }
+  a {
+    color: #7b2cbf;
+    text-decoration: underline;
+    cursor: pointer;
   }
   .error {
     color: #f44336;
@@ -73,14 +78,23 @@
     color: #4caf50;
     margin-top: 0.5rem;
   }
-  a {
-    color: #7b2cbf;
-    cursor: pointer;
-    text-decoration: underline;
+  #loginPopup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
   }
-  #mainContent {
-    width: 100%;
+  #loginPopupContent {
+    background: #220044;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
     max-width: 400px;
+    box-shadow: 0 0 20px #7b2cbf;
+    color: white;
   }
 </style>
 </head>
@@ -88,40 +102,80 @@
 
 <header>⚡ Hashcore Dashboard</header>
 
-<div id="loginSection" class="card">
-  <h2>Login</h2>
-  <input type="email" id="loginEmail" placeholder="E-Mail" autocomplete="username" />
-  <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
-  <div class="checkbox-label">
-    <input type="checkbox" id="loginAccept" />
-    <label for="loginAccept">Ich akzeptiere die <a href="https://deine-seite.ch/agb" target="_blank" rel="noopener noreferrer">AGB</a></label>
+<!-- Login Popup -->
+<div id="loginPopup">
+  <div id="loginPopupContent">
+    <div id="loginForm">
+      <h2>Login</h2>
+      <input type="email" id="loginEmail" placeholder="E-Mail" autocomplete="username" />
+      <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" />
+      <div class="checkbox-label">
+        <input type="checkbox" id="loginAccept" />
+        <label for="loginAccept">Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" rel="noopener noreferrer">AGB</a></label>
+      </div>
+      <button id="loginBtn">Login</button>
+      <p id="loginError" class="error"></p>
+      <p>Kein Konto? <a href="#" id="showRegister">Hier registrieren</a></p>
+    </div>
+    <div id="registerForm" style="display:none; margin-top:1rem;">
+      <h2>Registrieren</h2>
+      <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
+      <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
+      <div class="checkbox-label">
+        <input type="checkbox" id="registerAccept" />
+        <label for="registerAccept">Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" rel="noopener noreferrer">AGB</a></label>
+      </div>
+      <button id="registerBtn">Registrieren</button>
+      <p id="registerError" class="error"></p>
+      <p>Schon Konto? <a href="#" id="showLogin">Hier einloggen</a></p>
+    </div>
   </div>
-  <button id="loginBtn">Login</button>
-  <p id="loginError" class="error"></p>
-  <p id="loginSuccess" class="success"></p>
-  <p>Noch kein Konto? <a href="#" id="showRegister">Hier registrieren</a></p>
 </div>
 
-<div id="registerSection" class="card" style="display:none;">
-  <h2>Registrierung</h2>
-  <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
-  <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
-  <div class="checkbox-label">
-    <input type="checkbox" id="registerAccept" />
-    <label for="registerAccept">Ich akzeptiere die <a href="https://deine-seite.ch/agb" target="_blank" rel="noopener noreferrer">AGB</a></label>
+<!-- Main Dashboard -->
+<div id="mainContent" style="display:none; width: 100%; max-width: 400px;">
+
+  <div class="card">
+    <h2>⚡ Hashpower kaufen</h2>
+    <p>Wähle einen Algorithmus. Für mehr Einheiten mehrfach kaufen.</p>
+    <ul>
+      <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br/>
+        <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank"><button>Kaufen</button></a>
+      </li><br/>
+      <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br/>
+        <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank"><button>Kaufen</button></a>
+      </li><br/>
+      <li><strong>Etchash:</strong> 1 Einheit = CHF 52.-<br/>
+        <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank"><button>Kaufen</button></a>
+      </li><br/>
+      <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br/>
+        <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank"><button>Kaufen</button></a>
+      </li><br/>
+      <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br/>
+        <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank"><button>Kaufen</button></a>
+      </li>
+    </ul>
+    <p style="font-size:0.8rem; color:#ccc;">⚠ Mehrmals kaufen für mehr Hashpower!</p>
   </div>
-  <button id="registerBtn">Registrieren</button>
-  <p id="registerError" class="error"></p>
-  <p id="registerSuccess" class="success"></p>
-  <p>Schon ein Konto? <a href="#" id="showLogin">Hier einloggen</a></p>
+
+  <div class="card">
+    <h2>🧑‍🤝‍🧑 Referrals</h2>
+    <p>Empfohlene Partner: <strong>12</strong></p>
+    <p>Provision: <strong>CHF 600.-</strong> (50.- pro Kauf)</p>
+    <button onclick="copyReferral()">Referral-Link kopieren</button>
+    <p id="refStatus" style="color:#ccc; margin-top:0.5rem;"></p>
+  </div>
+
+  <div class="card">
+    <h2>💸 Auszahlung</h2>
+    <p>Dein Guthaben: <strong>CHF 428.-</strong></p>
+    <input type="text" id="walletInput" placeholder="IBAN oder Krypto-Adresse hier eingeben" />
+    <button onclick="submitPayout()">Auszahlung anfordern</button>
+    <p id="payoutStatus" style="color:#ccc; margin-top:0.5rem;"></p>
+  </div>
+
 </div>
 
-<div id="userSection" class="card" style="display:none;">
-  <h2>Willkommen, <span id="userEmail"></span></h2>
-  <button id="logoutBtn">Logout</button>
-</div>
-
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
   import {
@@ -145,45 +199,53 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const loginSection = document.getElementById('loginSection');
-  const registerSection = document.getElementById('registerSection');
-  const userSection = document.getElementById('userSection');
+  const loginPopup = document.getElementById('loginPopup');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
 
   const loginEmail = document.getElementById('loginEmail');
   const loginPassword = document.getElementById('loginPassword');
   const loginAccept = document.getElementById('loginAccept');
   const loginBtn = document.getElementById('loginBtn');
   const loginError = document.getElementById('loginError');
-  const loginSuccess = document.getElementById('loginSuccess');
-  const showRegister = document.getElementById('showRegister');
 
   const registerEmail = document.getElementById('registerEmail');
   const registerPassword = document.getElementById('registerPassword');
   const registerAccept = document.getElementById('registerAccept');
   const registerBtn = document.getElementById('registerBtn');
   const registerError = document.getElementById('registerError');
-  const registerSuccess = document.getElementById('registerSuccess');
-  const showLogin = document.getElementById('showLogin');
 
-  const userEmail = document.getElementById('userEmail');
-  const logoutBtn = document.getElementById('logoutBtn');
+  const showRegisterLink = document.getElementById('showRegister');
+  const showLoginLink = document.getElementById('showLogin');
 
-  // Umschalten Login <-> Registrierung
-  showRegister.addEventListener('click', (e) => {
+  const mainContent = document.getElementById('mainContent');
+  const refStatus = document.getElementById('refStatus');
+  const payoutStatus = document.getElementById('payoutStatus');
+  const walletInput = document.getElementById('walletInput');
+
+  // Umschalten Login / Register Formulare
+  showRegisterLink.addEventListener('click', e => {
     e.preventDefault();
-    loginSection.style.display = 'none';
-    registerSection.style.display = 'block';
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
     clearMessages();
   });
 
-  showLogin.addEventListener('click', (e) => {
+  showLoginLink.addEventListener('click', e => {
     e.preventDefault();
-    registerSection.style.display = 'none';
-    loginSection.style.display = 'block';
+    registerForm.style.display = 'none';
+    loginForm.style.display = 'block';
     clearMessages();
   });
 
-  // Login Funktion
+  function clearMessages() {
+    loginError.textContent = '';
+    registerError.textContent = '';
+    refStatus.textContent = '';
+    payoutStatus.textContent = '';
+  }
+
+  // Login
   loginBtn.addEventListener('click', () => {
     clearMessages();
     if (!loginEmail.value || !loginPassword.value) {
@@ -201,15 +263,15 @@
           signOut(auth);
           return;
         }
-        loginSuccess.textContent = 'Login erfolgreich!';
-        updateUI(userCredential.user);
+        loginPopup.style.display = 'none';
+        mainContent.style.display = 'block';
       })
       .catch(error => {
         loginError.textContent = `Anmeldung fehlgeschlagen: ${error.message}`;
       });
   });
 
-  // Registrierung Funktion
+  // Registrierung
   registerBtn.addEventListener('click', () => {
     clearMessages();
     if (!registerEmail.value || !registerPassword.value) {
@@ -222,54 +284,46 @@
     }
     createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value)
       .then(userCredential => {
-        sendEmailVerification(userCredential.user).then(() => {
-          registerSuccess.textContent = 'Registrierung erfolgreich! Bitte überprüfe deine E-Mail zur Bestätigung.';
-          registerSection.style.display = 'none';
-          loginSection.style.display = 'block';
-        });
+        sendEmailVerification(userCredential.user);
+        alert('Registrierung erfolgreich! Bitte bestätige deine E-Mail.');
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'block';
       })
       .catch(error => {
         registerError.textContent = `Registrierung fehlgeschlagen: ${error.message}`;
       });
   });
 
-  // Logout
-  logoutBtn.addEventListener('click', () => {
-    signOut(auth).then(() => {
-      updateUI(null);
-    });
+  // Auth State Observer
+  onAuthStateChanged(auth, user => {
+    if (user && user.emailVerified) {
+      loginPopup.style.display = 'none';
+      mainContent.style.display = 'block';
+    } else {
+      loginPopup.style.display = 'flex';
+      mainContent.style.display = 'none';
+    }
   });
 
-  // UI aktualisieren
-  function updateUI(user) {
-    clearMessages();
-    if (user) {
-      loginSection.style.display = 'none';
-      registerSection.style.display = 'none';
-      userSection.style.display = 'block';
-      userEmail.textContent = user.email;
-    } else {
-      loginSection.style.display = 'block';
-      registerSection.style.display = 'none';
-      userSection.style.display = 'none';
-      loginEmail.value = '';
-      loginPassword.value = '';
-      registerEmail.value = '';
-      registerPassword.value = '';
-      loginAccept.checked = false;
-      registerAccept.checked = false;
-    }
+  // Referral kopieren
+  function copyReferral() {
+    // Hier dein Referral-Link generieren/anpassen
+    const referralLink = 'https://hashcore.io/?ref=deinName';
+    navigator.clipboard.writeText(referralLink).then(() => {
+      refStatus.textContent = 'Referral-Link kopiert!';
+    });
   }
 
-  onAuthStateChanged(auth, (user) => {
-    updateUI(user);
-  });
-
-  function clearMessages() {
-    loginError.textContent = '';
-    loginSuccess.textContent = '';
-    registerError.textContent = '';
-    registerSuccess.textContent = '';
+  // Auszahlung anfordern (platzhalter)
+  function submitPayout() {
+    clearMessages();
+    const wallet = walletInput.value.trim();
+    if (!wallet) {
+      payoutStatus.textContent = '⚠ Bitte eine Adresse eingeben.';
+      return;
+    }
+    // Hier Logik für Auszahlung an Server/Admin einbauen
+    payoutStatus.textContent = '✅ Auszahlungsanfrage gesendet.';
   }
 </script>
 
