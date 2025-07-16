@@ -307,7 +307,6 @@
 
   // Referral kopieren
   function copyReferral() {
-    // Hier dein Referral-Link generieren/anpassen
     const referralLink = 'https://hashcore.io/?ref=deinName';
     navigator.clipboard.writeText(referralLink).then(() => {
       refStatus.textContent = 'Referral-Link kopiert!';
@@ -322,7 +321,6 @@
       payoutStatus.textContent = '⚠ Bitte eine Adresse eingeben.';
       return;
     }
-    // Hier Logik für Auszahlung an Server/Admin einbauen
     payoutStatus.textContent = '✅ Auszahlungsanfrage gesendet.';
   }
 </script>
