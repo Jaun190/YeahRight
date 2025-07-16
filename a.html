@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hashcore Login</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top left, #1b0033, #0a001a);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .login-container {
+    background: rgba(27, 0, 51, 0.9);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px #7b2cbf;
+    width: 320px;
+  }
+  h2 {
+    margin-top: 0;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 0.7rem;
+    border-radius: 6px;
+    border: none;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  label {
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  label input {
+    margin-right: 0.5rem;
+    cursor: pointer;
+  }
+  .glow-button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #7b2cbf;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px #7b2cbf;
+    transition: background-color 0.3s;
+  }
+  .glow-button:hover {
+    background-color: #894edd;
+  }
+  .toggle-link {
+    margin-top: 1rem;
+    text-align: center;
+    color: #5e8bff;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .error-message {
+    color: #f44336;
+    margin-top: 0.5rem;
+    min-height: 1.2em;
+  }
+  .success-message {
+    color: #4caf50;
+    margin-top: 0.5rem;
+    min-height: 1.2em;
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js"></script>
+</head>
+<body>
+
+<div class="login-container" id="login-container">
+
+  <!-- Login Form -->
+  <div id="login-form">
+    <h2>Login</h2>
+    <input type="email" id="login-email" placeholder="E-Mail" autocomplete="username" />
+    <input type="password" id="login-password" placeholder="Passwort" autocomplete="current-password" />
+    <label><input type="checkbox" id="login-agb" /> Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" style="color:#5e8bff;">AGB</a></label>
+    <button class="glow-button" id="login-btn">Einloggen</button>
+    <div class="error-message" id="login-error"></div>
+    <div class="success-message" id="login-success"></div>
+    <div class="toggle-link" id="show-register">Noch kein Konto? Registrieren</div>
+  </div>
+
+  <!-- Register Form -->
+  <div id="register-form" style="display:none;">
+    <h2>Registrieren</h2>
+    <input type="email" id="register-email" placeholder="E-Mail" autocomplete="email" />
+    <input type="password" id="register-password" placeholder="Passwort" autocomplete="new-password" />
+    <label><input type="checkbox" id="register-agb" /> Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" style="color:#5e8bff;">AGB</a></label>
+    <button class="glow-button" id="register-btn">Registrieren</button>
+    <div class="error-message" id="register-error"></div>
+    <div class="success-message" id="register-success"></div>
+    <div class="toggle-link" id="show-login">Schon Konto? Login</div>
+  </div>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    sendEmailVerification,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
+    authDomain: "hashcore-f4d96.firebaseapp.com",
+    projectId: "hashcore-f4d96",
+    storageBucket: "hashcore-f4d96.appspot.com",
+    messagingSenderId: "386291046348",
+    appId: "1:386291046348:web:e3aa80fd0ef77900786f69"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
+
+  // Login elements
+  const loginEmail = document.getElementById("login-email");
+  const loginPassword = document.getElementById("login-password");
+  const loginAGB = document.getElementById("login-agb");
+  const loginBtn = document.getElementById("login-btn");
+  const loginError = document.getElementById("login-error");
+  const loginSuccess = document.getElementById("login-success");
+
+  // Register elements
+  const registerEmail = document.getElementById("register-email");
+  const registerPassword = document.getElementById("register-password");
+  const registerAGB = document.getElementById("register-agb");
+  const registerBtn = document.getElementById("register-btn");
+  const registerError = document.getElementById("register-error");
+  const registerSuccess = document.getElementById("register-success");
+
+  // Toggle links
+  document.getElementById("show-register").addEventListener("click", () => {
+    loginForm.style.display = "none";
+    registerForm.style.display = "block";
+    clearMessages();
+  });
+
+  document.getElementById("show-login").addEventListener("click", () => {
+    registerForm.style.display = "none";
+    loginForm.style.display = "block";
+    clearMessages();
+  });
+
+  function clearMessages() {
+    loginError.textContent = "";
+    loginSuccess.textContent = "";
+    registerError.textContent = "";
+    registerSuccess.textContent = "";
+  }
+
+  // Check auth state and redirect if logged in
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      if (user.emailVerified) {
+        // Redirect to dashboard
+        window.location.href = "dashboard.html";
+      } else {
+        clearMessages();
+        loginError.textContent = "Bitte bestätige deine E-Mail-Adresse zuerst.";
+        auth.signOut();
+      }
+    }
+  });
+
+  // Login event
+  loginBtn.addEventListener("click", async () => {
+    clearMessages();
+    if (!loginEmail.value || !loginPassword.value) {
+      loginError.textContent = "Bitte E-Mail und Passwort eingeben.";
+      return;
+    }
+    if (!loginAGB.checked) {
+      loginError.textContent = "Bitte akzeptiere die AGB.";
+      return;
+    }
+    try {
+      await signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value);
+      // onAuthStateChanged übernimmt Redirect
+    } catch (error) {
+      loginError.textContent = error.message;
+    }
+  });
+
+  // Register event
+  registerBtn.addEventListener("click", async () => {
+    clearMessages();
+    if (!registerEmail.value || !registerPassword.value) {
+      registerError.textContent = "Bitte E-Mail und Passwort eingeben.";
+      return;
+    }
+    if (!registerAGB.checked) {
+      registerError.textContent = "Bitte akzeptiere die AGB.";
+      return;
+    }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value);
+      await sendEmailVerification(userCredential.user);
+      registerSuccess.textContent = "Registrierung erfolgreich! Bitte bestätige deine E-Mail.";
+      setTimeout(() => {
+        registerForm.style.display = "none";
+        loginForm.style.display = "block";
+      }, 3000);
+    } catch (error) {
+      registerError.textContent = error.message;
+    }
+  });
+</script>
+
+</body>
+</html>
