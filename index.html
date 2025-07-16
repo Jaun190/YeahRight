@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Login mit Firebase und Weiterleitung</title>
+<title>Minimal Firebase Login</title>
 <style>
   body {
-    background: linear-gradient(135deg, #1e1e3f, #3c1361);
     font-family: Arial, sans-serif;
-    color: #fff;
+    background: #222;
+    color: #eee;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,59 +16,48 @@
     margin: 0;
   }
   #container {
-    background: #2a1e4b;
-    padding: 30px;
-    border-radius: 12px;
-    width: 320px;
-    box-shadow: 0 0 20px #7b45f4;
-  }
-  input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
+    background: #333;
+    padding: 20px;
     border-radius: 8px;
+    width: 280px;
+  }
+  input, button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
     border: none;
   }
   button {
-    margin-top: 15px;
-    width: 100%;
-    padding: 12px;
-    background: #7b45f4;
-    border: none;
-    border-radius: 8px;
+    background: #5a2db9;
     color: white;
-    font-size: 16px;
     cursor: pointer;
   }
   button:hover {
-    background: #9046ff;
+    background: #7b45f4;
   }
-  #message {
-    margin-top: 15px;
-    min-height: 24px;
+  #msg {
+    margin-top: 10px;
+    min-height: 20px;
+    color: #f88;
+    font-size: 0.9em;
   }
 </style>
 </head>
 <body>
 
 <div id="container">
-  <h2>Login / Registrierung</h2>
-
-  <input id="email" type="email" placeholder="E-Mail" />
-  <input id="password" type="password" placeholder="Passwort" />
-
+  <h2>Login</h2>
+  <input id="email" type="email" placeholder="E-Mail" required />
+  <input id="password" type="password" placeholder="Passwort" required />
   <button id="loginBtn">Login</button>
-  <button id="registerBtn">Registrieren</button>
-
-  <div id="message"></div>
+  <div id="msg"></div>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
 <script>
-  // Firebase Konfiguration einfügen
   const firebaseConfig = {
     apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
     authDomain: "hashcore-f4d96.firebaseapp.com",
@@ -77,64 +66,36 @@
     messagingSenderId: "386291046348",
     appId: "1:386291046348:web:e3aa80fd0ef77900786f69"
   };
-
-  // Firebase initialisieren
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
   const loginBtn = document.getElementById('loginBtn');
-  const registerBtn = document.getElementById('registerBtn');
-  const messageDiv = document.getElementById('message');
-
-  function showMessage(msg, error=false) {
-    messageDiv.textContent = msg;
-    messageDiv.style.color = error ? '#ff4c4c' : '#aaffaa';
-  }
-
-  registerBtn.addEventListener('click', () => {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-
-    if (!email || !password) {
-      showMessage('Bitte E-Mail und Passwort eingeben.', true);
-      return;
-    }
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        showMessage('Registrierung erfolgreich! Bitte einloggen.');
-        emailInput.value = '';
-        passwordInput.value = '';
-      })
-      .catch(error => {
-        showMessage('Fehler: ' + error.message, true);
-      });
-  });
+  const msgDiv = document.getElementById('msg');
 
   loginBtn.addEventListener('click', () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
+    msgDiv.textContent = '';
 
     if (!email || !password) {
-      showMessage('Bitte E-Mail und Passwort eingeben.', true);
+      msgDiv.textContent = 'Bitte E-Mail und Passwort eingeben.';
       return;
     }
 
     auth.signInWithEmailAndPassword(email, password)
       .then(() => {
-        window.location.href = "dashboard.html"; // Weiterleitung nach Login
+        window.location.href = 'dashboard.html'; // Weiterleitung nach Login
       })
       .catch(error => {
-        showMessage('Fehler: ' + error.message, true);
+        msgDiv.textContent = error.message;
       });
   });
 
   auth.onAuthStateChanged(user => {
     if (user) {
-      // Wenn bereits eingeloggt, direkt weiterleiten
-      window.location.href = "dashboard.html";
+      window.location.href = 'dashboard.html'; // Falls schon eingeloggt, sofort weiterleiten
     }
   });
 </script>
