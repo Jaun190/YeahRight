@@ -1,143 +1,276 @@
-<!DOCTYPE html><html lang="de">
+<!DOCTYPE html>
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at top left, #1b0033, #0a001a);
-      color: white;
-      overflow-x: hidden;
-    }
-    header {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2rem;
-      text-align: center;
-      font-size: 2rem;
-      box-shadow: 0 0 20px violet;
-    }
-    .container {
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #7b2cbf;
-      box-shadow: 0 0 15px #7b2cbf;
-      padding: 1.5rem;
-      border-radius: 1rem;
-    }
-    .glow-button {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 6px;
-      background-color: #7b2cbf;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 15px #7b2cbf;
-      margin-top: 0.5rem;
-    }
-    .glow-button:hover {
-      background-color: #894edd;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 0.6rem;
-      border-radius: 5px;
-      border: none;
-      margin: 0.5rem 0;
-    }
-    footer {
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #aaa;
-      background: #110022;
-      margin-top: 4rem;
-    }
-    .small {
-      font-size: 0.85rem;
-      color: #ccc;
-    }
-    #loginModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-    .login-box {
-      background: #1f0033;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 20px #7b2cbf;
-      width: 300px;
-      text-align: center;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hashcore Dashboard</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top left, #1b0033, #0a001a);
+    color: white;
+    overflow-x: hidden;
+  }
+  header {
+    background: rgba(255,255,255,0.05);
+    padding: 2rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    box-shadow: 0 0 20px violet;
+  }
+  .container {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #7b2cbf;
+    box-shadow: 0 0 15px #7b2cbf;
+    padding: 1.5rem;
+    border-radius: 1rem;
+  }
+  .glow-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #7b2cbf;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px #7b2cbf;
+    margin-top: 0.5rem;
+  }
+  .glow-button:hover {
+    background-color: #894edd;
+  }
+  input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 5px;
+    border: none;
+    margin: 0.5rem 0;
+    font-size: 1rem;
+  }
+  footer {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #aaa;
+    background: #110022;
+    margin-top: 4rem;
+  }
+  .small {
+    font-size: 0.85rem;
+    color: #ccc;
+  }
+
+  /* Popup Styles */
+  #loginPopup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  #loginPopupContent {
+    background: #220044;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 20px #7b2cbf;
+  }
+  #loginPopupContent h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  #agbCheckbox {
+    margin-right: 0.5rem;
+  }
+  #errorMessage {
+    color: #f44336;
+    margin-top: 0.5rem;
+  }
+  #successMessage {
+    color: #4caf50;
+    margin-top: 0.5rem;
+  }
+  a.agb-link {
+    color: #5e8bff;
+    text-decoration: underline;
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body><div id="loginModal">
-  <div class="login-box">
-    <h2>Login</h2>
-    <input type="text" id="loginEmail" placeholder="E-Mail" /><br>
-    <input type="password" id="loginPassword" placeholder="Passwort" /><br>
-    <button class="glow-button" onclick="loginUser()">Einloggen</button>
-    <p class="small">Mit Login akzeptierst du unsere <a href="#">AGB</a></p>
+<body>
+
+<header>⚡ Hashcore Dashboard</header>
+
+<!-- Login / Registrierung Popup -->
+<div id="loginPopup">
+  <div id="loginPopupContent">
+    <h2>Login / Registrierung</h2>
+    <input type="email" id="emailInput" placeholder="E-Mail" />
+    <input type="password" id="passwordInput" placeholder="Passwort" />
+    <label><input type="checkbox" id="agbCheckbox" /> Ich akzeptiere die <a href="#" class="agb-link" target="_blank">AGB</a></label>
+    <button class="glow-button" onclick="handleAuth()">Login / Registrieren</button>
+    <p id="errorMessage"></p>
+    <p id="successMessage"></p>
   </div>
-</div><header>⚡ Hashcore Dashboard</header><div class="container" id="dashboard" style="display:none">
+</div>
+
+<div class="container" id="mainContent" style="display:none;">
+
+  <!-- Hashpower kaufen -->
   <div class="card">
-    <h2>⚙️ Hashpower kaufen</h2>
+    <h2>⚡ Hashpower kaufen</h2>
+    <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
     <ul>
-      <li><strong>SHA-256 (1Th/s)</strong> = CHF 130.–<br><button class="glow-button">Kaufen</button></li>
-      <li><strong>Scrypt (500MH/s)</strong> = CHF 65.–<br><button class="glow-button">Kaufen</button></li>
-      <li><strong>Etchash (100MH/s)</strong> = CHF 52.–<br><button class="glow-button">Kaufen</button></li>
-      <li><strong>KawPow (100MH/s)</strong> = CHF 78.–<br><button class="glow-button">Kaufen</button></li>
-      <li><strong>Octobus (100MH/s)</strong> = CHF 58.50<br><button class="glow-button">Kaufen</button></li>
+      <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br/>
+        <a href="https://buy.stripe.com/5kQaEwJTs7xmc78nhiF710I" target="_blank">
+          <button class="glow-button">Kaufen</button>
+        </a>
+      </li><br/>
+      <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br/>
+        <a href="https://buy.stripe.com/9B628qeLkRC9Zt8nhiF7103" target="_blank">
+          <button class="glow-button">Kaufen</button>
+        </a>
+      </li><br/>
+      <li><strong>Etcash:</strong> 1 Einheit = CHF 52.-<br/>
+        <a href="https://buy.stripe.com/cNi28qFpO18y3x5b6F7104" target="_blank">
+          <button class="glow-button">Kaufen</button>
+        </a>
+      </li><br/>
+      <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br/>
+        <a href="https://buy.stripe.com/4gMaEWDUU4IafjNavqf7105" target="_blank">
+          <button class="glow-button">Kaufen</button>
+        </a>
+      </li><br/>
+      <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br/>
+        <a href="https://buy.stripe.com/sAa0146d6dVK4F5pDyF7106" target="_blank">
+          <button class="glow-button">Kaufen</button>
+        </a>
+      </li>
     </ul>
+    <p class="small">⚠ Mehrmals kaufen für mehr Hashpower!</p>
   </div>
+
+  <!-- Referrals -->
   <div class="card">
-    <h2>🔑 Lizenz</h2>
-    <p><strong>Hashcore Lizenz</strong> = CHF 49.–</p>
-    <button class="glow-button">Lizenz kaufen</button>
+    <h2>🧑‍🤝‍🧑 Referrals</h2>
+    <p>Empfohlene Partner: <strong>12</strong></p>
+    <p>Provision: <strong>CHF 600.-</strong> (50.- pro Kauf)</p>
+    <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
+    <p class="small" id="refStatus"></p>
   </div>
+
+  <!-- Auszahlung -->
   <div class="card">
     <h2>💸 Auszahlung</h2>
-    <p>Dein Guthaben: <strong>CHF 428.–</strong></p>
-    <input type="text" placeholder="IBAN oder Krypto-Adresse" id="walletInput">
+    <p>Dein Guthaben: <strong>CHF 428.-</strong></p>
+    <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
     <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
     <p class="small" id="payoutStatus"></p>
   </div>
-</div><footer>
-  Hashcore – Dorfstrasse 233 – 3433 Schwanden i.E – jaun190@gmail.com
-</footer><script>
-function loginUser() {
-  const email = document.getElementById('loginEmail').value;
-  const pass = document.getElementById('loginPassword').value;
-  if(email && pass) {
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-  } else {
-    alert('Bitte E-Mail und Passwort eingeben.');
-  }
-}
 
-function submitPayout() {
-  const value = document.getElementById('walletInput').value;
-  if (!value) {
-    document.getElementById('payoutStatus').innerText = '⚠️ Bitte eine Adresse eingeben.';
-    return;
+</div>
+
+<footer>
+  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
+</footer>
+
+<script>
+  // Supabase-Client initialisieren
+  const supabaseUrl = 'https://zudmonossxcfpbltkung.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1ZG1vbm9zc3hjZnBibHRrdW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzgyOTIsImV4cCI6MjA2ODI1NDI5Mn0.OU1QnxYtopKBsyHGyZaLph5ZRMK8NrAMvSIe8ZzPIpo';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  const loginPopup = document.getElementById('loginPopup');
+  const mainContent = document.getElementById('mainContent');
+  const emailInput = document.getElementById('emailInput');
+  const passwordInput = document.getElementById('passwordInput');
+  const agbCheckbox = document.getElementById('agbCheckbox');
+  const errorMessage = document.getElementById('errorMessage');
+  const successMessage = document.getElementById('successMessage');
+  const refStatus = document.getElementById('refStatus');
+  const payoutStatus = document.getElementById('payoutStatus');
+
+  // Überprüfe Login-Status beim Laden
+  async function checkUser() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      loginPopup.style.display = 'none';
+      mainContent.style.display = 'flex';
+    } else {
+      loginPopup.style.display = 'flex';
+      mainContent.style.display = 'none';
+    }
   }
-  document.getElementById('payoutStatus').innerText = '✅ Auszahlung gesendet.';
-}
-</script></body>
+
+  checkUser();
+
+  async function handleAuth() {
+    errorMessage.textContent = '';
+    successMessage.textContent = '';
+
+    if (!emailInput.value || !passwordInput.value) {
+      errorMessage.textContent = 'Bitte E-Mail und Passwort eingeben.';
+      return;
+    }
+    if (!agbCheckbox.checked) {
+      errorMessage.textContent = 'Bitte akzeptiere die AGB.';
+      return;
+    }
+
+    // Versuch Anmeldung
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value,
+      password: passwordInput.value,
+    });
+
+    if (error && error.status === 400) {
+      // User nicht gefunden, registriere neu
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: emailInput.value,
+        password: passwordInput.value,
+      });
+      if (signUpError) {
+        errorMessage.textContent = signUpError.message;
+      } else {
+        successMessage.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.';
+      }
+    } else if (error) {
+      errorMessage.textContent = error.message;
+    } else {
+      successMessage.textContent = 'Login erfolgreich!';
+      setTimeout(() => {
+        loginPopup.style.display = 'none';
+        mainContent.style.display = 'flex';
+      }, 1000);
+    }
+  }
+
+  function copyReferral() {
+    const dummyLink = 'https://hashcore.io/?ref=deinName';
+    navigator.clipboard.writeText(dummyLink);
+    refStatus.innerText = 'Referral-Link kopiert!';
+  }
+
+  function submitPayout() {
+    const value = document.getElementById('walletInput').value;
+    if (!value) {
+      payoutStatus.innerText = '⚠ Bitte eine Adresse eingeben.';
+      return;
+    }
+    payoutStatus.innerText = '✅ Auszahlungsanfrage gesendet.';
+  }
+</script>
+
+</body>
 </html>
