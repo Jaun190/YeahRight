@@ -67,50 +67,86 @@
     font-size: 0.85rem;
     color: #ccc;
   }
+  /* Login Popup Styles */
+  #loginPopup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  #loginPopupContent {
+    background: #220044;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 20px #7b2cbf;
+    text-align: center;
+  }
+  #errorMessage {
+    color: #f44336;
+    margin-top: 0.5rem;
+  }
+  #successMessage {
+    color: #4caf50;
+    margin-top: 0.5rem;
+  }
 </style>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
 </head>
 <body>
 
 <header>⚡ Hashcore Dashboard</header>
 
-<div class="container" id="mainContent">
+<!-- Login Popup -->
+<div id="loginPopup">
+  <div id="loginPopupContent">
+    <h2>Login / Registrierung</h2>
+    <input type="email" id="emailInput" placeholder="E-Mail" />
+    <input type="password" id="passwordInput" placeholder="Passwort" />
+    <button class="glow-button" id="authButton">Login / Registrieren</button>
+    <p id="errorMessage"></p>
+    <p id="successMessage"></p>
+  </div>
+</div>
+
+<!-- Hauptinhalt Dashboard -->
+<div class="container" id="mainContent" style="display:none;">
   <!-- Hashpower kaufen -->
   <div class="card">
     <h2>⚡ Hashpower kaufen</h2>
     <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
     <ul>
-      <li>
-        <strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br />
+      <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br/>
         <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">
           <button class="glow-button">Kaufen</button>
         </a>
-      </li><br />
-      <li>
-        <strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br />
+      </li><br/>
+      <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br/>
         <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">
           <button class="glow-button">Kaufen</button>
         </a>
-      </li><br />
-      <li>
-        <strong>Etchash:</strong> 1 Einheit = CHF 52.-<br />
+      </li><br/>
+      <li><strong>Etchash:</strong> 1 Einheit = CHF 52.-<br/>
         <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">
           <button class="glow-button">Kaufen</button>
         </a>
-      </li><br />
-      <li>
-        <strong>KawPow:</strong> 1 Einheit = CHF 78.-<br />
+      </li><br/>
+      <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br/>
         <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">
           <button class="glow-button">Kaufen</button>
         </a>
-      </li><br />
-      <li>
-        <strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br />
+      </li><br/>
+      <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br/>
         <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">
           <button class="glow-button">Kaufen</button>
         </a>
       </li>
     </ul>
-    <p class="small">⚠ Mehrmals kaufen für mehr Hashpower!</p>
+    <p><small>⚠ Mehrmals kaufen für mehr Hashpower!</small></p>
   </div>
 
   <!-- Referrals -->
@@ -132,29 +168,104 @@
   </div>
 </div>
 
-<script>
-function copyReferral() {
-  // Referral-Link z.B. mit fester Email oder eigener Logik (hier Dummy)
-  const referralLink = window.location.href + '?ref=deine-email@example.com'
-  navigator.clipboard.writeText(referralLink)
-    .then(() => {
-      document.getElementById('refStatus').textContent = 'Referral-Link kopiert!'
-      setTimeout(() => document.getElementById('refStatus').textContent = '', 3000)
-    })
-    .catch(() => {
-      document.getElementById('refStatus').textContent = 'Kopieren fehlgeschlagen.'
-    })
-}
+<footer>
+  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
+</footer>
 
-function submitPayout() {
-  const wallet = document.getElementById('walletInput').value
-  if (!wallet) {
-    document.getElementById('payoutStatus').textContent = 'Bitte gib eine gültige Adresse ein.'
-    return
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  const supabaseUrl = 'https://zudmonossxcfpbltkung.supabase.co'
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1ZG1vbm9zc3hjZnBibHRrdW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzgyOTIsImV4cCI6MjA2ODI1NDI5Mn0.OU1QnxYtopKBsyHGyZaLph5ZRMK8NrAMvSIe8ZzPIpo'
+
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  const loginPopup = document.getElementById('loginPopup')
+  const mainContent = document.getElementById('mainContent')
+  const emailInput = document.getElementById('emailInput')
+  const passwordInput = document.getElementById('passwordInput')
+  const authButton = document.getElementById('authButton')
+  const errorMessage = document.getElementById('errorMessage')
+  const successMessage = document.getElementById('successMessage')
+
+  // Prüfe User-Session beim Laden
+  async function checkUser() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if(session) {
+      loginPopup.style.display = 'none'
+      mainContent.style.display = 'flex'
+    } else {
+      loginPopup.style.display = 'flex'
+      mainContent.style.display = 'none'
+    }
   }
-  document.getElementById('payoutStatus').textContent = 'Auszahlung angefordert: ' + wallet
-  // Hier müsste die Auszahlungslogik implementiert werden
-}
+  checkUser()
+
+  authButton.addEventListener('click', async () => {
+    errorMessage.textContent = ''
+    successMessage.textContent = ''
+
+    const email = emailInput.value.trim()
+    const password = passwordInput.value.trim()
+
+    if (!email || !password) {
+      errorMessage.textContent = 'Bitte E-Mail und Passwort eingeben.'
+      return
+    }
+
+    // Versuch Login
+    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (loginError) {
+      // Falls Nutzer nicht existiert, registrieren
+      if (loginError.status === 400 || loginError.status === 401) {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+        })
+        if (signUpError) {
+          errorMessage.textContent = 'Registrierung fehlgeschlagen: ' + signUpError.message
+          return
+        } else {
+          successMessage.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.'
+        }
+      } else {
+        errorMessage.textContent = 'Login fehlgeschlagen: ' + loginError.message
+      }
+    } else {
+      successMessage.textContent = 'Login erfolgreich! Willkommen.'
+      setTimeout(() => {
+        loginPopup.style.display = 'none'
+        mainContent.style.display = 'flex'
+      }, 1000)
+    }
+  })
+
+  function copyReferral() {
+    // Referral-Link mit User E-Mail oder ID kann hier angepasst werden
+    const referralLink = window.location.href + '?ref=deinName'
+    navigator.clipboard.writeText(referralLink)
+      .then(() => {
+        document.getElementById('refStatus').textContent = 'Referral-Link kopiert!'
+        setTimeout(() => document.getElementById('refStatus').textContent = '', 3000)
+      })
+      .catch(() => {
+        document.getElementById('refStatus').textContent = 'Kopieren fehlgeschlagen.'
+      })
+  }
+
+  function submitPayout() {
+    const wallet = document.getElementById('walletInput').value
+    if (!wallet) {
+      document.getElementById('payoutStatus').textContent = 'Bitte gib eine gültige Adresse ein.'
+      return
+    }
+    document.getElementById('payoutStatus').textContent = 'Auszahlung angefordert: ' + wallet
+    // Hier Auszahlungs-Logik ergänzen
+  }
 </script>
 
 </body>
