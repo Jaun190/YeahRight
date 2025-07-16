@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashcore Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #1b0033, #0a001a);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      box-shadow: 0 0 20px violet;
+    }
+
+    .container {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #7b2cbf;
+      box-shadow: 0 0 15px #7b2cbf;
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
+
+    .glow-button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #7b2cbf;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 15px #7b2cbf;
+      margin-top: 1rem;
+    }
+
+    .glow-button:hover {
+      background-color: #894edd;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+    }
+
+    footer {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #aaa;
+      background: #110022;
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>⚡ Hashcore Dashboard</header>
+
+  <div class="container">
+    <!-- Hashpower kaufen -->
+    <div class="card">
+      <h2>⚙️ Hashpower kaufen</h2>
+      <label for="algo">Algorithmus auswählen:</label>
+      <select id="algo">
+        <option value="sha256">SHA-256</option>
+        <option value="scrypt">Scrypt</option>
+        <option value="etchash">Etchash</option>
+        <option value="kawpow">KawPow</option>
+        <option value="octopus">Octopus</option>
+      </select>
+
+      <label for="menge">Menge (Einheiten):</label>
+      <input type="number" id="menge" min="1" value="1" />
+
+      <p>Gesamtpreis: <strong id="preis">CHF 130.00</strong></p>
+      <a id="kaufen-link" href="https://buy.stripe.com/test_default" target="_blank">
+        <button class="glow-button">Jetzt kaufen</button>
+      </a>
+    </div>
+
+    </div>
+
+    <!-- Referrals -->
+    <div class="card">
+      <h2>👥 Referrals</h2>
+      <p>Empfohlene Partner: <strong>12</strong></p>
+      <p>Verdient: <strong>CHF 600.–</strong></p>
+      <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
+    </div>
+
+    <!-- Auszahlung -->
+    <div class="card">
+      <h2>💰 Auszahlung beantragen</h2>
+      <label for="amount">Betrag in CHF:</label>
+      <input type="number" id="amount" min="1" placeholder="z.B. 200" />
+
+      <label for="method">Auszahlungsmethode:</label>
+      <select id="method">
+        <option value="iban">Bank (IBAN)</option>
+        <option value="btc">Bitcoin</option>
+        <option value="eth">Ethereum</option>
+      </select>
+
+      <label for="details">Empfangsdaten:</label>
+      <input type="text" id="details" placeholder="IBAN oder Wallet-Adresse" />
+
+      <button class="glow-button" onclick="submitPayout()">Auszahlung beantragen</button>
+    </div>
+  </div>
+
+  <footer>
+    Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
+  </footer>
+
+  <script>
+    const stripeLinks = {
+      sha256: "https://buy.stripe.com/3csbIQf9idJm7WkcMM",
+      scrypt: "https://buy.stripe.com/7sI4jS5R3alM2tO4gk",
+      etchash: "https://buy.stripe.com/3cs3db6Jv2TW1Ec4go",
+      kawpow: "https://buy.stripe.com/4gw8zA8ZJcTi8XmbIN",
+      octopus: "https://buy.stripe.com/dR6g0O3e9dJm6De2cj"
+    };
+
+    const basePrices = {
+      sha256: 100,
+      scrypt: 60,
+      etchash: 80,
+      kawpow: 75,
+      octopus: 90
+    };
+
+    const surcharge = 1.3; // 30% Aufschlag
+
+    function updatePreis() {
+      const algo = document.getElementById("algo").value;
+      const menge = parseInt(document.getElementById("menge").value) || 1;
+      const preis = (basePrices[algo] * surcharge * menge).toFixed(2);
+      document.getElementById("preis").textContent = `CHF ${preis}`;
+      document.getElementById("kaufen-link").href = stripeLinks[algo];
+    }
+
+    function copyReferral() {
+      const dummy = document.createElement("input");
+      const link = "https://hashcore.ch/ref/XYZ123";
+      document.body.appendChild(dummy);
+      dummy.value = link;
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+      alert("Referral-Link kopiert: " + link);
+    }
+
+    function submitPayout() {
+      const amount = document.getElementById("amount").value;
+      const method = document.getElementById("method").value;
+      const details = document.getElementById("details").value;
+      alert("Auszahlung beantragt: CHF " + amount + " an " + method + " → " + details);
+    }
+
+    document.getElementById("algo").addEventListener("change", updatePreis);
+    document.getElementById("menge").addEventListener("input", updatePreis);
+    updatePreis();
+  </script>
+
+</body>
+</html>
