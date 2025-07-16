@@ -93,10 +93,12 @@
   <div class="container">
     <div class="card">
       <h2>⚙️ Deine Hashrate</h2>
-      <p>Aktuelle Hashrate: <strong>750 MH/s</strong></p>
-      <input type="range" min="100" max="10000" value="750" />
-      <p>Preis: CHF <strong>349.–</strong></p>
-      <a href="DEIN_STRIPE_LINK_HIER"><button class="glow-button">Jetzt Hashrate kaufen</button></a>
+      <p>Aktuelle Hashrate: <strong id="selectedHashrate">750</strong> MH/s</p>
+      <input id="hashrateSlider" type="range" min="100" max="10000" value="750" />
+      <p>Preis: CHF <strong id="hashratePrice">349.–</strong></p>
+      <a href="https://buy.stripe.com/4gM00ieLk9Fu2x1eLGf7i00">
+        <button class="glow-button">Jetzt Hashrate kaufen</button>
+      </a>
     </div>
 
     <div class="card">
@@ -143,13 +145,13 @@
   </footer>
 
   <script>
-    // Lizenzstatus simulieren (hier noch manuell)
-    const hasLicense = false;
+    const hasLicense = false; // Hier: Lizenzstatus manuell setzen
 
     window.addEventListener('DOMContentLoaded', () => {
       if (!hasLicense) {
         document.getElementById('licensePopup').style.display = 'flex';
       }
+      updateHashratePrice();
       loadNiceHashDevices();
     });
 
@@ -161,7 +163,16 @@
       document.getElementById('walletPopup').style.display = 'none';
     }
 
-    // Geräte von NiceHash anzeigen
+    document.getElementById("hashrateSlider").addEventListener("input", updateHashratePrice);
+
+    function updateHashratePrice() {
+      const slider = document.getElementById("hashrateSlider");
+      const value = parseInt(slider.value);
+      const preis = Math.round(value * 0.5); // Beispielrechnung: CHF 0.50 pro MH/s
+      document.getElementById("selectedHashrate").innerText = value;
+      document.getElementById("hashratePrice").innerText = `${preis}.–`;
+    }
+
     async function loadNiceHashDevices() {
       const container = document.getElementById('nicehash-devices');
       try {
