@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Firebase Login & Registrierung</title>
+<title>Login mit Firebase und Weiterleitung</title>
 <style>
   body {
     background: linear-gradient(135deg, #1e1e3f, #3c1361);
@@ -13,6 +13,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin: 0;
   }
   #container {
     background: #2a1e4b;
@@ -67,7 +68,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
 <script>
-  // Firebase config hier rein kopieren
+  // Firebase Konfiguration einfügen
   const firebaseConfig = {
     apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
     authDomain: "hashcore-f4d96.firebaseapp.com",
@@ -81,20 +82,17 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // HTML Elemente
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
   const loginBtn = document.getElementById('loginBtn');
   const registerBtn = document.getElementById('registerBtn');
   const messageDiv = document.getElementById('message');
 
-  // Nachricht anzeigen
-  function showMessage(msg, error = false) {
+  function showMessage(msg, error=false) {
     messageDiv.textContent = msg;
     messageDiv.style.color = error ? '#ff4c4c' : '#aaffaa';
   }
 
-  // Registrierung
   registerBtn.addEventListener('click', () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
@@ -105,7 +103,7 @@
     }
 
     auth.createUserWithEmailAndPassword(email, password)
-      .then(userCredential => {
+      .then(() => {
         showMessage('Registrierung erfolgreich! Bitte einloggen.');
         emailInput.value = '';
         passwordInput.value = '';
@@ -115,7 +113,6 @@
       });
   });
 
-  // Login
   loginBtn.addEventListener('click', () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
@@ -126,22 +123,18 @@
     }
 
     auth.signInWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        showMessage('Login erfolgreich! Willkommen ' + userCredential.user.email);
-        // Hier kannst du weiterleiten oder Dashboard anzeigen
+      .then(() => {
+        window.location.href = "dashboard.html"; // Weiterleitung nach Login
       })
       .catch(error => {
         showMessage('Fehler: ' + error.message, true);
       });
   });
 
-  // Auth Status prüfen (optional)
   auth.onAuthStateChanged(user => {
     if (user) {
-      showMessage('Eingeloggt als: ' + user.email);
-      // Hier z.B. Dashboard anzeigen oder weiterleiten
-    } else {
-      showMessage('');
+      // Wenn bereits eingeloggt, direkt weiterleiten
+      window.location.href = "dashboard.html";
     }
   });
 </script>
