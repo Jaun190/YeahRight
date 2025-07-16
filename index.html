@@ -67,15 +67,14 @@
     font-size: 0.85rem;
     color: #ccc;
   }
-  /* Login Popup Styles */
   #loginPopup {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.8);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 999;
   }
   #loginPopupContent {
     background: #220044;
@@ -84,7 +83,13 @@
     width: 90%;
     max-width: 400px;
     box-shadow: 0 0 20px #7b2cbf;
-    text-align: center;
+  }
+  #loginPopupContent h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  #agbCheckbox {
+    margin-right: 0.5rem;
   }
   #errorMessage {
     color: #f44336;
@@ -94,59 +99,62 @@
     color: #4caf50;
     margin-top: 0.5rem;
   }
+  #logoutButton {
+    margin: 1rem 0 0 0;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #7b2cbf;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 0 15px #7b2cbf;
+  }
+  #logoutButton:hover {
+    background-color: #894edd;
+  }
 </style>
-<script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
 </head>
 <body>
 
 <header>⚡ Hashcore Dashboard</header>
 
-<!-- Login Popup -->
+<!-- Login / Registrierung Popup -->
 <div id="loginPopup">
   <div id="loginPopupContent">
     <h2>Login / Registrierung</h2>
     <input type="email" id="emailInput" placeholder="E-Mail" />
     <input type="password" id="passwordInput" placeholder="Passwort" />
+    <label><input type="checkbox" id="agbCheckbox" /> Ich akzeptiere die <a href="#" target="_blank">AGB</a></label>
     <button class="glow-button" id="authButton">Login / Registrieren</button>
     <p id="errorMessage"></p>
     <p id="successMessage"></p>
   </div>
 </div>
 
-<!-- Hauptinhalt Dashboard -->
+<!-- Hauptinhalt (Dashboard) -->
 <div class="container" id="mainContent" style="display:none;">
   <!-- Hashpower kaufen -->
   <div class="card">
     <h2>⚡ Hashpower kaufen</h2>
     <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
     <ul>
-      <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br/>
-        <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li><br/>
-      <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br/>
-        <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li><br/>
-      <li><strong>Etchash:</strong> 1 Einheit = CHF 52.-<br/>
-        <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li><br/>
-      <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br/>
-        <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li><br/>
-      <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br/>
-        <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
+      <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br />
+        <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank"><button class="glow-button">Kaufen</button></a>
+      </li><br />
+      <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br />
+        <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank"><button class="glow-button">Kaufen</button></a>
+      </li><br />
+      <li><strong>Etchash:</strong> 1 Einheit = CHF 52.-<br />
+        <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank"><button class="glow-button">Kaufen</button></a>
+      </li><br />
+      <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br />
+        <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank"><button class="glow-button">Kaufen</button></a>
+      </li><br />
+      <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br />
+        <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank"><button class="glow-button">Kaufen</button></a>
       </li>
     </ul>
-    <p><small>⚠ Mehrmals kaufen für mehr Hashpower!</small></p>
+    <p class="small">⚠️ Mehrmals kaufen für mehr Hashpower!</p>
   </div>
 
   <!-- Referrals -->
@@ -166,32 +174,33 @@
     <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
     <p class="small" id="payoutStatus"></p>
   </div>
-</div>
 
-<footer>
-  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E · jaun190@gmail.com
-</footer>
+  <!-- Logout-Button -->
+  <button id="logoutButton">Logout</button>
+</div>
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-  const supabaseUrl = 'https://zudmonossxcfpbltkung.supabase.co'
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1ZG1vbm9zc3hjZnBibHRrdW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzgyOTIsImV4cCI6MjA2ODI1NDI5Mn0.OU1QnxYtopKBsyHGyZaLph5ZRMK8NrAMvSIe8ZzPIpo'
-
+  const supabaseUrl = 'https://zudmonossxcfpbltkuq.supabase.co'
+  const supabaseKey = 'dein-public-anon-key-hier' // Hier musst du deinen tatsächlichen Public-Anon-Key einfügen
   const supabase = createClient(supabaseUrl, supabaseKey)
 
   const loginPopup = document.getElementById('loginPopup')
   const mainContent = document.getElementById('mainContent')
   const emailInput = document.getElementById('emailInput')
   const passwordInput = document.getElementById('passwordInput')
-  const authButton = document.getElementById('authButton')
+  const agbCheckbox = document.getElementById('agbCheckbox')
   const errorMessage = document.getElementById('errorMessage')
   const successMessage = document.getElementById('successMessage')
+  const refStatus = document.getElementById('refStatus')
+  const payoutStatus = document.getElementById('payoutStatus')
+  const logoutButton = document.getElementById('logoutButton')
+  const authButton = document.getElementById('authButton')
 
-  // Prüfe User-Session beim Laden
   async function checkUser() {
     const { data: { session } } = await supabase.auth.getSession()
-    if(session) {
+    if (session) {
       loginPopup.style.display = 'none'
       mainContent.style.display = 'flex'
     } else {
@@ -199,74 +208,85 @@
       mainContent.style.display = 'none'
     }
   }
-  checkUser()
 
   authButton.addEventListener('click', async () => {
     errorMessage.textContent = ''
     successMessage.textContent = ''
 
-    const email = emailInput.value.trim()
-    const password = passwordInput.value.trim()
-
-    if (!email || !password) {
+    if (!emailInput.value || !passwordInput.value) {
       errorMessage.textContent = 'Bitte E-Mail und Passwort eingeben.'
       return
     }
+    if (!agbCheckbox.checked) {
+      errorMessage.textContent = 'Bitte akzeptiere die AGB.'
+      return
+    }
 
-    // Versuch Login
-    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    // Login Versuch
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: emailInput.value,
+      password: passwordInput.value,
     })
 
-    if (loginError) {
-      // Falls Nutzer nicht existiert, registrieren
-      if (loginError.status === 400 || loginError.status === 401) {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
+    if (signInError) {
+      // Falls User nicht existiert, registrieren
+      if (signInError.status === 400) {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: emailInput.value,
+          password: passwordInput.value,
         })
         if (signUpError) {
           errorMessage.textContent = 'Registrierung fehlgeschlagen: ' + signUpError.message
           return
         } else {
           successMessage.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.'
+          return
         }
       } else {
-        errorMessage.textContent = 'Login fehlgeschlagen: ' + loginError.message
+        errorMessage.textContent = 'Anmeldung fehlgeschlagen: ' + signInError.message
+        return
       }
-    } else {
-      successMessage.textContent = 'Login erfolgreich! Willkommen.'
-      setTimeout(() => {
-        loginPopup.style.display = 'none'
-        mainContent.style.display = 'flex'
-      }, 1000)
     }
+
+    successMessage.textContent = 'Login erfolgreich!'
+    loginPopup.style.display = 'none'
+    mainContent.style.display = 'flex'
+  })
+
+  logoutButton.addEventListener('click', async () => {
+    await supabase.auth.signOut()
+    loginPopup.style.display = 'flex'
+    mainContent.style.display = 'none'
   })
 
   function copyReferral() {
-    // Referral-Link mit User E-Mail oder ID kann hier angepasst werden
-    const referralLink = window.location.href + '?ref=deinName'
+    const referralLink = window.location.href + '?ref=' + encodeURIComponent(emailInput.value)
     navigator.clipboard.writeText(referralLink)
       .then(() => {
-        document.getElementById('refStatus').textContent = 'Referral-Link kopiert!'
-        setTimeout(() => document.getElementById('refStatus').textContent = '', 3000)
+        refStatus.textContent = 'Referral-Link kopiert!'
+        setTimeout(() => refStatus.textContent = '', 3000)
       })
       .catch(() => {
-        document.getElementById('refStatus').textContent = 'Kopieren fehlgeschlagen.'
+        refStatus.textContent = 'Kopieren fehlgeschlagen.'
       })
   }
 
   function submitPayout() {
     const wallet = document.getElementById('walletInput').value
     if (!wallet) {
-      document.getElementById('payoutStatus').textContent = 'Bitte gib eine gültige Adresse ein.'
+      payoutStatus.textContent = 'Bitte gib eine gültige Adresse ein.'
       return
     }
-    document.getElementById('payoutStatus').textContent = 'Auszahlung angefordert: ' + wallet
-    // Hier Auszahlungs-Logik ergänzen
+    payoutStatus.textContent = 'Auszahlung angefordert: ' + wallet
+    // Hier müsste die Auszahlungslogik implementiert werden
   }
+
+  checkUser()
 </script>
+
+<footer>
+  Hashcore · Dorfstrasse 233 · 3433 Schwanden i. E. · jaun190@gmail.com
+</footer>
 
 </body>
 </html>
