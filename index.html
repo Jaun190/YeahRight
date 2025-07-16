@@ -1,223 +1,197 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hashcore Dashboard</title>
-<style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top left, #1b0033, #0a001a);
-    color: white;
-    overflow-x: hidden;
-  }
-  header {
-    background: rgba(255,255,255,0.05);
-    padding: 2rem;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    box-shadow: 0 0 20px violet;
-  }
-  .container {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-  .card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid #7b2cbf;
-    box-shadow: 0 0 15px #7b2cbf;
-    padding: 1.5rem;
-    border-radius: 1rem;
-  }
-  .glow-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 6px;
-    background-color: #7b2cbf;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 0 15px #7b2cbf;
-    margin-top: 0.5rem;
-  }
-  .glow-button:hover {
-    background-color: #894edd;
-  }
-  input[type="text"], input[type="email"], input[type="password"] {
-    width: 100%;
-    padding: 0.6rem;
-    border-radius: 5px;
-    border: none;
-    margin: 0.5rem 0;
-    font-size: 1rem;
-  }
-  footer {
-    padding: 1rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: #aaa;
-    background: #110022;
-    margin-top: 4rem;
-  }
-  .small {
-    font-size: 0.85rem;
-    color: #ccc;
-  }
-  #loginPopup {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  #loginPopupContent {
-    background: #220044;
-    padding: 2rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 0 20px #7b2cbf;
-  }
-  #loginPopupContent h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  #agbCheckbox {
-    margin-right: 0.5rem;
-  }
-  #errorMessage {
-    color: #f44336;
-    margin-top: 0.5rem;
-  }
-  #successMessage {
-    color: #4caf50;
-    margin-top: 0.5rem;
-  }
-  a.agb-link {
-    color: #5e8bff;
-    text-decoration: underline;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hashcore Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #1b0033, #0a001a);
+      color: white;
+      overflow-x: hidden;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      box-shadow: 0 0 20px violet;
+    }
+    #loginPopup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    #loginPopupContent {
+      background: #220044;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px #7b2cbf;
+      text-align: center;
+    }
+    #loginPopupContent h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 5px;
+      border: none;
+      margin: 0.5rem 0 1rem 0;
+      font-size: 1rem;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    .glow-button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #7b2cbf;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 15px #7b2cbf;
+      transition: background-color 0.3s ease;
+    }
+    .glow-button:hover {
+      background-color: #894edd;
+    }
+    #errorMessage {
+      color: #f44336;
+      margin-top: 0.5rem;
+      min-height: 1.2rem;
+    }
+    #successMessage {
+      color: #4caf50;
+      margin-top: 0.5rem;
+      min-height: 1.2rem;
+    }
+    #mainContent {
+      display: none;
+      padding: 2rem;
+      /* Hier kommt der Inhalt deiner Hauptseite */
+    }
+  </style>
 </head>
 <body>
 
-<header>⚡ Hashcore Dashboard</header>
+  <header>⚡ Hashcore Dashboard</header>
 
-<!-- Login / Registrierung Popup -->
-<div id="loginPopup">
-  <div id="loginPopupContent">
-    <h2>Login / Registrierung</h2>
-    <input type="email" id="emailInput" placeholder="E-Mail" />
-    <input type="password" id="passwordInput" placeholder="Passwort" />
-    <label><input type="checkbox" id="agbCheckbox" /> Ich akzeptiere die <a href="#" class="agb-link" target="_blank">AGB</a></label>
-    <button class="glow-button" id="authButton">Login / Registrieren</button>
-    <p id="errorMessage"></p>
-    <p id="successMessage"></p>
-  </div>
-</div>
-
-<div class="container" id="mainContent" style="display:none;">
-
-  <!-- Hashpower kaufen -->
-  <div class="card">
-    <h2>⚡ Hashpower kaufen</h2>
-    <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
-    <ul>
-      <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.-<br/>
-        <a href="https://buy.stripe.com/5kQaEwJTs7xmc78nhiF710I" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li><br/>
-      <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.-<br/>
-        <a href="https://buy.stripe.com/9B628qeLkRC9Zt8nhiF7103" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li><br/>
-      <li><strong>Etcash:</strong> 1 Einheit = CHF 52.-<br/>
-        <a href="https://buy.stripe.com/cNi28qFpO18y3x5b6F7104" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li><br/>
-      <li><strong>KawPow:</strong> 1 Einheit = CHF 78.-<br/>
-        <a href="https://buy.stripe.com/4gMaEWDUU4IafjNavqf7105" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li><br/>
-      <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.-<br/>
-        <a href="https://buy.stripe.com/sAa0146d6dVK4F5pDyF7106" target="_blank">
-          <button class="glow-button">Kaufen</button>
-        </a>
-      </li>
-    </ul>
-    <p class="small">⚠ Mehrmals kaufen für mehr Hashpower!</p>
+  <!-- Login / Registrierung Popup -->
+  <div id="loginPopup">
+    <div id="loginPopupContent">
+      <h2>Login / Registrierung</h2>
+      <input type="email" id="emailInput" placeholder="E-Mail" />
+      <input type="password" id="passwordInput" placeholder="Passwort" />
+      <label>
+        <input type="checkbox" id="agbCheckbox" />
+        Ich akzeptiere die <a href="#" class="agb-link" target="_blank">AGB</a>
+      </label>
+      <button class="glow-button" id="authButton">Login / Registrieren</button>
+      <p id="errorMessage"></p>
+      <p id="successMessage"></p>
+    </div>
   </div>
 
-  <!-- Referrals -->
-  <div class="card">
-    <h2>🧑‍🤝‍🧑 Referrals</h2>
-    <p>Empfohlene Partner: <strong>12</strong></p>
-    <p>Provision: <strong>CHF 600.-</strong> (50.- pro Kauf)</p>
-    <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
-    <p class="small" id="refStatus"></p>
+  <div id="mainContent">
+    <!-- Hauptinhalt, z.B. Dashboard, hier einfügen -->
+    <h2>Willkommen im Hashcore Dashboard</h2>
+    <p>Hier erscheint dein Dashboard, sobald du eingeloggt bist.</p>
   </div>
 
-  <!-- Auszahlung -->
-  <div class="card">
-    <h2>💸 Auszahlung</h2>
-    <p>Dein Guthaben: <strong>CHF 428.-</strong></p>
-    <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
-    <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
-    <p class="small" id="payoutStatus"></p>
-  </div>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-</div>
+    // Supabase-Daten - ersetze hier mit deinen eigenen!
+    const supabaseUrl = 'https://zudmonossxcfpbltkung.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1ZG1vbm9zc3hmaHBsdGt1bmc iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDg1NjAxMywiZXhwIjoxOTY2NDEyMDEzfQ.V2CMdVb9zNzx-1A7nxY8P8prAYNu9Z9DNMxukJ0fyVss'
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-  const supabaseUrl = 'https://zudmonossxcfpbltkung.supabase.co'
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1ZG1vbm9zc3hjZnBibHRrdW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzgyOTIsImV4cCI6MjA2ODI1NDI5Mn0.OU1QnxYtopKBsyHGyZaLph5ZRMK8NrAMvSIe8ZzPIpo'
+    const loginPopup = document.getElementById('loginPopup')
+    const mainContent = document.getElementById('mainContent')
+    const emailInput = document.getElementById('emailInput')
+    const passwordInput = document.getElementById('passwordInput')
+    const agbCheckbox = document.getElementById('agbCheckbox')
+    const authButton = document.getElementById('authButton')
+    const errorMessage = document.getElementById('errorMessage')
+    const successMessage = document.getElementById('successMessage')
 
-  const supabase = createClient(supabaseUrl, supabaseKey)
-
-  const loginPopup = document.getElementById('loginPopup')
-  const mainContent = document.getElementById('mainContent')
-  const emailInput = document.getElementById('emailInput')
-  const passwordInput = document.getElementById('passwordInput')
-  const agbCheckbox = document.getElementById('agbCheckbox')
-  const errorMessage = document.getElementById('errorMessage')
-  const successMessage = document.getElementById('successMessage')
-  const refStatus = document.getElementById('refStatus')
-  const payoutStatus = document.getElementById('payoutStatus')
-
-  async function checkUser() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session) {
-      const user = session.user
-      if (!user.email_confirmed_at) {
-        errorMessage.textContent = 'Bitte bestätige zuerst deine E-Mail-Adresse.'
+    async function checkUser() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        if (!session.user.email_confirmed_at) {
+          errorMessage.textContent = 'Bitte bestätige zuerst deine E-Mail.'
+          loginPopup.style.display = 'flex'
+          mainContent.style.display = 'none'
+          return
+        }
+        loginPopup.style.display = 'none'
+        mainContent.style.display = 'block'
+      } else {
         loginPopup.style.display = 'flex'
         mainContent.style.display = 'none'
-      } else {
-        loginPopup.style.display = 'none'
-        mainContent.style.display = 'flex'
       }
-    } else {
-      loginPopup.style.display = 'flex'
-      mainContent.style.display = 'none'
     }
-  }
 
-  checkUser()
+    authButton.addEventListener('click', async () => {
+      errorMessage.textContent = ''
+      successMessage.textContent = ''
 
-  document.getElementById('authButton').addEventListener('click', async () => {
-    errorMessage.textContent = ''
-    successMessage.textContent = ''
+      if (!emailInput.value) {
+        errorMessage.textContent = 'Bitte E-Mail eingeben.'
+        return
+      }
+      if (!passwordInput.value) {
+        errorMessage.textContent = 'Bitte Passwort eingeben.'
+        return
+      }
+      if (!agbCheckbox.checked) {
+        errorMessage.textContent = 'Bitte AGB akzeptieren.'
+        return
+      }
 
-    if (!emailInput.value ||
+      // Versuch Login
+      let { error } = await supabase.auth.signInWithPassword({
+        email: emailInput.value,
+        password: passwordInput.value,
+      })
+
+      if (error) {
+        // Wenn Login fehlschlägt, versuche zu registrieren
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: emailInput.value,
+          password: passwordInput.value,
+        })
+        if (signUpError) {
+          errorMessage.textContent = signUpError.message
+        } else {
+          successMessage.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.'
+        }
+      } else {
+        checkUser()
+      }
+    })
+
+    checkUser()
+  </script>
+
+</body>
+</html>
