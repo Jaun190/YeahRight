@@ -331,15 +331,25 @@
     }
   });
 
-  // Referral und Auszahlung Funktionen
   window.copyReferral = function() {
     const referralLink = 'https://hashcore.io/?ref=deinName';
     navigator.clipboard.writeText(referralLink).then(() => {
       document.getElementById('refStatus').textContent = 'Referral-Link kopiert!';
     });
-  }
+  };
 
   window.submitPayout = function() {
     const wallet = document.getElementById('walletInput').value.trim();
     const payoutStatus = document.getElementById('payoutStatus');
-    payoutStatus
+    if (!wallet) {
+      payoutStatus.textContent = '⚠ Bitte eine Adresse eingeben.';
+      payoutStatus.style.color = '#ff5252';
+      return;
+    }
+    payoutStatus.textContent = '✅ Auszahlungsanfrage gesendet.';
+    payoutStatus.style.color = '#81c784';
+  };
+</script>
+
+</body>
+</html>
