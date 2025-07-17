@@ -68,66 +68,49 @@
   </style>
 </head>
 <body>
-  <header>⚡ Hashcore Dashboard</header>
+
+  <header>⚡ Hashcore Dashboard ⚡</header>
 
   <div class="container">
 
     <!-- Hashpower kaufen -->
     <div class="card">
-      <h2>⚒️ Hashpower kaufen</h2>
+      <h2>⚙️ Hashpower kaufen</h2>
       <ul>
-        <li><strong>SHA-256:</strong> CHF 130.–<br />
-          <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
-        <li><strong>Scrypt:</strong> CHF 65.–<br />
-          <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
-        <li><strong>Etchash:</strong> CHF 52.–<br />
-          <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
-        <li><strong>KawPow:</strong> CHF 59.–<br />
-          <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
-        <li><strong>Octopus:</strong> CHF 58.50<br />
-          <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
+        <li><strong>SHA-256:</strong> CHF 130.–<br /><button class="glow-button">Kaufen</button></li>
+        <li><strong>Scrypt:</strong> CHF 65.–<br /><button class="glow-button">Kaufen</button></li>
+        <li><strong>Etchash:</strong> CHF 52.–<br /><button class="glow-button">Kaufen</button></li>
+        <li><strong>KawPow:</strong> CHF 59.–<br /><button class="glow-button">Kaufen</button></li>
+        <li><strong>Octopus:</strong> CHF 58.50<br /><button class="glow-button">Kaufen</button></li>
       </ul>
       <small>✨ Du kannst mehrere Einheiten kaufen für mehr Hashpower</small>
     </div>
 
     <!-- Referral -->
-    <div class="card">
+    <div class="card" id="referralBox">
       <h2>🎁 Referral</h2>
-      <p>Empfohlener Partner: <strong>Du</strong><br />
-        Provision: z. B. 50.– pro Kauf</p>
-      <input type="text" id="refLinkInput" readonly style="width:100%; padding:8px; font-size:14px; border-radius:5px;" />
+      Empfohlener Partner: <strong>Du</strong><br />
+      Provision: z. B. CHF 50.– pro Kauf<br />
+      <input type="text" id="refLinkInput" readonly />
       <button class="glow-button" onclick="copyReferral()">📋 Referral-Link kopieren</button>
-      <small id="refstatus"></small>
+      <small id="refStatus"></small>
     </div>
 
     <!-- Auszahlung -->
     <div class="card">
-      <h2>💸 Auszahlung</h2>
+      <h2>💵 Auszahlung</h2>
       <p>Jetzt auszahlen: <strong>CHF 428.–</strong></p>
       <input type="text" placeholder="IBAN oder Wallet-Adresse hier eingeben" id="walletInput" />
-      <button class="glow-button" onclick="submitPayout()">💸 Auszahlung anfordern</button>
+      <button class="glow-button" onclick="submitPayout()">📤 Auszahlung anfordern</button>
       <small id="payoutStatus"></small>
     </div>
+
   </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "DEIN_API_KEY",
@@ -135,15 +118,31 @@
       projectId: "DEIN_PROJEKT_ID",
       appId: "DEINE_APP_ID"
     };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-
+    const db = firebase.firestore();
     let currentUser = null;
-    auth.onAuthStateChanged(user => {
-      currentUser = user;
+
+    auth.onAuthStateChanged(async function(user) {
       if (user) {
-        const link = window.location.origin + "?ref=" + user.uid;
+        currentUser = user;
+        const uid = user.uid;
+        const link = window.location.origin + "/register?ref=" + uid;
         document.getElementById("refLinkInput").value = link;
+
+        const doc = await db.collection("users").doc(uid).get();
+        const data = doc.exists ? doc.data() : {};
+        const referrer = data.referrer || null;
+        const provision = data.provision || 0;
+
+        document.getElementById("refStatus").textContent =
+          referrer ? "👥 Geworben von: " + referrer : "👤 Kein Referrer";
+
+        const provisionBox = document.createElement("p");
+        provisionBox.textContent = "💸 Deine Provision: CHF " + provision.toFixed(2);
+        document.getElementById("referralBox").appendChild(provisionBox);
+
       } else {
         document.getElementById("refLinkInput").value = "Bitte einloggen!";
       }
@@ -151,22 +150,22 @@
 
     function copyReferral() {
       const input = document.getElementById("refLinkInput");
-      const refStatus = document.getElementById("refstatus");
+      const status = document.getElementById("refStatus");
 
       if (!currentUser) {
-        refStatus.textContent = "❌ Du musst eingeloggt sein!";
+        status.textContent = "❌ Du musst eingeloggt sein!";
         return;
       }
 
       input.select();
-      input.setSelectionRange(0, 99999); // Für Mobilgeräte
+      input.setSelectionRange(0, 99999); // Mobile
       navigator.clipboard.writeText(input.value)
         .then(() => {
-          refStatus.textContent = "✅ Referral-Link kopiert!";
-          setTimeout(() => refStatus.textContent = "", 3000);
+          status.textContent = "✅ Referral-Link kopiert!";
+          setTimeout(() => status.textContent = "", 3000);
         })
         .catch(() => {
-          refStatus.textContent = "❌ Kopieren fehlgeschlagen.";
+          status.textContent = "❌ Kopieren fehlgeschlagen.";
         });
     }
 
@@ -179,7 +178,7 @@
         return;
       }
 
-      payoutStatus.textContent = "Auszahlung angefordert: " + wallet;
+      payoutStatus.textContent = "💸 Auszahlung angefordert: " + wallet;
     }
   </script>
 </body>
