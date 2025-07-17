@@ -59,12 +59,19 @@
       font-size: 0.85rem;
       color: #ccc;
     }
+    ul {
+      padding-left: 1rem;
+    }
+    li {
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
   <header>⚡ Hashcore Dashboard</header>
 
   <div class="container">
+
     <!-- Hashpower kaufen -->
     <div class="card">
       <h2>⚒️ Hashpower kaufen</h2>
@@ -75,7 +82,26 @@
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-        <!-- Weitere Algorithmen können hier folgen -->
+        <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.–<br />
+          <a href="https://buy.stripe.com/906B2qeLkRG92t8m7j" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+        <li><strong>Etchash:</strong> 1 Einheit = CHF 52.–<br />
+          <a href="https://buy.stripe.com/cHI28gFpo1BYb3xb6f" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+        <li><strong>KawPow:</strong> 1 Einheit = CHF 59.–<br />
+          <a href="https://buy.stripe.com/4gW8aW00UaJlaflNaq" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+        <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50<br />
+          <a href="https://buy.stripe.com/aFa001466GkY94ScDg" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
       </ul>
       <small>✨ Mehrmals kaufen für mehr Hashpower!</small>
     </div>
@@ -83,7 +109,8 @@
     <!-- Referral -->
     <div class="card">
       <h2>🎁 Referral</h2>
-      <p>Empfohlener Partner: <strong>Du</strong></p>
+      <p>Empfohlener Partner: <strong>Du</strong><br />
+        Provision: z. B. 50.– pro Kauf</p>
       <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
       <small id="refstatus"></small>
     </div>
@@ -91,7 +118,8 @@
     <!-- Auszahlung -->
     <div class="card">
       <h2>💸 Auszahlung</h2>
-      <input type="text" placeholder="IBAN oder Wallet-Adresse eingeben" id="walletInput" />
+      <p>Jetzt auszahlen: <strong>CHF 428.–</strong></p>
+      <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
       <button class="glow-button" onclick="submitPayout()">💸 Auszahlung anfordern</button>
       <small id="payoutStatus"></small>
     </div>
@@ -100,41 +128,40 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
-
   <script>
-    // 🔥 DEINE Firebase-Konfiguration hier eintragen:
     const firebaseConfig = {
       apiKey: "DEIN_API_KEY",
       authDomain: "DEIN_PROJEKT.firebaseapp.com",
       projectId: "DEIN_PROJEKT_ID",
       appId: "DEINE_APP_ID"
     };
-
-    // Initialisiere Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
   </script>
 
+  <!-- Funktion Referral-Link + Auszahlung -->
   <script>
     function copyReferral() {
-      const user = firebase.auth().currentUser;
       const refStatus = document.getElementById("refstatus");
 
-      if (user) {
-        const referralID = user.uid;
-        const referralLink = window.location.origin + "?ref=" + referralID;
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          const referralID = user.uid;
+          const referralLink = window.location.origin + "?ref=" + referralID;
 
-        navigator.clipboard.writeText(referralLink)
-          .then(() => {
-            refStatus.textContent = "Referral-Link kopiert: " + referralLink;
-            setTimeout(() => refStatus.textContent = "", 4000);
-          })
-          .catch(() => {
-            refStatus.textContent = "Kopieren fehlgeschlagen.";
-          });
-      } else {
-        refStatus.textContent = "Bitte zuerst einloggen!";
-      }
+          navigator.clipboard.writeText(referralLink)
+            .then(() => {
+              refStatus.textContent = "Referral-Link kopiert: " + referralLink;
+              setTimeout(() => refStatus.textContent = "", 4000);
+            })
+            .catch(() => {
+              refStatus.textContent = "Kopieren fehlgeschlagen.";
+            });
+
+        } else {
+          refStatus.textContent = "Bitte zuerst einloggen!";
+        }
+      });
     }
 
     function submitPayout() {
