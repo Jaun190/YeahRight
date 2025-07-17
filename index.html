@@ -1,13 +1,107 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>hashcore Login</title>
-  <link rel="stylesheet" href="style.css"/>
-  <script defer src="firebase.js"></script>
-  <script defer src="auth.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0b001a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #15002b;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 30px purple;
+      width: 300px;
+    }
+    .form-box {
+      display: flex;
+      flex-direction: column;
+    }
+    input[type="email"],
+    input[type="password"] {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      background: #b370ff;
+      color: white;
+      border: none;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    a { color: #c397ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+  <script type="module">
+    // Firebase Konfiguration
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AlzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtlUk",
+      authDomain: "fritz-95aeb.firebaseapp.com",
+      projectId: "fritz-95aeb",
+      storageBucket: "fritz-95aeb.appspot.com",
+      messagingSenderId: "172607275914",
+      appId: "1:172607275914:web:1c92d4de8022c7b6d0be73"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Login/Register Funktionen
+    window.register = async function () {
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      const confirm = document.getElementById("regConfirm").value;
+      const agb = document.getElementById("agbCheck").checked;
+      if (!agb) return alert("Bitte akzeptiere die AGB und Datenschutz.");
+      if (password !== confirm) return alert("Passwörter stimmen nicht überein.");
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Registrierung erfolgreich!");
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+
+    window.login = async function () {
+      const email = document.getElementById("logEmail").value;
+      const password = document.getElementById("logPassword").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        alert("Login fehlgeschlagen: " + err.message);
+      }
+    };
+
+    window.showLogin = function () {
+      document.getElementById("loginBox").style.display = "block";
+      document.getElementById("registerBox").style.display = "none";
+    };
+
+    window.showRegister = function () {
+      document.getElementById("registerBox").style.display = "block";
+      document.getElementById("loginBox").style.display = "none";
+    };
+  </script>
 </head>
 <body>
   <div class="container">
@@ -17,7 +111,9 @@
       <input type="password" id="regPassword" placeholder="Passwort" />
       <input type="password" id="regConfirm" placeholder="Passwort bestätigen" />
       <label>
-        <input type="checkbox" id="agbCheck" /> Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und <a href="datenschutz.html" target="_blank">Datenschutz</a>.
+        <input type="checkbox" id="agbCheck" />
+        Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und
+        <a href="datenschutz.html" target="_blank">Datenschutz</a>.
       </label>
       <button onclick="register()">Registrieren</button>
       <p>Bereits registriert? <a href="#" onclick="showLogin()">Zum Login</a></p>
