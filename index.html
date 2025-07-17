@@ -2,149 +2,143 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>hashcore Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashcore – Mining Dashboard</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #0b001a;
-      color: white;
+      background: #0d0d0d;
+      color: #fff;
+    }
+    nav {
+      background: #111;
+      padding: 1rem 2rem;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      height: 100vh;
     }
-
-    .container {
-      background: #15002b;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 30px purple;
-      width: 300px;
+    nav h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #0ff;
     }
-
-    .form-box {
-      display: flex;
-      flex-direction: column;
-    }
-
-    input {
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      border-radius: 5px;
+    nav button {
+      background: #0ff;
+      color: #000;
       border: none;
-    }
-
-    button {
-      background: #b370ff;
-      color: white;
-      border: none;
-      padding: 0.6rem;
-      margin-top: 0.5rem;
-      cursor: pointer;
-      border-radius: 5px;
+      padding: 0.5rem 1rem;
       font-weight: bold;
+      cursor: pointer;
     }
-
-    a {
-      color: #c397ff;
-      text-decoration: none;
+    main {
+      padding: 2rem;
     }
-
-    a:hover {
-      text-decoration: underline;
+    .section {
+      margin-bottom: 2rem;
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 0 8px #0ff4;
+    }
+    .products button {
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #0ff;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+    }
+    td, th {
+      padding: 0.5rem;
+      border-bottom: 1px solid #333;
+    }
+    #nav-buttons button {
+      margin-left: 1rem;
     }
   </style>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
-      authDomain: "fritz-95aeb.firebaseapp.com",
-      projectId: "fritz-95aeb",
-      storageBucket: "fritz-95aeb.appspot.com",
-      messagingSenderId: "172607275914",
-      appId: "1:172607275914:web:1c92d4de8022c7b6d0be73"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    window.register = async function () {
-      const email = document.getElementById("regEmail").value;
-      const pw = document.getElementById("regPassword").value;
-      const pwConfirm = document.getElementById("regConfirm").value;
-      const agb = document.getElementById("agbCheck").checked;
-
-      if (!agb) return alert("Bitte akzeptiere die AGB und Datenschutz.");
-      if (pw !== pwConfirm) return alert("Passwörter stimmen nicht überein.");
-
-      try {
-        await createUserWithEmailAndPassword(auth, email, pw);
-        alert("Registrierung erfolgreich!");
-        window.location.href = "dashboard.html";
-      } catch (e) {
-        alert("Fehler: " + e.message);
-      }
-    };
-
-    window.login = async function () {
-      const email = document.getElementById("logEmail").value;
-      const pw = document.getElementById("logPassword").value;
-
-      try {
-        await signInWithEmailAndPassword(auth, email, pw);
-        window.location.href = "dashboard.html";
-      } catch (e) {
-        alert("Login fehlgeschlagen: " + e.message);
-      }
-    };
-
-    window.showLogin = () => {
-      document.getElementById("registerBox").style.display = "none";
-      document.getElementById("loginBox").style.display = "flex";
-    };
-
-    window.showRegister = () => {
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("registerBox").style.display = "flex";
-    };
-  </script>
 </head>
-
 <body>
-  <div class="container">
-    <!-- Registrierung -->
-    <div class="form-box" id="registerBox">
-      <h2>Registrieren</h2>
-      <input type="email" id="regEmail" placeholder="E-Mail" />
-      <input type="password" id="regPassword" placeholder="Passwort" />
-      <input type="password" id="regConfirm" placeholder="Passwort bestätigen" />
-      <label>
-        <input type="checkbox" id="agbCheck" />
-        Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und
-        <a href="datenschutz.html" target="_blank">Datenschutz</a>.
-      </label>
-      <button onclick="register()">Registrieren</button>
-      <p>Bereits registriert? <a href="#" onclick="showLogin()">Zum Login</a></p>
+
+  <nav>
+    <h1>Hashcore</h1>
+    <div id="nav-buttons">
+      <button onclick="showSection('dashboard')">Dashboard</button>
+      <button onclick="showSection('buy')">Hashpower kaufen</button>
+      <button onclick="showSection('admin')">Admin</button>
+    </div>
+  </nav>
+
+  <main>
+    <div id="dashboard" class="section">
+      <h2>Dein Mining Dashboard</h2>
+      <p><strong>Gekaufte Hashrate:</strong> <span id="hashrate">0 TH/s</span></p>
+      <p><strong>Simulierter Ertrag:</strong> <span id="earnings">0.00000000 BTC</span></p>
+      <p><strong>Referral-Link:</strong> <code>https://hashcore.io/?ref=deinname</code></p>
     </div>
 
-    <!-- Login -->
-    <div class="form-box" id="loginBox" style="display:none">
-      <h2>Login</h2>
-      <input type="email" id="logEmail" placeholder="E-Mail" />
-      <input type="password" id="logPassword" placeholder="Passwort" />
-      <button onclick="login()">Login</button>
-      <p>Noch kein Konto? <a href="#" onclick="showRegister()">Hier registrieren</a></p>
+    <div id="buy" class="section" style="display: none;">
+      <h2>Hashpower kaufen</h2>
+      <div class="products">
+        <button onclick="buyHashrate(1)">1 TH/s – CHF 49.–</button>
+        <button onclick="buyHashrate(5)">5 TH/s – CHF 199.–</button>
+        <button onclick="buyHashrate(10)">10 TH/s – CHF 349.–</button>
+      </div>
     </div>
-  </div>
+
+    <div id="admin" class="section" style="display: none;">
+      <h2>Adminpanel</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Hashrate</th>
+            <th>BTC Ertrag</th>
+          </tr>
+        </thead>
+        <tbody id="admin-table">
+          <tr>
+            <td>demo_user</td>
+            <td id="admin-hashrate">0 TH/s</td>
+            <td id="admin-earnings">0.00000000 BTC</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    let totalHashrate = 0;
+    let totalEarnings = 0;
+
+    function buyHashrate(ths) {
+      totalHashrate += ths;
+      totalEarnings += ths * 0.000015; // Simulierter BTC-Wert
+      updateDashboard();
+      alert(`✅ ${ths} TH/s erfolgreich gekauft!`);
+    }
+
+    function updateDashboard() {
+      document.getElementById("hashrate").innerText = totalHashrate + " TH/s";
+      document.getElementById("earnings").innerText = totalEarnings.toFixed(8) + " BTC";
+      document.getElementById("admin-hashrate").innerText = totalHashrate + " TH/s";
+      document.getElementById("admin-earnings").innerText = totalEarnings.toFixed(8) + " BTC";
+    }
+
+    function showSection(id) {
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("buy").style.display = "none";
+      document.getElementById("admin").style.display = "none";
+      document.getElementById(id).style.display = "block";
+    }
+  </script>
+
 </body>
 </html>
