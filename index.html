@@ -3,174 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hashcore Login</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <title>Login / Registrieren</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom right, #1e0034, #2a004f);
+      background: #100020;
       color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .container {
-      background: #220033;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-      width: 90%;
-      max-width: 400px;
-    }
-    h2 {
+      font-family: sans-serif;
       text-align: center;
-      margin-bottom: 1.5rem;
+      padding: 40px;
     }
     input, button {
-      width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      border-radius: 0.5rem;
-      border: none;
-      font-size: 1rem;
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      width: 250px;
     }
-    input {
-      background: #3a005c;
-      color: white;
+    .hidden {
+      display: none;
     }
-    button {
-      background: #7f00ff;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
+    .error {
+      color: red;
+      margin-top: 10px;
     }
-    small {
-      display: block;
-      text-align: center;
-      margin-top: 1rem;
-    }
-    .hidden { display: none; }
-    .error { color: #ff4d4d; text-align: center; }
-    label { font-size: 0.9rem; display: block; margin-bottom: 0.2rem; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2 id="formTitle">Login</h2>
-    
-    <div id="error" class="error"></div>
-    
-    <input type="email" id="email" placeholder="E-Mail eingeben" />
-    <input type="password" id="password" placeholder="Passwort eingeben" />
-    <input type="password" id="passwordRepeat" placeholder="Passwort wiederholen" class="hidden" />
-    
-    <label class="hidden" id="agbContainer">
-      <input type="checkbox" id="agbCheckbox" />
-      Ich akzeptiere die <a href="agb.html" target="_blank" style="color:#7fb2cb;">AGB</a> & <a href="datenschutz.html" target="_blank" style="color:#7fb2cb;">Datenschutzerklärung</a>
-    </label>
-    
-    <button id="submitBtn">Einloggen</button>
-    
-    <small>
-      <span id="toggleText">Noch keinen Account?</span>
-      <button onclick="toggleMode()" style="background: none; border: none; color: #7fb2cb; text-decoration: underline; cursor: pointer; padding: 0; font-size: 0.9rem;">
-        Registrieren
-      </button>
-    </small>
+  <h1 id="title">Login</h1>
+
+  <div id="form">
+    <input type="email" id="email" placeholder="E-Mail"><br>
+    <input type="password" id="password" placeholder="Passwort"><br>
+    <input type="password" id="password2" placeholder="Passwort bestätigen" class="hidden"><br>
+    <label id="agbLabel" class="hidden">
+      <input type="checkbox" id="agb"> Ich akzeptiere AGB & Datenschutz
+    </label><br>
+    <button onclick="handleAction()" id="actionBtn">Einloggen</button><br>
+    <a href="#" onclick="toggleMode()" id="toggleLink">Noch keinen Account? Registrieren</a>
+    <p class="error" id="error"></p>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <h2>Willkommen!</h2>
+    <p>Dein Referral-Link:</p>
+    <code id="refLink"></code><br><br>
+    <button onclick="logout()">Logout</button>
   </div>
 
   <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 
+  <!-- Firebase Config -->
   <script>
     const firebaseConfig = {
-      apiKey: "DEINE_API_KEY",
-      authDomain: "DEIN_PROJECT.firebaseapp.com",
-      projectId: "DEIN_PROJECT",
-      appId: "DEINE_APP_ID"
+      apiKey: "AlzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtlUk",
+      authDomain: "fritz-95aeb.firebaseapp.com",
+      projectId: "fritz-95aeb"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+  </script>
 
-    let mode = "login";
+  <!-- Auth & Logic -->
+  <script>
+    let mode = "login"; // oder 'register'
 
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const passwordRepeat = document.getElementById("passwordRepeat");
-    const submitBtn = document.getElementById("submitBtn");
-    const toggleText = document.getElementById("toggleText");
-    const formTitle = document.getElementById("formTitle");
-    const errorDiv = document.getElementById("error");
-    const agbCheckbox = document.getElementById("agbCheckbox");
-    const agbContainer = document.getElementById("agbContainer");
+    const emailInput = document.getElementById("email");
+    const passInput = document.getElementById("password");
+    const pass2Input = document.getElementById("password2");
+    const agb = document.getElementById("agb");
+    const agbLabel = document.getElementById("agbLabel");
+    const title = document.getElementById("title");
+    const actionBtn = document.getElementById("actionBtn");
+    const toggleLink = document.getElementById("toggleLink");
+    const errorText = document.getElementById("error");
 
-    let referrer = new URLSearchParams(window.location.search).get("ref") || null;
+    const ref = new URLSearchParams(window.location.search).get("ref") || "none";
 
     function toggleMode() {
-      if (mode === "login") {
-        mode = "register";
-        formTitle.innerText = "Registrieren";
-        submitBtn.innerText = "Registrieren";
-        toggleText.innerText = "Schon einen Account?";
-        passwordRepeat.classList.remove("hidden");
-        agbContainer.classList.remove("hidden");
+      mode = mode === "login" ? "register" : "login";
+      if (mode === "register") {
+        title.innerText = "Registrieren";
+        actionBtn.innerText = "Registrieren";
+        toggleLink.innerText = "Schon einen Account? Einloggen";
+        pass2Input.classList.remove("hidden");
+        agbLabel.classList.remove("hidden");
       } else {
-        mode = "login";
-        formTitle.innerText = "Login";
-        submitBtn.innerText = "Einloggen";
-        toggleText.innerText = "Noch keinen Account?";
-        passwordRepeat.classList.add("hidden");
-        agbContainer.classList.add("hidden");
+        title.innerText = "Login";
+        actionBtn.innerText = "Einloggen";
+        toggleLink.innerText = "Noch keinen Account? Registrieren";
+        pass2Input.classList.add("hidden");
+        agbLabel.classList.add("hidden");
       }
-      errorDiv.innerText = "";
     }
 
-    submitBtn.addEventListener("click", async () => {
-      const mail = email.value.trim();
-      const pass = password.value.trim();
-      const repeat = passwordRepeat.value.trim();
+    function handleAction() {
+      const email = emailInput.value;
+      const pass = passInput.value;
+      const pass2 = pass2Input.value;
 
-      if (!mail || !pass) {
-        errorDiv.innerText = "❌ Bitte E-Mail und Passwort eingeben.";
-        return;
-      }
+      if (!email || !pass) return showError("Bitte Felder ausfüllen.");
 
       if (mode === "register") {
-        if (pass !== repeat) {
-          errorDiv.innerText = "❌ Passwörter stimmen nicht überein.";
-          return;
-        }
-        if (!agbCheckbox.checked) {
-          errorDiv.innerText = "❌ Bitte AGB und Datenschutzerklärung akzeptieren.";
-          return;
-        }
+        if (pass !== pass2) return showError("Passwörter stimmen nicht überein.");
+        if (!agb.checked) return showError("AGB bestätigen.");
 
-        try {
-          const cred = await auth.createUserWithEmailAndPassword(mail, pass);
-          await cred.user.sendEmailVerification();
-          await cred.user.updateProfile({ displayName: referrer ? `ref:${referrer}` : "" });
-          alert("✅ Registriert! Bitte E-Mail bestätigen.");
-        } catch (err) {
-          errorDiv.innerText = "❌ " + err.message;
-        }
-
+        auth.createUserWithEmailAndPassword(email, pass)
+          .then(() => {
+            localStorage.setItem("ref", ref);
+            showDashboard();
+          })
+          .catch(err => showError(err.message));
       } else {
-        try {
-          const cred = await auth.signInWithEmailAndPassword(mail, pass);
-          if (!cred.user.emailVerified) {
-            errorDiv.innerText = "❌ Bitte E-Mail bestätigen.";
-            return;
-          }
-          window.location.href = "dashboard.html";
-        } catch (err) {
-          errorDiv.innerText = "❌ " + err.message;
-        }
+        auth.signInWithEmailAndPassword(email, pass)
+          .then(() => showDashboard())
+          .catch(err => showError(err.message));
       }
+    }
+
+    function showDashboard() {
+      document.getElementById("form").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+      const user = auth.currentUser;
+      const uid = user.uid;
+      const savedRef = localStorage.getItem("ref") || uid;
+      document.getElementById("refLink").innerText = `https://hashcore.website?ref=${uid}`;
+    }
+
+    function logout() {
+      auth.signOut().then(() => location.reload());
+    }
+
+    function showError(msg) {
+      errorText.innerText = msg;
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) showDashboard();
     });
   </script>
+
 </body>
 </html>
