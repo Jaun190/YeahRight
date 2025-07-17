@@ -1,169 +1,141 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HashCore Login & Registrierung</title>
+  <meta charset="UTF-8">
+  <title>Registrieren – HashCore</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial, sans-serif;
       background: #111;
+      font-family: sans-serif;
       color: #fff;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       margin: 0;
     }
-    .login-wrapper {
+    .box {
       background: #1e1e1e;
       padding: 30px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ffd5;
+      width: 90%;
       max-width: 400px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .brand { color: #00ffcc; }
-    .subtitle {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #ccc;
-    }
-    input, button {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
       padding: 12px;
-      margin: 8px 0;
+      margin: 10px 0;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
+      font-size: 16px;
     }
-    input[type="checkbox"] {
-      width: auto;
-      margin-right: 10px;
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00ffd5;
+      border: none;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
     }
     label {
-      font-size: 14px;
       display: flex;
       align-items: center;
-      margin-top: 10px;
-    }
-    input { background: #2c2c2c; color: #fff; }
-    button {
-      background-color: #00ffcc;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .toggle-mode {
-      text-align: center;
-      margin-top: 15px;
       font-size: 14px;
-      color: #aaa;
     }
-    .toggle-mode a {
-      color: #00ffcc;
-      cursor: pointer;
-      text-decoration: underline;
+    a {
+      color: #00ffd5;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="login-wrapper">
-    <h1>Willkommen bei <span class="brand">HashCore</span></h1>
-    <p class="subtitle" id="form-title">Login</p>
 
-    <form id="auth-form">
-      <input type="email" id="email" placeholder="E-Mail" required />
-      <input type="password" id="password" placeholder="Passwort" required />
-      <div id="agb-container" style="display: none;">
-        <label>
-          <input type="checkbox" id="agb" />
-          Ich akzeptiere die <a href="agb.html" target="_blank" style="color:#00ffcc;">AGB</a>
-        </label>
-      </div>
-      <button type="submit" id="submit-btn">Login</button>
-    </form>
-
-    <div class="toggle-mode">
-      <span id="toggle-text">Noch kein Konto?</span>
-      <a id="toggle-link">Jetzt registrieren</a>
-    </div>
+  <div class="box">
+    <h2>Registrieren</h2>
+    <input type="email" id="email" placeholder="E-Mail" required>
+    <input type="password" id="password" placeholder="Passwort" required>
+    <label><input type="checkbox" id="agb"> Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a></label>
+    <button onclick="register()">Registrieren</button>
+    <p>Schon registriert? <a href="login.html">Login</a></p>
   </div>
 
   <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js"></script>
 
   <script>
+    // Deine Firebase-Konfiguration
     const firebaseConfig = {
-      apiKey: "AIzaSyD7iSkiuOfYoguLDjAG0DMuVYkCPRc0UtM",
-      authDomain: "fritz-95aab.firebaseapp.com",
-      projectId: "fritz-95aab"
+      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
+      authDomain: "fritz-95aeb.firebaseapp.com",
+      projectId: "fritz-95aeb",
+      storageBucket: "fritz-95aeb.appspot.com",
+      messagingSenderId: "DEINE_SENDER_ID",
+      appId: "DEINE_APP_ID"
     };
-
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
-    let isLogin = true;
-    let referrer = null;
-
-    const toggleLink = document.getElementById("toggle-link");
-    const formTitle = document.getElementById("form-title");
-    const submitBtn = document.getElementById("submit-btn");
-    const toggleText = document.getElementById("toggle-text");
-    const agbContainer = document.getElementById("agb-container");
-
-    // Check for referral
+    // Referral aus URL holen
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('ref')) {
-      referrer = urlParams.get('ref');
-    }
+    const ref = urlParams.get("ref");
 
-    toggleLink.addEventListener("click", () => {
-      isLogin = !isLogin;
-      formTitle.innerText = isLogin ? "Login" : "Registrierung";
-      submitBtn.innerText = isLogin ? "Login" : "Registrieren";
-      toggleText.innerText = isLogin ? "Noch kein Konto?" : "Schon registriert?";
-      toggleLink.innerText = isLogin ? "Jetzt registrieren" : "Zum Login";
-      agbContainer.style.display = isLogin ? "none" : "block";
-    });
+    function register() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const agbAccepted = document.getElementById("agb").checked;
 
-    document.getElementById("auth-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      if (!isLogin && !document.getElementById("agb").checked) {
-        alert("Bitte bestätige die AGB.");
+      if (!agbAccepted) {
+        alert("Bitte akzeptiere die AGB.");
         return;
       }
 
-      if (isLogin) {
-        firebase.auth().signInWithEmailAndPassword(email, password)
-          .then(() => {
-            alert("Login erfolgreich!");
-            window.location.href = "dashboard.html";
-          })
-          .catch(error => alert("Fehler beim Login:\n" + error.message));
-      } else {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-          .then((userCredential) => {
-            // Referral speichern
-            const uid = userCredential.user.uid;
-            db.collection("users").doc(uid).set({
-              email: email,
-              referrer: referrer || null
-            }).then(() => {
-              alert("Registrierung erfolgreich!");
-              window.location.href = "dashboard.html";
-            });
-          })
-          .catch(error => alert("Fehler bei der Registrierung:\n" + error.message));
-      }
-    });
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          const uid = userCredential.user.uid;
+
+          // Eigenes Profil speichern
+          db.collection("users").doc(uid).set({
+            email: email,
+            referrer: ref || null,
+            bonus: 0,
+            referrals: 0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          // Wenn jemand geworben hat, dem Bonus geben
+          if (ref) {
+            db.collection("users").where("email", "==", ref).get()
+              .then(snapshot => {
+                if (!snapshot.empty) {
+                  const doc = snapshot.docs[0];
+                  const data = doc.data();
+                  const newBonus = (data.bonus || 0) + 50;
+                  const newReferrals = (data.referrals || 0) + 1;
+
+                  doc.ref.update({
+                    bonus: newBonus,
+                    referrals: newReferrals
+                  });
+                }
+              });
+          }
+
+          alert("Registrierung erfolgreich!");
+          window.location.href = "dashboard.html";
+        })
+        .catch(error => {
+          alert("Fehler: " + error.message);
+        });
+    }
   </script>
 </body>
 </html>
