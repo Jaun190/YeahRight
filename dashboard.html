@@ -12,6 +12,7 @@
       color: white;
       padding: 2rem;
     }
+
     .container {
       max-width: 800px;
       margin: auto;
@@ -19,6 +20,7 @@
       flex-direction: column;
       gap: 2rem;
     }
+
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #7b2cbf;
@@ -26,18 +28,21 @@
       padding: 1.5rem;
       border-radius: 1rem;
     }
+
     h2 {
       margin-top: 0;
     }
-    input[type="text"] {
-      width: 100%;
-      padding: 0.6rem;
-      border-radius: 5px;
-      border: none;
-      margin: 0.5rem 0;
-      font-size: 1rem;
+
+    .product-list li {
+      margin-bottom: 1.5rem;
     }
-    .glow-button, .product-button {
+
+    .product-title {
+      font-weight: bold;
+      margin-bottom: 0.2rem;
+    }
+
+    .product-button {
       padding: 0.75rem 1.2rem;
       border: none;
       border-radius: 6px;
@@ -50,147 +55,92 @@
       display: inline-block;
       margin-top: 0.5rem;
     }
-    .product-list li {
-      margin-bottom: 1.5rem;
-    }
-    .product-title {
-      font-weight: bold;
-      margin-bottom: 0.2rem;
-    }
+
     small {
       font-size: 0.85rem;
       color: #ccc;
     }
   </style>
 </head>
-<body>
+
+<body style="display: none;" id="bodyHidden">
   <h1>⚡ Hashcore Dashboard</h1>
   <div class="container">
-    
+
     <!-- Produkte -->
     <div class="card">
       <h2>🛒 Hashpower kaufen</h2>
       <ul class="product-list">
         <li>
           <div class="product-title">SHA-256 – CHF 130.–</div>
-          <a class="product-button" href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">Kaufen</a>
+          <a class="product-button" href="https://buy.stripe.com/5k2qkEWTs7xmc788n1" target="_blank">Kaufen</a>
         </li>
         <li>
           <div class="product-title">Scrypt – CHF 65.–</div>
-          <a class="product-button" href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">Kaufen</a>
+          <a class="product-button" href="https://buy.stripe.com/9B528qeLkcRG9ZtBni" target="_blank">Kaufen</a>
         </li>
         <li>
           <div class="product-title">Etchash – CHF 52.–</div>
-          <a class="product-button" href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">Kaufen</a>
+          <a class="product-button" href="https://buy.stripe.com/cNi28qfPo18Y3bXs6b" target="_blank">Kaufen</a>
         </li>
         <li>
           <div class="product-title">KawPow – CHF 59.–</div>
-          <a class="product-button" href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">Kaufen</a>
+          <a class="product-button" href="https://buy.stripe.com/4gMaEW0U4laJfNav6j" target="_blank">Kaufen</a>
         </li>
         <li>
           <div class="product-title">Octopus – CHF 58.50</div>
-          <a class="product-button" href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">Kaufen</a>
+          <a class="product-button" href="https://buy.stripe.com/aFa001a66dVK4F9cDy" target="_blank">Kaufen</a>
         </li>
       </ul>
       <small>✨ Je mehr du kaufst, desto mehr Hashpower bekommst du.</small>
     </div>
 
-    <!-- Referral -->
+    <!-- NiceHash Geräte -->
     <div class="card">
-      <h2>🎯 Dein Referral-Link</h2>
-      <input type="text" id="refLinkInput" readonly />
-      <button class="glow-button" onclick="copyReferral()">🔗 Link kopieren</button>
-      <p id="refStatus">Lade...</p>
+      <h2>🧠 NiceHash Geräte</h2>
+      <ul class="product-list">
+        <li>
+          <div class="product-title">Bitmain Antminer S19 Pro – ca. 110 TH/s</div>
+          <a class="product-button" href="https://www.nicehash.com/profitability-calculator/bitmain-antminer-s19-pro" target="_blank">🔗 Zur NiceHash-Seite</a>
+        </li>
+        <li>
+          <div class="product-title">Whatsminer M30S+ – ca. 100 TH/s</div>
+          <a class="product-button" href="https://www.nicehash.com/profitability-calculator/whatsminer-m30s" target="_blank">🔗 Zur NiceHash-Seite</a>
+        </li>
+        <li>
+          <div class="product-title">Hashpower kaufen (on-demand)</div>
+          <a class="product-button" href="https://www.nicehash.com/hash-power-marketplace" target="_blank">💥 Hashpower mieten</a>
+        </li>
+      </ul>
+      <small>ℹ️ Die Hashpower-Angebote ändern sich je nach Verfügbarkeit auf NiceHash.</small>
     </div>
 
-    <!-- Provision -->
-    <div class="card">
-      <h2>💰 Deine Provision</h2>
-      <p id="provisionInfo">CHF 0.–</p>
-    </div>
-
-    <!-- Auszahlung -->
-    <div class="card">
-      <h2>💸 Auszahlung anfordern</h2>
-      <input type="text" id="walletInput" placeholder="Wallet oder IBAN eingeben" />
-      <button class="glow-button" onclick="submitPayout()">🔥 Auszahlung anfordern</button>
-      <small id="payoutStatus"></small>
-    </div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase Auth Check -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import {
-      getFirestore,
-      doc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "DEIN_API_KEY",
-      authDomain: "DEIN_PROJEKT.firebaseapp.com",
-      projectId: "DEIN_PROJEKT_ID",
-      appId: "DEINE_APP_ID"
+      apiKey: "AIzaSyD75WuKfOyLUjD4GQmUVXYfQhCCUtUK",
+      authDomain: "fritz-95aeb.firebaseapp.com",
+      projectId: "fritz-95aeb",
+      storageBucket: "fritz-95aeb.appspot.com",
+      messagingSenderId: "172602759144",
+      appId: "1:172602759144:web:1c924d8de8022c7b6d0be73"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
-    let currentUser = null;
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        const uid = user.uid;
-        const refLink = `${window.location.origin}/index.html?ref=${uid}`;
-        document.getElementById("refLinkInput").value = refLink;
-
-        const docSnap = await getDoc(doc(db, "users", uid));
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          const referrer = data.referrer || null;
-          const provision = data.provision || 0;
-
-          document.getElementById("refStatus").textContent = referrer
-            ? `Geworben von: ${referrer}`
-            : `Kein Werber`;
-
-          document.getElementById("provisionInfo").textContent = `CHF ${provision.toFixed(2)}.–`;
-        } else {
-          document.getElementById("refStatus").textContent = "Kein Benutzerdatensatz gefunden.";
-        }
-      } else {
-        alert("Du bist nicht eingeloggt.");
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
         window.location.href = "index.html";
+      } else {
+        document.getElementById("bodyHidden").style.display = "block";
       }
     });
-
-    window.copyReferral = () => {
-      const input = document.getElementById("refLinkInput");
-      input.select();
-      navigator.clipboard.writeText(input.value)
-        .then(() => {
-          document.getElementById("refStatus").textContent = "✅ Link kopiert!";
-        });
-    };
-
-    window.submitPayout = () => {
-      const wallet = document.getElementById("walletInput").value;
-      const status = document.getElementById("payoutStatus");
-
-      if (!wallet.trim()) {
-        status.textContent = "❌ Bitte gib eine gültige Adresse ein.";
-        return;
-      }
-
-      status.textContent = `✅ Auszahlung beantragt für: ${wallet}`;
-    };
   </script>
 </body>
 </html>
