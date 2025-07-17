@@ -7,87 +7,82 @@
   <style>
     body {
       margin: 0;
-      background: radial-gradient(circle at top left, #1b0033, #0a001a);
       font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #1b0033, #0a001a);
       color: white;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
     }
-
-    .login-box {
-      background: rgba(255, 255, 255, 0.05);
+    .form-container {
+      background: rgba(255,255,255,0.05);
       padding: 2rem;
       border-radius: 1rem;
-      box-shadow: 0 0 20px #7fb2cb;
       width: 100%;
       max-width: 400px;
+      box-shadow: 0 0 15px #7fb2cbf;
     }
-
     h2 {
-      text-align: center;
+      margin-top: 0;
     }
-
-    input, button {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
-      padding: 0.8rem;
-      margin: 0.5rem 0;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
       border: none;
-      border-radius: 5px;
+      font-size: 1rem;
     }
-
-    input {
-      background: #333;
-      color: white;
-    }
-
     button {
-      background: #7fb2cb;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      background: #7fb2cbf;
       color: white;
-      font-weight: bold;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+      margin-bottom: 1rem;
     }
-
-    .toggle {
-      text-align: center;
-      margin-top: 1rem;
-      cursor: pointer;
-      color: #7fb2cb;
+    small, label {
+      font-size: 0.9rem;
     }
-
-    small {
-      display: block;
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.8rem;
+    .toggle-link {
       color: #ccc;
+      cursor: pointer;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="login-box">
+  <div class="form-container">
     <h2 id="formTitle">Login</h2>
+    <input type="email" id="email" placeholder="E-Mail eingeben" />
+    <input type="password" id="password" placeholder="Passwort eingeben" />
+    <input type="password" id="passwordRepeat" placeholder="Passwort wiederholen" style="display: none;" />
 
-    <input type="email" id="email" placeholder="E-Mail" required />
-    <input type="password" id="password" placeholder="Passwort" required />
-    <input type="password" id="confirmPassword" placeholder="Passwort wiederholen" style="display:none" />
+    <div id="agbContainer" style="display: none; margin-bottom: 1rem;">
+      <label>
+        <input type="checkbox" id="agb" />
+        Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>.
+      </label>
+    </div>
 
-    <label><input type="checkbox" id="agbBox" /> Ich akzeptiere AGB & Datenschutz</label>
-
-    <button onclick="submitForm()">➡️ Weiter</button>
-
-    <div class="toggle" onclick="toggleForm()">Noch kein Account? Jetzt registrieren</div>
-
-    <small id="status"></small>
+    <button id="actionBtn">Einloggen</button>
+    <small><span id="toggleText">Noch keinen Account?</span> <span class="toggle-link" onclick="toggleMode()">Registrieren</span></small>
+    <p id="statusMsg"></p>
   </div>
 
+  <!-- Firebase + Logik -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getAuth,
       createUserWithEmailAndPassword,
-      signInWithEmailAndPassword
+      signInWithEmailAndPassword,
+      sendEmailVerification
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       getFirestore,
@@ -98,7 +93,7 @@
     const firebaseConfig = {
       apiKey: "DEIN_API_KEY",
       authDomain: "DEIN_PROJEKT.firebaseapp.com",
-      projectId: "DEIN_PROJEKT_ID",
+      projectId: "DEIN_PROJEKT",
       appId: "DEINE_APP_ID"
     };
 
@@ -108,58 +103,68 @@
 
     let registerMode = false;
 
-    function toggleForm() {
+    function toggleMode() {
       registerMode = !registerMode;
       document.getElementById("formTitle").textContent = registerMode ? "Registrieren" : "Login";
-      document.getElementById("confirmPassword").style.display = registerMode ? "block" : "none";
-      document.querySelector(".toggle").textContent = registerMode
-        ? "Schon registriert? Jetzt einloggen"
-        : "Noch kein Account? Jetzt registrieren";
+      document.getElementById("passwordRepeat").style.display = registerMode ? "block" : "none";
+      document.getElementById("agbContainer").style.display = registerMode ? "block" : "none";
+      document.getElementById("actionBtn").textContent = registerMode ? "Registrieren" : "Einloggen";
+      document.getElementById("toggleText").textContent = registerMode ? "Schon registriert?" : "Noch keinen Account?";
+      document.querySelector(".toggle-link").textContent = registerMode ? "Login" : "Registrieren";
     }
 
-    async function submitForm() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const confirm = document.getElementById("confirmPassword").value;
-      const agb = document.getElementById("agbBox").checked;
-      const status = document.getElementById("status");
+    document.getElementById("actionBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const pw = document.getElementById("password").value;
+      const pw2 = document.getElementById("passwordRepeat").value;
+      const agbChecked = document.getElementById("agb").checked;
+      const status = document.getElementById("statusMsg");
 
-      if (!email || !password || (registerMode && password !== confirm)) {
-        status.textContent = "❌ Bitte gib gültige Daten ein.";
+      if (!email || !pw) {
+        status.textContent = "❌ Bitte E-Mail und Passwort eingeben.";
         return;
       }
 
-      if (!agb) {
-        status.textContent = "❌ Du musst AGB & Datenschutz akzeptieren.";
-        return;
-      }
-
-      try {
-        if (registerMode) {
-          const cred = await createUserWithEmailAndPassword(auth, email, password);
-          const uid = cred.user.uid;
-          const url = new URL(window.location.href);
-          const ref = url.searchParams.get("ref") || null;
-
-          await setDoc(doc(db, "users", uid), {
-            email,
-            provision: 0,
-            referrer: ref
-          });
-
-          status.textContent = "✅ Registrierung erfolgreich!";
-        } else {
-          await signInWithEmailAndPassword(auth, email, password);
-          status.textContent = "✅ Login erfolgreich!";
+      if (registerMode) {
+        if (pw !== pw2) {
+          status.textContent = "❌ Passwörter stimmen nicht überein.";
+          return;
+        }
+        if (!agbChecked) {
+          status.textContent = "❌ Bitte AGB und Datenschutz akzeptieren.";
+          return;
         }
 
-        setTimeout(() => {
+        try {
+          const userCred = await createUserWithEmailAndPassword(auth, email, pw);
+          const uid = userCred.user.uid;
+          const params = new URLSearchParams(window.location.search);
+          const ref = params.get("ref") || null;
+
+          await setDoc(doc(db, "users", uid), {
+            referrer: ref,
+            provision: 0
+          });
+
+          await sendEmailVerification(userCred.user);
+
+          status.textContent = "✅ Registrierung erfolgreich. Bitte E-Mail bestätigen.";
+        } catch (err) {
+          status.textContent = "❌ Fehler: " + err.message;
+        }
+      } else {
+        try {
+          const userCred = await signInWithEmailAndPassword(auth, email, pw);
+          if (!userCred.user.emailVerified) {
+            status.textContent = "❌ Bitte bestätige zuerst deine E-Mail.";
+            return;
+          }
           window.location.href = "dashboard.html";
-        }, 1000);
-      } catch (err) {
-        status.textContent = "⚠️ " + err.message;
+        } catch (err) {
+          status.textContent = "❌ Fehler: " + err.message;
+        }
       }
-    }
+    });
   </script>
 </body>
 </html>
