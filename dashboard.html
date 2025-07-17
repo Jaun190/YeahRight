@@ -57,11 +57,11 @@
   <div class="card">
     <h2>⚡ Hashpower kaufen</h2>
     <ul>
-      <li><b>SHA-256</b>: CHF 49.– <br><a class="kaufen" href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">Kaufen</a></li>
-      <li><b>Scrypt</b>: CHF 55.– <br><a class="kaufen" href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">Kaufen</a></li>
-      <li><b>Etchash</b>: CHF 52.– <br><a class="kaufen" href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">Kaufen</a></li>
-      <li><b>KawPow</b>: CHF 59.– <br><a class="kaufen" href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">Kaufen</a></li>
-      <li><b>Octopus</b>: CHF 58.50 <br><a class="kaufen" href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">Kaufen</a></li>
+      <li><b>SHA-256</b>: CHF 49.–<br><a class="kaufen" href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">Kaufen</a></li>
+      <li><b>Scrypt</b>: CHF 55.–<br><a class="kaufen" href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">Kaufen</a></li>
+      <li><b>Etchash</b>: CHF 52.–<br><a class="kaufen" href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">Kaufen</a></li>
+      <li><b>KawPow</b>: CHF 59.–<br><a class="kaufen" href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">Kaufen</a></li>
+      <li><b>Octopus</b>: CHF 58.50<br><a class="kaufen" href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">Kaufen</a></li>
     </ul>
     <p>✨ Du kannst mehrere Einheiten kaufen für mehr Hashpower</p>
   </div>
@@ -80,19 +80,23 @@
     <button>Auszahlung beantragen</button>
   </div>
 
-  <!-- Firebase Scripts -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
   <script>
+    // Deine Firebase-Konfiguration
     const firebaseConfig = {
-      apiKey: "DEIN_API_KEY",
-      authDomain: "DEIN_AUTH_DOMAIN",
-      projectId: "DEIN_PROJECT_ID",
+      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
+      authDomain: "fritz-95aeb.firebaseapp.com",
+      projectId: "fritz-95aeb",
+      storageBucket: "fritz-95aeb.firebasestorage.app",
+      messagingSenderId: "172607275914",
+      appId: "1:172607275914:web:1c92d4de8022c7b6d0be73"
     };
     firebase.initializeApp(firebaseConfig);
   </script>
 
-  <!-- Referral Logic -->
+  <!-- Referral Script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       firebase.auth().onAuthStateChanged(user => {
@@ -127,5 +131,6 @@
       }
     }
   </script>
+
 </body>
 </html>
