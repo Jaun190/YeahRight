@@ -109,8 +109,9 @@
     <div class="card">
       <h2>🎁 Referral</h2>
       <p>Empfohlener Partner: <strong>Du</strong><br />
-      Provision: z. B. 50.– pro Kauf</p>
-      <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
+        Provision: z. B. 50.– pro Kauf</p>
+      <input type="text" id="refLinkInput" readonly style="width:100%; padding:8px; font-size:14px; border-radius:5px;" />
+      <button class="glow-button" onclick="copyReferral()">📋 Referral-Link kopieren</button>
       <small id="refstatus"></small>
     </div>
 
@@ -124,7 +125,7 @@
     </div>
   </div>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
   <script>
@@ -137,33 +138,36 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Merke den User global
     let currentUser = null;
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(user => {
       currentUser = user;
+      if (user) {
+        const link = window.location.origin + "?ref=" + user.uid;
+        document.getElementById("refLinkInput").value = link;
+      } else {
+        document.getElementById("refLinkInput").value = "Bitte einloggen!";
+      }
     });
-  </script>
 
-  <!-- Referral + Auszahlung -->
-  <script>
     function copyReferral() {
+      const input = document.getElementById("refLinkInput");
       const refStatus = document.getElementById("refstatus");
 
-      if (currentUser) {
-        const referralID = currentUser.uid;
-        const referralLink = window.location.origin + "?ref=" + referralID;
-
-        navigator.clipboard.writeText(referralLink)
-          .then(() => {
-            refStatus.textContent = "Referral-Link kopiert: " + referralLink;
-            setTimeout(() => refStatus.textContent = "", 4000);
-          })
-          .catch(() => {
-            refStatus.textContent = "Fehler beim Kopieren.";
-          });
-      } else {
-        refStatus.textContent = "Bitte zuerst einloggen!";
+      if (!currentUser) {
+        refStatus.textContent = "❌ Du musst eingeloggt sein!";
+        return;
       }
+
+      input.select();
+      input.setSelectionRange(0, 99999); // Für Mobilgeräte
+      navigator.clipboard.writeText(input.value)
+        .then(() => {
+          refStatus.textContent = "✅ Referral-Link kopiert!";
+          setTimeout(() => refStatus.textContent = "", 3000);
+        })
+        .catch(() => {
+          refStatus.textContent = "❌ Kopieren fehlgeschlagen.";
+        });
     }
 
     function submitPayout() {
@@ -171,7 +175,7 @@
       const payoutStatus = document.getElementById("payoutStatus");
 
       if (!wallet) {
-        payoutStatus.textContent = "Bitte Adresse eingeben.";
+        payoutStatus.textContent = "Bitte gib eine Adresse ein.";
         return;
       }
 
