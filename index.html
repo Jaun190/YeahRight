@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>hashcore Login</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script defer src="firebase.js"></script>
+  <script defer src="auth.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="form-box" id="registerBox">
+      <h2>Registrieren</h2>
+      <input type="email" id="regEmail" placeholder="E-Mail" />
+      <input type="password" id="regPassword" placeholder="Passwort" />
+      <input type="password" id="regConfirm" placeholder="Passwort bestätigen" />
+      <label>
+        <input type="checkbox" id="agbCheck" /> Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und <a href="datenschutz.html" target="_blank">Datenschutz</a>.
+      </label>
+      <button onclick="register()">Registrieren</button>
+      <p>Bereits registriert? <a href="#" onclick="showLogin()">Zum Login</a></p>
+    </div>
+
+    <div class="form-box" id="loginBox" style="display:none">
+      <h2>Login</h2>
+      <input type="email" id="logEmail" placeholder="E-Mail" />
+      <input type="password" id="logPassword" placeholder="Passwort" />
+      <button onclick="login()">Login</button>
+      <p>Noch kein Konto? <a href="#" onclick="showRegister()">Hier registrieren</a></p>
+    </div>
+  </div>
+</body>
+</html>
