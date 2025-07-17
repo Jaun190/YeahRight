@@ -12,6 +12,7 @@
       color: white;
       overflow-x: hidden;
     }
+
     header {
       background: rgba(255, 255, 255, 0.05);
       padding: 2rem;
@@ -20,12 +21,14 @@
       font-weight: bold;
       box-shadow: 0 0 20px violet;
     }
+
     .container {
       padding: 2rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
     }
+
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #7b2cbf;
@@ -33,6 +36,7 @@
       padding: 1.5rem;
       border-radius: 1rem;
     }
+
     .glow-button {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -44,9 +48,11 @@
       box-shadow: 0 0 15px #7b2cbf;
       margin-top: 0.5rem;
     }
+
     .glow-button:hover {
       background-color: #894edd;
     }
+
     input[type="text"] {
       width: 100%;
       padding: 0.6rem;
@@ -55,6 +61,7 @@
       margin: 0.5rem 0;
       font-size: 1rem;
     }
+
     small {
       font-size: 0.85rem;
       color: #ccc;
@@ -62,52 +69,65 @@
   </style>
 </head>
 <body>
-  <header>🌐 Hashcore Dashboard</header>
+  <header>⚡ Hashcore Dashboard</header>
 
   <div class="container">
 
     <!-- Hashpower kaufen -->
     <div class="card">
-      <h2>⚡ Hashpower kaufen</h2>
+      <h2>💸 Hashpower kaufen</h2>
       <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
       <ul>
         <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.–<br />
-          <a href="https://buy.stripe.com/5kq6vEUwTs7xc78nhF" target="_blank">
-            <button class="glow-button">Kaufen</button></a></li>
+          <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+
         <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.–<br />
-          <a href="https://buy.stripe.com/96Q2e1cKkG2R8ne1f103" target="_blank">
-            <button class="glow-button">Kaufen</button></a></li>
-        <li><strong>EtcHash:</strong> 1 Einheit = CHF 52.–<br />
-          <a href="https://buy.stripe.com/cNi28qF01By3k65bF1" target="_blank">
-            <button class="glow-button">Kaufen</button></a></li>
-        <li><strong>Kapow:</strong> 1 Einheit = CHF 59.–<br />
-          <a href="https://buy.stripe.com/00g6qS88Ud44tJaqVf" target="_blank">
-            <button class="glow-button">Kaufen</button></a></li>
+          <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+
+        <li><strong>Etchash:</strong> 1 Einheit = CHF 52.–<br />
+          <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+
+        <li><strong>KawPow:</strong> 1 Einheit = CHF 59.–<br />
+          <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+
         <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50<br />
-          <a href="https://buy.stripe.com/5a014l66dkW45Pb9f7" target="_blank">
-            <button class="glow-button">Kaufen</button></a></li>
+          <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
       </ul>
       <small>✨ Mehrmals kaufen für mehr Hashpower!</small>
     </div>
 
     <!-- Referral -->
     <div class="card">
-      <h2>👥 Referrals</h2>
-      <p>Empfohlene Partner: <strong>12</strong></p>
-      <p>Provision: <strong>CHF 600.–</strong> (50.– pro Kauf)</p>
+      <h2>🤝 Referrals</h2>
+      <p>Empfohlene Partner: <strong>12</strong><br />
+        Provision: <strong>CHF 600.–</strong> (50.– pro Kauf)</p>
       <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
       <small id="refStatus"></small>
     </div>
 
     <!-- Auszahlung -->
     <div class="card">
-      <h2>💸 Auszahlung</h2>
-      <p>Dein Guthaben: <strong>CHF 428.–</strong></p>
+      <h2>💵 Auszahlung</h2>
+      <p>Auszahlung: <strong>CHF 428.–</strong></p>
       <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
-      <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
+      <button class="glow-button" onclick="submitPayout()">💸 Auszahlung anfordern</button>
       <small id="payoutStatus"></small>
     </div>
-
   </div>
 
   <script>
