@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="de">
+<!DOCTYPE html><html lang="de">
 <head>
   <meta charset="UTF-8">
   <title>Registrieren – HashCore</title>
@@ -7,7 +6,7 @@
   <style>
     body {
       background: #111;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -25,7 +24,8 @@
       max-width: 400px;
     }
     input[type="email"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="text"] {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
@@ -54,88 +54,4 @@
     }
   </style>
 </head>
-<body>
-
-  <div class="box">
-    <h2>Registrieren</h2>
-    <input type="email" id="email" placeholder="E-Mail" required>
-    <input type="password" id="password" placeholder="Passwort" required>
-    <label><input type="checkbox" id="agb"> Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a></label>
-    <button onclick="register()">Registrieren</button>
-    <p>Schon registriert? <a href="login.html">Login</a></p>
-  </div>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js"></script>
-
-  <script>
-    // Deine Firebase-Konfiguration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
-      authDomain: "fritz-95aeb.firebaseapp.com",
-      projectId: "fritz-95aeb",
-      storageBucket: "fritz-95aeb.appspot.com",
-      messagingSenderId: "DEINE_SENDER_ID",
-      appId: "DEINE_APP_ID"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    // Referral aus URL holen
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get("ref");
-
-    function register() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const agbAccepted = document.getElementById("agb").checked;
-
-      if (!agbAccepted) {
-        alert("Bitte akzeptiere die AGB.");
-        return;
-      }
-
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          const uid = userCredential.user.uid;
-
-          // Eigenes Profil speichern
-          db.collection("users").doc(uid).set({
-            email: email,
-            referrer: ref || null,
-            bonus: 0,
-            referrals: 0,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-
-          // Wenn jemand geworben hat, dem Bonus geben
-          if (ref) {
-            db.collection("users").where("email", "==", ref).get()
-              .then(snapshot => {
-                if (!snapshot.empty) {
-                  const doc = snapshot.docs[0];
-                  const data = doc.data();
-                  const newBonus = (data.bonus || 0) + 50;
-                  const newReferrals = (data.referrals || 0) + 1;
-
-                  doc.ref.update({
-                    bonus: newBonus,
-                    referrals: newReferrals
-                  });
-                }
-              });
-          }
-
-          alert("Registrierung erfolgreich!");
-          window.location.href = "dashboard.html";
-        })
-        .catch(error => {
-          alert("Fehler: " + error.message);
-        });
-    }
-  </script>
-</body>
-</html>
+<body>  <div class="box
