@@ -10,27 +10,15 @@
       font-family: 'Segoe UI', sans-serif;
       background: radial-gradient(circle at top left, #1b0033, #0a001a);
       color: white;
-      overflow-x: hidden;
-    }
-
-    header {
-      background: rgba(255, 255, 255, 0.05);
       padding: 2rem;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      box-shadow: 0 0 20px violet;
     }
-
     .container {
-      max-width: 700px;
-      margin: 2rem auto;
-      padding: 1rem;
+      max-width: 800px;
+      margin: auto;
       display: flex;
       flex-direction: column;
       gap: 2rem;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #7b2cbf;
@@ -38,23 +26,9 @@
       padding: 1.5rem;
       border-radius: 1rem;
     }
-
-    .glow-button {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 6px;
-      background-color: #7b2cbf;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 15px #7b2cbf;
-      margin-top: 0.5rem;
+    h2 {
+      margin-top: 0;
     }
-
-    .glow-button:hover {
-      background-color: #894edd;
-    }
-
     input[type="text"] {
       width: 100%;
       padding: 0.6rem;
@@ -63,64 +37,100 @@
       margin: 0.5rem 0;
       font-size: 1rem;
     }
-
+    .glow-button, .product-button {
+      padding: 0.75rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #7b2cbf;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 10px #7b2cbf;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+    .product-list li {
+      margin-bottom: 1.5rem;
+    }
+    .product-title {
+      font-weight: bold;
+      margin-bottom: 0.2rem;
+    }
     small {
       font-size: 0.85rem;
       color: #ccc;
     }
-
-    ul {
-      padding-left: 1rem;
-    }
-
-    li {
-      margin-bottom: 1rem;
-    }
   </style>
 </head>
 <body>
-  <header>⚡ Hashcore Dashboard ⚡</header>
-
+  <h1>⚡ Hashcore Dashboard</h1>
   <div class="container">
-    <!-- Hashpower kaufen -->
+    
+    <!-- Produkte -->
     <div class="card">
-      <h2>⚙️ Hashpower kaufen</h2>
-      <ul>
-        <li><strong>SHA-256:</strong> CHF 130.– <br /><a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" class="glow-button">Kaufen</a></li>
-        <li><strong>Scrypt:</strong> CHF 65.– <br /><a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" class="glow-button">Kaufen</a></li>
-        <li><strong>Etchash:</strong> CHF 52.– <br /><a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" class="glow-button">Kaufen</a></li>
-        <li><strong>KawPow:</strong> CHF 59.– <br /><a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" class="glow-button">Kaufen</a></li>
-        <li><strong>Octopus:</strong> CHF 58.50 <br /><a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" class="glow-button">Kaufen</a></li>
+      <h2>🛒 Hashpower kaufen</h2>
+      <ul class="product-list">
+        <li>
+          <div class="product-title">SHA-256 – CHF 130.–</div>
+          <a class="product-button" href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">Kaufen</a>
+        </li>
+        <li>
+          <div class="product-title">Scrypt – CHF 65.–</div>
+          <a class="product-button" href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">Kaufen</a>
+        </li>
+        <li>
+          <div class="product-title">Etchash – CHF 52.–</div>
+          <a class="product-button" href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">Kaufen</a>
+        </li>
+        <li>
+          <div class="product-title">KawPow – CHF 59.–</div>
+          <a class="product-button" href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">Kaufen</a>
+        </li>
+        <li>
+          <div class="product-title">Octopus – CHF 58.50</div>
+          <a class="product-button" href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">Kaufen</a>
+        </li>
       </ul>
-      <small>✨ Du kannst mehrere Einheiten kaufen für mehr Hashpower</small>
+      <small>✨ Je mehr du kaufst, desto mehr Hashpower bekommst du.</small>
     </div>
 
     <!-- Referral -->
-    <div class="card" id="referralBox">
-      <h2>🎯 Referral</h2>
-      Empfohlener Partner: <strong>Du</strong><br />
-      Provision: z. B. CHF 50.– pro Kauf<br />
+    <div class="card">
+      <h2>🎯 Dein Referral-Link</h2>
       <input type="text" id="refLinkInput" readonly />
-      <button class="glow-button" onclick="copyReferral()">🔗 Referral-Link kopieren</button>
-      <small id="refStatus">⏳</small>
+      <button class="glow-button" onclick="copyReferral()">🔗 Link kopieren</button>
+      <p id="refStatus">Lade...</p>
+    </div>
+
+    <!-- Provision -->
+    <div class="card">
+      <h2>💰 Deine Provision</h2>
+      <p id="provisionInfo">CHF 0.–</p>
     </div>
 
     <!-- Auszahlung -->
     <div class="card">
-      <h2>💸 Auszahlung</h2>
-      <p>Jetzt auszahlen: <strong>CHF 428.–</strong></p>
-      <input type="text" placeholder="IBAN oder Wallet-Adresse hier eingeben" id="walletInput" />
+      <h2>💸 Auszahlung anfordern</h2>
+      <input type="text" id="walletInput" placeholder="Wallet oder IBAN eingeben" />
       <button class="glow-button" onclick="submitPayout()">🔥 Auszahlung anfordern</button>
       <small id="payoutStatus"></small>
     </div>
   </div>
 
-  <!-- Firebase SDK + Logik -->
-  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js"></script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <script>
     const firebaseConfig = {
       apiKey: "DEIN_API_KEY",
       authDomain: "DEIN_PROJEKT.firebaseapp.com",
@@ -128,66 +138,59 @@
       appId: "DEINE_APP_ID"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
     let currentUser = null;
 
-    auth.onAuthStateChanged(async function (user) {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
         const uid = user.uid;
-        const link = window.location.origin + "/register?ref=" + uid;
-        document.getElementById("refLinkInput").value = link;
+        const refLink = `${window.location.origin}/index.html?ref=${uid}`;
+        document.getElementById("refLinkInput").value = refLink;
 
-        const doc = await db.collection("users").doc(uid).get();
-        const data = doc.exists ? doc.data() : {};
-        const referrer = data.referrer || null;
-        const provision = data.provision || 0;
+        const docSnap = await getDoc(doc(db, "users", uid));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const referrer = data.referrer || null;
+          const provision = data.provision || 0;
 
-        document.getElementById("refStatus").textContent =
-          referrer ? `🧲 Geworben von: ${referrer}` : `🔍 Kein Referrer`;
+          document.getElementById("refStatus").textContent = referrer
+            ? `Geworben von: ${referrer}`
+            : `Kein Werber`;
 
-        const provisionBox = document.createElement("p");
-        provisionBox.textContent = `💰 Deine Provision: CHF ${provision.toFixed(2)}`;
-        document.getElementById("referralBox").appendChild(provisionBox);
+          document.getElementById("provisionInfo").textContent = `CHF ${provision.toFixed(2)}.–`;
+        } else {
+          document.getElementById("refStatus").textContent = "Kein Benutzerdatensatz gefunden.";
+        }
       } else {
-        document.getElementById("refLinkInput").value = "Bitte einloggen!";
+        alert("Du bist nicht eingeloggt.");
+        window.location.href = "index.html";
       }
     });
 
-    function copyReferral() {
+    window.copyReferral = () => {
       const input = document.getElementById("refLinkInput");
-      const status = document.getElementById("refStatus");
-
-      if (!currentUser) {
-        status.textContent = "❌ Du musst eingeloggt sein!";
-        return;
-      }
-
       input.select();
-      input.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(input.value)
         .then(() => {
-          status.textContent = "✅ Referral-Link kopiert!";
-          setTimeout(() => status.textContent = "", 3000);
-        })
-        .catch(() => {
-          status.textContent = "❌ Kopieren fehlgeschlagen.";
+          document.getElementById("refStatus").textContent = "✅ Link kopiert!";
         });
-    }
+    };
 
-    function submitPayout() {
+    window.submitPayout = () => {
       const wallet = document.getElementById("walletInput").value;
-      const payoutStatus = document.getElementById("payoutStatus");
+      const status = document.getElementById("payoutStatus");
 
-      if (!wallet) {
-        payoutStatus.textContent = "⚠️ Bitte gib eine Adresse ein.";
+      if (!wallet.trim()) {
+        status.textContent = "❌ Bitte gib eine gültige Adresse ein.";
         return;
       }
 
-      payoutStatus.textContent = `✅ Auszahlung angefordert für: ${wallet}`;
-    }
+      status.textContent = `✅ Auszahlung beantragt für: ${wallet}`;
+    };
   </script>
 </body>
 </html>
