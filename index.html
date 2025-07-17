@@ -15,7 +15,6 @@
       margin: 0;
       color: white;
     }
-
     .card {
       background: rgba(80, 0, 120, 0.2);
       border: 1px solid #9d4edd;
@@ -26,17 +25,15 @@
       backdrop-filter: blur(10px);
       text-align: center;
     }
-
     input {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
       border-radius: 10px;
       border: none;
-      background: #33044d;
+      background: #330444;
       color: white;
     }
-
     button {
       width: 100%;
       padding: 10px;
@@ -49,11 +46,9 @@
       cursor: pointer;
       transition: background 0.3s;
     }
-
     button:hover {
       background: #7b2cbf;
     }
-
     .toggle {
       margin-top: 15px;
       color: #bbb;
@@ -61,16 +56,20 @@
       font-size: 0.9em;
       text-decoration: underline;
     }
-
     .hidden {
       display: none;
     }
-
     .title {
       font-size: 1.4em;
       margin-bottom: 20px;
       font-weight: bold;
-      color: #e0aaff;
+      color: #00aaff;
+    }
+    label {
+      font-size: 0.8em;
+      text-align: left;
+      display: block;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -90,22 +89,23 @@
     <div class="title">Registrieren</div>
     <input type="email" id="registerEmail" placeholder="E-Mail" />
     <input type="password" id="registerPassword" placeholder="Passwort" />
-    <label style="font-size: 0.8em;">
-      <input type="checkbox" id="agbCheck" /> Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a>
+    <input type="text" id="registerRef" placeholder="Werbercode (optional)" />
+    <label>
+      <input type="checkbox" id="agbCheck" />
+      Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und die
+      <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>
     </label>
     <button id="registerBtn">Registrieren</button>
     <div class="toggle" id="toLogin">Zurück zum Login</div>
   </div>
 
   <script type="module">
-    // Firebase einbinden
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // ✅ DEINE FIREBASE KONFIGURATION
     const firebaseConfig = {
-      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
+      apiKey: "AIzaSyDfpVu6qUvjA6D0UWPXfQhCtU1Kk",
       authDomain: "fritz-95aeb.firebaseapp.com",
       projectId: "fritz-95aeb",
       storageBucket: "fritz-95aeb.appspot.com",
@@ -117,7 +117,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // 👉 Ref-Link aus URL speichern
+    // Reflink aus URL speichern
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get("ref");
     if (ref) localStorage.setItem("ref", ref);
@@ -138,17 +138,19 @@
     document.getElementById("registerBtn").addEventListener("click", async () => {
       const email = document.getElementById("registerEmail").value;
       const password = document.getElementById("registerPassword").value;
+      const refInput = document.getElementById("registerRef").value.trim();
       const agb = document.getElementById("agbCheck").checked;
 
+      const referrer = refInput !== "" ? refInput : localStorage.getItem("ref") || null;
+
       if (!agb) {
-        alert("Bitte akzeptiere die AGB.");
+        alert("Bitte akzeptiere die AGB und Datenschutzerklärung.");
         return;
       }
 
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const uid = userCredential.user.uid;
-        const referrer = localStorage.getItem("ref") || null;
 
         await setDoc(doc(db, "users", uid), {
           email,
@@ -163,7 +165,7 @@
       }
     });
 
-    // Umschaltung Login/Register
+    // Umschalten
     document.getElementById("toRegister").addEventListener("click", () => {
       document.getElementById("loginCard").classList.add("hidden");
       document.getElementById("registerCard").classList.remove("hidden");
