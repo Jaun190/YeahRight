@@ -2,98 +2,92 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore Avalon Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – Hashcore</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background: radial-gradient(circle at top, #1b0f2e, #000);
       font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(145deg, #1f0033, #000010);
       color: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-    .card {
+    .form-box {
       background: rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 30px;
-      width: 320px;
-      box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
-      backdrop-filter: blur(10px);
+      border: 1px solid #7b2cbf;
+      box-shadow: 0 0 25px #7b2cbf;
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 90%;
+      max-width: 400px;
+    }
+    h2 {
       text-align: center;
+      margin-bottom: 1.5rem;
     }
     input, button {
       width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 10px;
+      padding: 0.8rem;
+      margin-top: 0.6rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
       border: none;
-      outline: none;
-    }
-    input {
-      background: #220b40;
-      color: white;
+      font-size: 1rem;
     }
     button {
-      background: #8a2be2;
+      background-color: #7b2cbf;
       color: white;
-      font-weight: bold;
       cursor: pointer;
+      box-shadow: 0 0 10px #7b2cbf;
     }
-    .toggle, .legal {
-      margin-top: 15px;
-      font-size: 0.9em;
+    .checkbox {
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .switch-link {
+      text-align: center;
+      font-size: 0.9rem;
       cursor: pointer;
-      text-decoration: underline;
-      color: #aaa;
+      color: #ccc;
     }
-    .hidden {
-      display: none;
-    }
-    label {
-      display: block;
-      text-align: left;
-      font-size: 0.8em;
-      margin-top: 10px;
+    .error {
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
     }
   </style>
 </head>
 <body>
+  <div class="form-box">
+    <h2 id="formTitle">🔐 Login</h2>
+    <div id="errorBox" class="error"></div>
+    <input type="email" id="email" placeholder="E-Mail" required/>
+    <input type="password" id="password" placeholder="Passwort" required/>
+    <input type="password" id="confirmPassword" placeholder="Passwort bestätigen" style="display:none"/>
 
-  <!-- LOGIN -->
-  <div class="card" id="loginCard">
-    <h2>🔐 Login</h2>
-    <input type="email" id="loginEmail" placeholder="E-Mail" />
-    <input type="password" id="loginPassword" placeholder="Passwort" />
-    <button id="loginBtn">Einloggen</button>
-    <div class="toggle" id="toRegister">Noch kein Konto? Registrieren</div>
+    <div class="checkbox" id="agbBox" style="display:none">
+      <input type="checkbox" id="agbCheckbox" />
+      <label for="agbCheckbox">Ich akzeptiere <a href="agb.html" target="_blank">AGB</a> & <a href="datenschutz.html" target="_blank">Datenschutz</a></label>
+    </div>
+
+    <button onclick="handleAuth()" id="submitBtn">Einloggen</button>
+    <div class="switch-link" onclick="toggleMode()">Oder registrieren</div>
   </div>
 
-  <!-- REGISTRIEREN -->
-  <div class="card hidden" id="registerCard">
-    <h2>🧙‍♂️ Registrieren</h2>
-    <input type="email" id="registerEmail" placeholder="E-Mail" />
-    <input type="password" id="registerPassword" placeholder="Passwort" />
-    <input type="text" id="registerRef" placeholder="Werbecode (optional)" />
-    <label><input type="checkbox" id="agbCheck" /> Ich akzeptiere die 
-      <a href="agb.html" target="_blank">AGB</a> und 
-      <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>.
-    </label>
-    <button id="registerBtn">Registrieren</button>
-    <div class="toggle" id="toLogin">Zurück zum Login</div>
-  </div>
-
-  <!-- Firebase + Logik -->
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getAuth,
-      createUserWithEmailAndPassword,
       signInWithEmailAndPassword,
-      sendEmailVerification
+      createUserWithEmailAndPassword,
+      onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       getFirestore,
@@ -102,70 +96,71 @@
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
-      authDomain: "fritz-95aeb.firebaseapp.com",
-      projectId: "fritz-95aeb",
-      storageBucket: "fritz-95aeb.appspot.com",
-      messagingSenderId: "172607275914",
-      appId: "1:172607275914:web:1c92d4de8022c7b6d0be73"
+      apiKey: "DEIN_API_KEY",
+      authDomain: "DEIN_PROJECT.firebaseapp.com",
+      projectId: "DEIN_PROJECT_ID",
+      appId: "DEINE_APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Referral übernehmen
-    const refFromURL = new URLSearchParams(window.location.search).get("ref");
-    if (refFromURL) localStorage.setItem("ref", refFromURL);
+    let isLogin = true;
 
-    // Login
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("Login erfolgreich!");
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        alert("Login fehlgeschlagen: " + err.message);
-      }
-    });
+    function toggleMode() {
+      isLogin = !isLogin;
+      document.getElementById("formTitle").innerText = isLogin ? "🔐 Login" : "🆕 Registrieren";
+      document.getElementById("submitBtn").innerText = isLogin ? "Einloggen" : "Registrieren";
+      document.getElementById("confirmPassword").style.display = isLogin ? "none" : "block";
+      document.getElementById("agbBox").style.display = isLogin ? "none" : "flex";
+    }
 
-    // Registrierung
-    document.getElementById("registerBtn").addEventListener("click", async () => {
-      const email = document.getElementById("registerEmail").value;
-      const password = document.getElementById("registerPassword").value;
-      const ref = document.getElementById("registerRef").value || localStorage.getItem("ref") || null;
-      const agb = document.getElementById("agbCheck").checked;
-      if (!agb) return alert("Bitte AGB akzeptieren.");
+    window.handleAuth = async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const agbChecked = document.getElementById("agbCheckbox").checked;
+      const errorBox = document.getElementById("errorBox");
+      errorBox.textContent = "";
 
       try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        await sendEmailVerification(userCred.user);
-        await setDoc(doc(db, "users", userCred.user.uid), {
-          email,
-          referrer: ref,
-          createdAt: new Date().toISOString(),
-          verified: false,
-          provision: 0
-        });
-        alert("Registrierung erfolgreich! Bitte bestätige deine E-Mail.");
+        if (isLogin) {
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          if (password !== confirmPassword) {
+            errorBox.textContent = "❌ Passwörter stimmen nicht überein.";
+            return;
+          }
+          if (!agbChecked) {
+            errorBox.textContent = "❌ Du musst AGB & Datenschutz akzeptieren.";
+            return;
+          }
+
+          const userCred = await createUserWithEmailAndPassword(auth, email, password);
+
+          // Referral aus URL lesen
+          const params = new URLSearchParams(window.location.search);
+          const ref = params.get("ref") || null;
+
+          await setDoc(doc(db, "users", userCred.user.uid), {
+            email: email,
+            referrer: ref,
+            provision: 0
+          });
+        }
         window.location.href = "dashboard.html";
       } catch (err) {
-        alert("Registrierung fehlgeschlagen: " + err.message);
+        errorBox.textContent = "❌ " + err.message;
       }
-    });
+    };
 
-    // Ansicht umschalten
-    document.getElementById("toRegister").addEventListener("click", () => {
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("registerCard").classList.remove("hidden");
-    });
-    document.getElementById("toLogin").addEventListener("click", () => {
-      document.getElementById("registerCard").classList.add("hidden");
-      document.getElementById("loginCard").classList.remove("hidden");
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        // Optional: direkt weiterleiten
+        // window.location.href = "dashboard.html";
+      }
     });
   </script>
-
 </body>
 </html>
