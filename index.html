@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -55,6 +56,7 @@
       font-size: 0.9rem;
       cursor: pointer;
       color: #ccc;
+      text-decoration: underline;
     }
     .error {
       color: #ff6b6b;
@@ -67,27 +69,29 @@
   <div class="form-box">
     <h2 id="formTitle">🔐 Login</h2>
     <div id="errorBox" class="error"></div>
-    <input type="email" id="email" placeholder="E-Mail" required/>
-    <input type="password" id="password" placeholder="Passwort" required/>
-    <input type="password" id="confirmPassword" placeholder="Passwort bestätigen" style="display:none"/>
-
+    
+    <input type="email" id="email" placeholder="E-Mail" required />
+    <input type="password" id="password" placeholder="Passwort" required />
+    <input type="password" id="confirmPassword" placeholder="Passwort bestätigen" style="display:none" />
+    
     <div class="checkbox" id="agbBox" style="display:none">
       <input type="checkbox" id="agbCheckbox" />
-      <label for="agbCheckbox">Ich akzeptiere <a href="agb.html" target="_blank">AGB</a> & <a href="datenschutz.html" target="_blank">Datenschutz</a></label>
+      <label for="agbCheckbox">
+        Ich akzeptiere <a href="agb.html" target="_blank">AGB</a> & <a href="datenschutz.html" target="_blank">Datenschutz</a>
+      </label>
     </div>
-
-    <button onclick="handleAuth()" id="submitBtn">Einloggen</button>
-    <div class="switch-link" onclick="toggleMode()">Oder registrieren</div>
+    
+    <button id="submitBtn" onclick="handleAuth()">Einloggen</button>
+    <div class="switch-link" onclick="toggleMode()" id="toggleText">Noch kein Konto? Jetzt registrieren</div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getAuth,
       signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      onAuthStateChanged
+      createUserWithEmailAndPassword
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       getFirestore,
@@ -96,10 +100,9 @@
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "DEIN_API_KEY",
-      authDomain: "DEIN_PROJECT.firebaseapp.com",
-      projectId: "DEIN_PROJECT_ID",
-      appId: "DEINE_APP_ID"
+      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
+      authDomain: "fritz-95aeb.firebaseapp.com",
+      projectId: "fritz-95aeb",
     };
 
     const app = initializeApp(firebaseConfig);
@@ -108,13 +111,14 @@
 
     let isLogin = true;
 
-    function toggleMode() {
+    window.toggleMode = () => {
       isLogin = !isLogin;
       document.getElementById("formTitle").innerText = isLogin ? "🔐 Login" : "🆕 Registrieren";
       document.getElementById("submitBtn").innerText = isLogin ? "Einloggen" : "Registrieren";
+      document.getElementById("toggleText").innerText = isLogin ? "Noch kein Konto? Jetzt registrieren" : "Schon registriert? Jetzt einloggen";
       document.getElementById("confirmPassword").style.display = isLogin ? "none" : "block";
       document.getElementById("agbBox").style.display = isLogin ? "none" : "flex";
-    }
+    };
 
     window.handleAuth = async () => {
       const email = document.getElementById("email").value.trim();
@@ -139,7 +143,7 @@
 
           const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-          // Referral aus URL lesen
+          // Referral aus URL
           const params = new URLSearchParams(window.location.search);
           const ref = params.get("ref") || null;
 
@@ -149,18 +153,12 @@
             provision: 0
           });
         }
+
         window.location.href = "dashboard.html";
       } catch (err) {
         errorBox.textContent = "❌ " + err.message;
       }
     };
-
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        // Optional: direkt weiterleiten
-        // window.location.href = "dashboard.html";
-      }
-    });
   </script>
 </body>
 </html>
