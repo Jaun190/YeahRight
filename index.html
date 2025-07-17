@@ -2,9 +2,10 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>HashCore Login & Registrierung</title>
+  <title>HashCore Login / Registrierung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script type="module">
-    // Firebase einbinden
+    // Firebase Setup
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -22,15 +23,14 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // DOM laden
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
-      const ref = params.get('ref');
+      const ref = params.get("ref");
       if (ref) document.getElementById("regRef").value = ref;
 
-      document.getElementById("toggleForm").addEventListener("click", () => {
-        document.getElementById("loginForm").classList.toggle("hidden");
-        document.getElementById("registerForm").classList.toggle("hidden");
+      document.getElementById("toggleBtn").addEventListener("click", () => {
+        document.getElementById("loginCard").classList.toggle("hidden");
+        document.getElementById("registerCard").classList.toggle("hidden");
       });
 
       document.getElementById("loginBtn").addEventListener("click", async () => {
@@ -38,7 +38,7 @@
         const password = document.getElementById("loginPassword").value;
         try {
           await signInWithEmailAndPassword(auth, email, password);
-          alert("Login erfolgreich!");
+          window.location.href = "dashboard.html";
         } catch (err) {
           alert("Login-Fehler: " + err.message);
         }
@@ -55,7 +55,7 @@
             referrer: ref || null,
             createdAt: serverTimestamp()
           });
-          alert("Registrierung erfolgreich!");
+          window.location.href = "dashboard.html";
         } catch (err) {
           alert("Registrierungs-Fehler: " + err.message);
         }
@@ -64,34 +64,53 @@
   </script>
   <style>
     body {
-      background: #111;
-      color: #fff;
-      font-family: sans-serif;
-      text-align: center;
-      padding: 2rem;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(145deg, #0f0f0f, #1a1a1a);
+      font-family: "Segoe UI", sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    .form {
-      max-width: 400px;
-      margin: auto;
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 320px;
+      box-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    h2 {
+      color: #00ffc8;
+      margin-bottom: 1rem;
     }
     input, button {
-      display: block;
-      width: 90%;
-      margin: 10px auto;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
       border: none;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    input {
+      background: #222;
+      color: #fff;
     }
     button {
       background: #00ffc8;
-      color: black;
+      color: #000;
       font-weight: bold;
+      cursor: pointer;
     }
     .toggle {
       margin-top: 1rem;
       color: #00ffc8;
       cursor: pointer;
+      font-size: 14px;
       text-decoration: underline;
     }
     .hidden {
@@ -100,23 +119,23 @@
   </style>
 </head>
 <body>
-  <h2>Willkommen bei <span style="color:#00ffc8">HashCore</span></h2>
-
-  <div class="form" id="loginForm">
-    <h3>Login</h3>
-    <input id="loginEmail" placeholder="E-Mail">
-    <input id="loginPassword" type="password" placeholder="Passwort">
+  <!-- Login -->
+  <div class="card" id="loginCard">
+    <h2>HashCore Login</h2>
+    <input type="email" id="loginEmail" placeholder="E-Mail" />
+    <input type="password" id="loginPassword" placeholder="Passwort" />
     <button id="loginBtn">Login</button>
+    <div class="toggle" id="toggleBtn">Noch kein Account? Jetzt registrieren</div>
   </div>
 
-  <div class="form hidden" id="registerForm">
-    <h3>Registrieren</h3>
-    <input id="regEmail" placeholder="E-Mail">
-    <input id="regPassword" type="password" placeholder="Passwort">
-    <input id="regRef" placeholder="Werber (optional)">
+  <!-- Registrierung -->
+  <div class="card hidden" id="registerCard">
+    <h2>HashCore Registrieren</h2>
+    <input type="email" id="regEmail" placeholder="E-Mail" />
+    <input type="password" id="regPassword" placeholder="Passwort" />
+    <input type="text" id="regRef" placeholder="Werber (optional)" />
     <button id="registerBtn">Registrieren</button>
+    <div class="toggle" id="toggleBtn">Zurück zum Login</div>
   </div>
-
-  <div class="toggle" id="toggleForm">⇄ Zwischen Login & Registrierung wechseln</div>
 </body>
 </html>
