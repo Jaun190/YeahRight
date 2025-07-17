@@ -75,42 +75,41 @@
     <!-- Hashpower kaufen -->
     <div class="card">
       <h2>⚒️ Hashpower kaufen</h2>
-      <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
       <ul>
-        <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.–<br />
-          <a href="https://buy.stripe.com/5kQaEgiW57xncZB8m7" target="_blank">
+        <li><strong>SHA-256:</strong> CHF 130.–<br />
+          <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-        <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.–<br />
-          <a href="https://buy.stripe.com/906B2qeLkRG92t8m7j" target="_blank">
+        <li><strong>Scrypt:</strong> CHF 65.–<br />
+          <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-        <li><strong>Etchash:</strong> 1 Einheit = CHF 52.–<br />
-          <a href="https://buy.stripe.com/cHI28gFpo1BYb3xb6f" target="_blank">
+        <li><strong>Etchash:</strong> CHF 52.–<br />
+          <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-        <li><strong>KawPow:</strong> 1 Einheit = CHF 59.–<br />
-          <a href="https://buy.stripe.com/4gW8aW00UaJlaflNaq" target="_blank">
+        <li><strong>KawPow:</strong> CHF 59.–<br />
+          <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-        <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50<br />
-          <a href="https://buy.stripe.com/aFa001466GkY94ScDg" target="_blank">
+        <li><strong>Octopus:</strong> CHF 58.50<br />
+          <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
       </ul>
-      <small>✨ Mehrmals kaufen für mehr Hashpower!</small>
+      <small>✨ Du kannst mehrere Einheiten kaufen für mehr Hashpower</small>
     </div>
 
     <!-- Referral -->
     <div class="card">
       <h2>🎁 Referral</h2>
       <p>Empfohlener Partner: <strong>Du</strong><br />
-        Provision: z. B. 50.– pro Kauf</p>
+      Provision: z. B. 50.– pro Kauf</p>
       <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
       <small id="refstatus"></small>
     </div>
@@ -119,7 +118,7 @@
     <div class="card">
       <h2>💸 Auszahlung</h2>
       <p>Jetzt auszahlen: <strong>CHF 428.–</strong></p>
-      <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
+      <input type="text" placeholder="IBAN oder Wallet-Adresse hier eingeben" id="walletInput" />
       <button class="glow-button" onclick="submitPayout()">💸 Auszahlung anfordern</button>
       <small id="payoutStatus"></small>
     </div>
@@ -137,31 +136,34 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+
+    // Merke den User global
+    let currentUser = null;
+    auth.onAuthStateChanged((user) => {
+      currentUser = user;
+    });
   </script>
 
-  <!-- Funktion Referral-Link + Auszahlung -->
+  <!-- Referral + Auszahlung -->
   <script>
     function copyReferral() {
       const refStatus = document.getElementById("refstatus");
 
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          const referralID = user.uid;
-          const referralLink = window.location.origin + "?ref=" + referralID;
+      if (currentUser) {
+        const referralID = currentUser.uid;
+        const referralLink = window.location.origin + "?ref=" + referralID;
 
-          navigator.clipboard.writeText(referralLink)
-            .then(() => {
-              refStatus.textContent = "Referral-Link kopiert: " + referralLink;
-              setTimeout(() => refStatus.textContent = "", 4000);
-            })
-            .catch(() => {
-              refStatus.textContent = "Kopieren fehlgeschlagen.";
-            });
-
-        } else {
-          refStatus.textContent = "Bitte zuerst einloggen!";
-        }
-      });
+        navigator.clipboard.writeText(referralLink)
+          .then(() => {
+            refStatus.textContent = "Referral-Link kopiert: " + referralLink;
+            setTimeout(() => refStatus.textContent = "", 4000);
+          })
+          .catch(() => {
+            refStatus.textContent = "Fehler beim Kopieren.";
+          });
+      } else {
+        refStatus.textContent = "Bitte zuerst einloggen!";
+      }
     }
 
     function submitPayout() {
@@ -169,7 +171,7 @@
       const payoutStatus = document.getElementById("payoutStatus");
 
       if (!wallet) {
-        payoutStatus.textContent = "Bitte gib eine gültige Adresse ein.";
+        payoutStatus.textContent = "Bitte Adresse eingeben.";
         return;
       }
 
