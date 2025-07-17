@@ -3,123 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore Dashboard</title>
+  <title>hashcore Login</title>
   <style>
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at top left, #1b0033, #0a001a);
+      background: #0b001a;
       color: white;
-      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
     .container {
-      max-width: 800px;
-      margin: auto;
+      background: #15002b;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 30px purple;
+      width: 300px;
+    }
+
+    .form-box {
       display: flex;
       flex-direction: column;
-      gap: 2rem;
     }
 
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #7b2cbf;
-      box-shadow: 0 0 15px #7b2cbf;
-      padding: 1.5rem;
-      border-radius: 1rem;
-    }
-
-    h2 {
-      margin-top: 0;
-    }
-
-    .product-list li {
-      margin-bottom: 1.5rem;
-    }
-
-    .product-title {
-      font-weight: bold;
-      margin-bottom: 0.2rem;
-    }
-
-    .product-button {
-      padding: 0.75rem 1.2rem;
+    input {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border-radius: 5px;
       border: none;
-      border-radius: 6px;
-      background-color: #7b2cbf;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 10px #7b2cbf;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 0.5rem;
     }
 
-    small {
-      font-size: 0.85rem;
-      color: #ccc;
+    button {
+      background: #b370ff;
+      color: white;
+      border: none;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    a {
+      color: #c397ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
-</head>
-<body>
-  <h1>⚡ Hashcore Dashboard</h1>
-  <div class="container">
 
-    <!-- Produkte -->
-    <div class="card">
-      <h2>🛒 Hashpower kaufen</h2>
-      <ul class="product-list">
-        <li>
-          <div class="product-title">SHA-256 – CHF 130.–</div>
-          <a class="product-button" href="https://buy.stripe.com/5k2qkEWTs7xmc788n1" target="_blank">Kaufen</a>
-        </li>
-        <li>
-          <div class="product-title">Scrypt – CHF 65.–</div>
-          <a class="product-button" href="https://buy.stripe.com/9B528qeLkcRG9ZtBni" target="_blank">Kaufen</a>
-        </li>
-        <li>
-          <div class="product-title">Etchash – CHF 52.–</div>
-          <a class="product-button" href="https://buy.stripe.com/cNi28qfPo18Y3bXs6b" target="_blank">Kaufen</a>
-        </li>
-        <li>
-          <div class="product-title">KawPow – CHF 59.–</div>
-          <a class="product-button" href="https://buy.stripe.com/4gMaEW0U4laJfNav6j" target="_blank">Kaufen</a>
-        </li>
-        <li>
-          <div class="product-title">Octopus – CHF 58.50</div>
-          <a class="product-button" href="https://buy.stripe.com/aFa001a66dVK4F9cDy" target="_blank">Kaufen</a>
-        </li>
-      </ul>
-      <small>✨ Je mehr du kaufst, desto mehr Hashpower bekommst du.</small>
-    </div>
-
-    <!-- NiceHash Geräte -->
-    <div class="card">
-      <h2>🧠 NiceHash Geräte</h2>
-      <ul class="product-list">
-        <li>
-          <div class="product-title">Bitmain Antminer S19 Pro – ca. 110 TH/s</div>
-          <a class="product-button" href="https://www.nicehash.com/profitability-calculator/bitmain-antminer-s19-pro" target="_blank">🔗 Zur NiceHash-Seite</a>
-        </li>
-        <li>
-          <div class="product-title">Whatsminer M30S+ – ca. 100 TH/s</div>
-          <a class="product-button" href="https://www.nicehash.com/profitability-calculator/whatsminer-m30s" target="_blank">🔗 Zur NiceHash-Seite</a>
-        </li>
-        <li>
-          <div class="product-title">Hashpower kaufen (on-demand)</div>
-          <a class="product-button" href="https://www.nicehash.com/hash-power-marketplace" target="_blank">💥 Hashpower mieten</a>
-        </li>
-      </ul>
-      <small>ℹ️ Die Hashpower-Angebote ändern sich je nach Verfügbarkeit auf NiceHash.</small>
-    </div>
-
-  </div>
-
-  <!-- Firebase Auth Check -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyD75WuKfOyLUjD4GQmUVXYfQhCCUtUK",
@@ -133,12 +78,70 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        // Nicht eingeloggt → weiterleiten
-        window.location.href = "index.html";
+    window.register = async function () {
+      const email = document.getElementById("regEmail").value;
+      const pw = document.getElementById("regPassword").value;
+      const pwConfirm = document.getElementById("regConfirm").value;
+      const agb = document.getElementById("agbCheck").checked;
+
+      if (!agb) return alert("Bitte akzeptiere die AGB und Datenschutz.");
+      if (pw !== pwConfirm) return alert("Passwörter stimmen nicht überein.");
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, pw);
+        alert("Registrierung erfolgreich!");
+        window.location.href = "dashboard.html";
+      } catch (e) {
+        alert("Fehler: " + e.message);
       }
-    });
+    };
+
+    window.login = async function () {
+      const email = document.getElementById("logEmail").value;
+      const pw = document.getElementById("logPassword").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, pw);
+        window.location.href = "dashboard.html";
+      } catch (e) {
+        alert("Login fehlgeschlagen: " + e.message);
+      }
+    };
+
+    window.showLogin = () => {
+      document.getElementById("registerBox").style.display = "none";
+      document.getElementById("loginBox").style.display = "flex";
+    };
   </script>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Registrierung -->
+    <div class="form-box" id="registerBox">
+      <h2>Registrieren</h2>
+      <input type="email" id="regEmail" placeholder="E-Mail" />
+      <input type="password" id="regPassword" placeholder="Passwort" />
+      <input type="password" id="regConfirm" placeholder="Passwort bestätigen" />
+      <label>
+        <input type="checkbox" id="agbCheck" />
+        Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und
+        <a href="datenschutz.html" target="_blank">Datenschutz</a>.
+      </label>
+      <button onclick="register()">Registrieren</button>
+      <p>Bereits registriert? <a href="#" onclick="showLogin()">Zum Login</a></p>
+    </div>
+
+    <!-- Login -->
+    <div class="form-box" id="loginBox" style="display:none">
+      <h2>Login</h2>
+      <input type="email" id="logEmail" placeholder="E-Mail" />
+      <input type="password" id="logPassword" placeholder="Passwort" />
+      <button onclick="login()">Login</button>
+      <p>Noch kein Konto? <a href="#" onclick="showRegister()">Hier registrieren</a></p>
+    </div>
+
+  </div>
 </body>
 </html>
