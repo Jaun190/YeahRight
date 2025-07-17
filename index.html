@@ -2,178 +2,121 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HashCore Login & Registrierung</title>
+  <script type="module">
+    // Firebase einbinden
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
+      authDomain: "fritz-95aeb.firebaseapp.com",
+      projectId: "fritz-95aeb",
+      storageBucket: "fritz-95aeb.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abc123"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM laden
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) document.getElementById("regRef").value = ref;
+
+      document.getElementById("toggleForm").addEventListener("click", () => {
+        document.getElementById("loginForm").classList.toggle("hidden");
+        document.getElementById("registerForm").classList.toggle("hidden");
+      });
+
+      document.getElementById("loginBtn").addEventListener("click", async () => {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          alert("Login erfolgreich!");
+        } catch (err) {
+          alert("Login-Fehler: " + err.message);
+        }
+      });
+
+      document.getElementById("registerBtn").addEventListener("click", async () => {
+        const email = document.getElementById("regEmail").value;
+        const password = document.getElementById("regPassword").value;
+        const ref = document.getElementById("regRef").value;
+        try {
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          await setDoc(doc(db, "users", cred.user.uid), {
+            email: email,
+            referrer: ref || null,
+            createdAt: serverTimestamp()
+          });
+          alert("Registrierung erfolgreich!");
+        } catch (err) {
+          alert("Registrierungs-Fehler: " + err.message);
+        }
+      });
+    });
+  </script>
   <style>
     body {
-      font-family: Arial, sans-serif;
       background: #111;
       color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
     }
-
-    .login-wrapper {
-      background: #222;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      width: 100%;
+    .form {
       max-width: 400px;
+      margin: auto;
     }
-
-    h1, .subtitle {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .brand { color: #00ffcc; }
-    .subtitle { color: #ccc; }
-
     input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      background: #2c2c2c;
-      color: #fff;
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
       border: none;
-      border-radius: 5px;
     }
-
-    input[type="checkbox"] {
-      width: auto;
-      margin-right: 10px;
-    }
-
-    label {
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
-    }
-
     button {
-      background-color: #00ffcc;
-      color: #000;
+      background: #00ffc8;
+      color: black;
       font-weight: bold;
-      cursor: pointer;
     }
-
-    .toggle-mode {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-      color: #aaa;
+    .toggle {
+      margin-top: 1rem;
+      color: #00ffc8;
       cursor: pointer;
       text-decoration: underline;
     }
-
-    #agb-container {
+    .hidden {
       display: none;
     }
   </style>
 </head>
 <body>
-  <div class="login-wrapper">
-    <h1>Willkommen bei <span class="brand">HashCore</span></h1>
-    <p class="subtitle" id="form-title">Login</p>
+  <h2>Willkommen bei <span style="color:#00ffc8">HashCore</span></h2>
 
-    <form id="auth-form">
-      <input type="email" id="email" placeholder="E-Mail" required />
-      <input type="password" id="password" placeholder="Passwort" required />
-      <input type="text" id="refInput" placeholder="Werber-E-Mail (optional)">
-
-      <div id="agb-container">
-        <label>
-          <input type="checkbox" id="agb" />
-          Ich akzeptiere die <a href="agb.html" target="_blank" style="color:#00ffcc;">AGB</a>
-        </label>
-      </div>
-
-      <button type="submit" id="submit-btn">Login</button>
-    </form>
-
-    <div class="toggle-mode">
-      <span id="toggle-text">Noch kein Konto?</span>
-      <a id="toggle-link">Jetzt registrieren</a>
-    </div>
+  <div class="form" id="loginForm">
+    <h3>Login</h3>
+    <input id="loginEmail" placeholder="E-Mail">
+    <input id="loginPassword" type="password" placeholder="Passwort">
+    <button id="loginBtn">Login</button>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth-compat.js"></script>
+  <div class="form hidden" id="registerForm">
+    <h3>Registrieren</h3>
+    <input id="regEmail" placeholder="E-Mail">
+    <input id="regPassword" type="password" placeholder="Passwort">
+    <input id="regRef" placeholder="Werber (optional)">
+    <button id="registerBtn">Registrieren</button>
+  </div>
 
-  <script>
-    // Deine Firebase-Konfiguration
-    const firebaseConfig = {
-      apiKey: "AIzaSyD7j5KIw0fYoqyLDja6QDMuVVkFCphCU1k",
-      authDomain: "fritz-95aeb.firebaseapp.com",
-      projectId: "fritz-95aeb",
-    };
-    firebase.initializeApp(firebaseConfig);
-
-    let isLogin = true;
-
-    const toggleLink = document.getElementById("toggle-link");
-    const formTitle = document.getElementById("form-title");
-    const submitBtn = document.getElementById("submit-btn");
-    const toggleText = document.getElementById("toggle-text");
-    const agbContainer = document.getElementById("agb-container");
-
-    toggleLink.addEventListener("click", () => {
-      isLogin = !isLogin;
-      formTitle.innerText = isLogin ? "Login" : "Registrieren";
-      submitBtn.innerText = isLogin ? "Login" : "Registrieren";
-      toggleText.innerText = isLogin ? "Noch kein Konto?" : "Schon registriert?";
-      toggleLink.innerText = isLogin ? "Jetzt registrieren" : "Zum Login";
-      agbContainer.style.display = isLogin ? "none" : "block";
-    });
-
-    // Ref aus URL eintragen
-    const urlParams = new URLSearchParams(window.location.search);
-    const refFromUrl = urlParams.get("ref");
-    if (refFromUrl) document.getElementById("refInput").value = refFromUrl;
-
-    // Formular absenden
-    document.getElementById("auth-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const refManual = document.getElementById("refInput").value.trim();
-      const referrer = refManual || refFromUrl;
-
-      if (!isLogin && !document.getElementById("agb").checked) {
-        alert("Bitte bestätige die AGB.");
-        return;
-      }
-
-      if (isLogin) {
-        firebase.auth().signInWithEmailAndPassword(email, password)
-          .then(() => {
-            alert("Login erfolgreich!");
-            window.location.href = "dashboard.html";
-          })
-          .catch((error) => {
-            alert("Fehler beim Login:\n" + error.message);
-          });
-      } else {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-          .then((userCredential) => {
-            // Referrer in localStorage speichern (oder später in DB)
-            if (referrer) {
-              localStorage.setItem("referrer", referrer);
-            }
-            alert("Registrierung erfolgreich!");
-            window.location.href = "dashboard.html";
-          })
-          .catch((error) => {
-            alert("Fehler bei der Registrierung:\n" + error.message);
-          });
-      }
-    });
-  </script>
+  <div class="toggle" id="toggleForm">⇄ Zwischen Login & Registrierung wechseln</div>
 </body>
 </html>
