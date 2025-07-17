@@ -1,30 +1,25 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login / Registrieren</title>
+  <meta charset="UTF-8">
+  <title>Login & Registrierung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      background: #100020;
+      background: #0a001a;
       color: white;
       font-family: sans-serif;
-      text-align: center;
       padding: 40px;
+      text-align: center;
     }
     input, button {
       margin: 10px;
       padding: 10px;
+      width: 260px;
       font-size: 16px;
-      width: 250px;
     }
-    .hidden {
-      display: none;
-    }
-    .error {
-      color: red;
-      margin-top: 10px;
-    }
+    .hidden { display: none; }
+    .error { color: red; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -36,7 +31,7 @@
     <input type="password" id="password" placeholder="Passwort"><br>
     <input type="password" id="password2" placeholder="Passwort bestätigen" class="hidden"><br>
     <label id="agbLabel" class="hidden">
-      <input type="checkbox" id="agb"> Ich akzeptiere AGB & Datenschutz
+      <input type="checkbox" id="agb"> AGB & Datenschutz akzeptieren
     </label><br>
     <button onclick="handleAction()" id="actionBtn">Einloggen</button><br>
     <a href="#" onclick="toggleMode()" id="toggleLink">Noch keinen Account? Registrieren</a>
@@ -50,24 +45,19 @@
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <!-- Firebase SDK (Modular API ab v9) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-  <!-- Firebase Config -->
-  <script>
     const firebaseConfig = {
       apiKey: "AlzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtlUk",
       authDomain: "fritz-95aeb.firebaseapp.com",
-      projectId: "fritz-95aeb"
+      projectId: "fritz-95aeb",
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-  </script>
 
-  <!-- Auth & Logic -->
-  <script>
-    let mode = "login"; // oder 'register'
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
     const emailInput = document.getElementById("email");
     const passInput = document.getElementById("password");
@@ -81,12 +71,14 @@
 
     const ref = new URLSearchParams(window.location.search).get("ref") || "none";
 
+    let mode = "login";
+
     function toggleMode() {
       mode = mode === "login" ? "register" : "login";
       if (mode === "register") {
         title.innerText = "Registrieren";
         actionBtn.innerText = "Registrieren";
-        toggleLink.innerText = "Schon einen Account? Einloggen";
+        toggleLink.innerText = "Schon einen Account? Login";
         pass2Input.classList.remove("hidden");
         agbLabel.classList.remove("hidden");
       } else {
@@ -98,27 +90,34 @@
       }
     }
 
-    function handleAction() {
+    function showError(msg) {
+      errorText.innerText = msg;
+    }
+
+    async function handleAction() {
       const email = emailInput.value;
       const pass = passInput.value;
       const pass2 = pass2Input.value;
 
-      if (!email || !pass) return showError("Bitte Felder ausfüllen.");
+      if (!email || !pass) return showError("Felder ausfüllen!");
 
       if (mode === "register") {
-        if (pass !== pass2) return showError("Passwörter stimmen nicht überein.");
-        if (!agb.checked) return showError("AGB bestätigen.");
-
-        auth.createUserWithEmailAndPassword(email, pass)
-          .then(() => {
-            localStorage.setItem("ref", ref);
-            showDashboard();
-          })
-          .catch(err => showError(err.message));
+        if (pass !== pass2) return showError("Passwörter stimmen nicht überein!");
+        if (!agb.checked) return showError("AGB bestätigen!");
+        try {
+          await createUserWithEmailAndPassword(auth, email, pass);
+          localStorage.setItem("ref", ref);
+          showDashboard();
+        } catch (err) {
+          showError(err.message);
+        }
       } else {
-        auth.signInWithEmailAndPassword(email, pass)
-          .then(() => showDashboard())
-          .catch(err => showError(err.message));
+        try {
+          await signInWithEmailAndPassword(auth, email, pass);
+          showDashboard();
+        } catch (err) {
+          showError("Login fehlgeschlagen: " + err.message);
+        }
       }
     }
 
@@ -126,20 +125,17 @@
       document.getElementById("form").classList.add("hidden");
       document.getElementById("dashboard").classList.remove("hidden");
       const user = auth.currentUser;
-      const uid = user.uid;
+      const uid = user?.uid || "unbekannt";
       const savedRef = localStorage.getItem("ref") || uid;
       document.getElementById("refLink").innerText = `https://hashcore.website?ref=${uid}`;
     }
 
-    function logout() {
-      auth.signOut().then(() => location.reload());
+    async function logout() {
+      await signOut(auth);
+      location.reload();
     }
 
-    function showError(msg) {
-      errorText.innerText = msg;
-    }
-
-    auth.onAuthStateChanged(user => {
+    onAuthStateChanged(auth, (user) => {
       if (user) showDashboard();
     });
   </script>
