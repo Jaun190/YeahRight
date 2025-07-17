@@ -1,97 +1,93 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login – Hashcore</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hashcore Login</title>
   <style>
     body {
       margin: 0;
+      background: radial-gradient(circle at top left, #1b0033, #0a001a);
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(145deg, #1f0033, #000010);
       color: white;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
     }
-    .form-box {
+
+    .login-box {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #7b2cbf;
-      box-shadow: 0 0 25px #7b2cbf;
-      border-radius: 1rem;
       padding: 2rem;
-      width: 90%;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px #7fb2cb;
+      width: 100%;
       max-width: 400px;
     }
+
     h2 {
       text-align: center;
-      margin-bottom: 1.5rem;
     }
+
     input, button {
       width: 100%;
       padding: 0.8rem;
-      margin-top: 0.6rem;
-      margin-bottom: 1rem;
-      border-radius: 6px;
+      margin: 0.5rem 0;
       border: none;
-      font-size: 1rem;
+      border-radius: 5px;
     }
-    button {
-      background-color: #7b2cbf;
+
+    input {
+      background: #333;
       color: white;
+    }
+
+    button {
+      background: #7fb2cb;
+      color: white;
+      font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 0 10px #7b2cbf;
     }
-    .checkbox {
-      display: flex;
-      align-items: center;
-      font-size: 0.9rem;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .switch-link {
+
+    .toggle {
       text-align: center;
-      font-size: 0.9rem;
+      margin-top: 1rem;
       cursor: pointer;
-      color: #ccc;
-      text-decoration: underline;
+      color: #7fb2cb;
     }
-    .error {
-      color: #ff6b6b;
-      font-size: 0.85rem;
-      margin-bottom: 0.5rem;
+
+    small {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
-  <div class="form-box">
-    <h2 id="formTitle">🔐 Login</h2>
-    <div id="errorBox" class="error"></div>
-    
+  <div class="login-box">
+    <h2 id="formTitle">Login</h2>
+
     <input type="email" id="email" placeholder="E-Mail" required />
     <input type="password" id="password" placeholder="Passwort" required />
-    <input type="password" id="confirmPassword" placeholder="Passwort bestätigen" style="display:none" />
-    
-    <div class="checkbox" id="agbBox" style="display:none">
-      <input type="checkbox" id="agbCheckbox" />
-      <label for="agbCheckbox">
-        Ich akzeptiere <a href="agb.html" target="_blank">AGB</a> & <a href="datenschutz.html" target="_blank">Datenschutz</a>
-      </label>
-    </div>
-    
-    <button id="submitBtn" onclick="handleAuth()">Einloggen</button>
-    <div class="switch-link" onclick="toggleMode()" id="toggleText">Noch kein Konto? Jetzt registrieren</div>
+    <input type="password" id="confirmPassword" placeholder="Passwort wiederholen" style="display:none" />
+
+    <label><input type="checkbox" id="agbBox" /> Ich akzeptiere AGB & Datenschutz</label>
+
+    <button onclick="submitForm()">➡️ Weiter</button>
+
+    <div class="toggle" onclick="toggleForm()">Noch kein Account? Jetzt registrieren</div>
+
+    <small id="status"></small>
   </div>
 
-  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getAuth,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       getFirestore,
@@ -100,65 +96,70 @@
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
-      authDomain: "fritz-95aeb.firebaseapp.com",
-      projectId: "fritz-95aeb",
+      apiKey: "DEIN_API_KEY",
+      authDomain: "DEIN_PROJEKT.firebaseapp.com",
+      projectId: "DEIN_PROJEKT_ID",
+      appId: "DEINE_APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let isLogin = true;
+    let registerMode = false;
 
-    window.toggleMode = () => {
-      isLogin = !isLogin;
-      document.getElementById("formTitle").innerText = isLogin ? "🔐 Login" : "🆕 Registrieren";
-      document.getElementById("submitBtn").innerText = isLogin ? "Einloggen" : "Registrieren";
-      document.getElementById("toggleText").innerText = isLogin ? "Noch kein Konto? Jetzt registrieren" : "Schon registriert? Jetzt einloggen";
-      document.getElementById("confirmPassword").style.display = isLogin ? "none" : "block";
-      document.getElementById("agbBox").style.display = isLogin ? "none" : "flex";
-    };
+    function toggleForm() {
+      registerMode = !registerMode;
+      document.getElementById("formTitle").textContent = registerMode ? "Registrieren" : "Login";
+      document.getElementById("confirmPassword").style.display = registerMode ? "block" : "none";
+      document.querySelector(".toggle").textContent = registerMode
+        ? "Schon registriert? Jetzt einloggen"
+        : "Noch kein Account? Jetzt registrieren";
+    }
 
-    window.handleAuth = async () => {
+    async function submitForm() {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-      const agbChecked = document.getElementById("agbCheckbox").checked;
-      const errorBox = document.getElementById("errorBox");
-      errorBox.textContent = "";
+      const confirm = document.getElementById("confirmPassword").value;
+      const agb = document.getElementById("agbBox").checked;
+      const status = document.getElementById("status");
+
+      if (!email || !password || (registerMode && password !== confirm)) {
+        status.textContent = "❌ Bitte gib gültige Daten ein.";
+        return;
+      }
+
+      if (!agb) {
+        status.textContent = "❌ Du musst AGB & Datenschutz akzeptieren.";
+        return;
+      }
 
       try {
-        if (isLogin) {
-          await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          if (password !== confirmPassword) {
-            errorBox.textContent = "❌ Passwörter stimmen nicht überein.";
-            return;
-          }
-          if (!agbChecked) {
-            errorBox.textContent = "❌ Du musst AGB & Datenschutz akzeptieren.";
-            return;
-          }
+        if (registerMode) {
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          const uid = cred.user.uid;
+          const url = new URL(window.location.href);
+          const ref = url.searchParams.get("ref") || null;
 
-          const userCred = await createUserWithEmailAndPassword(auth, email, password);
-
-          // Referral aus URL
-          const params = new URLSearchParams(window.location.search);
-          const ref = params.get("ref") || null;
-
-          await setDoc(doc(db, "users", userCred.user.uid), {
-            email: email,
-            referrer: ref,
-            provision: 0
+          await setDoc(doc(db, "users", uid), {
+            email,
+            provision: 0,
+            referrer: ref
           });
+
+          status.textContent = "✅ Registrierung erfolgreich!";
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+          status.textContent = "✅ Login erfolgreich!";
         }
 
-        window.location.href = "dashboard.html";
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1000);
       } catch (err) {
-        errorBox.textContent = "❌ " + err.message;
+        status.textContent = "⚠️ " + err.message;
       }
-    };
+    }
   </script>
 </body>
 </html>
