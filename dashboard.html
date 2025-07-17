@@ -1,214 +1,141 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hashcore Dashboard</title>
-<style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top left, #1b0033, #0a001a);
-    color: white;
-    overflow-x: hidden;
-  }
-  header {
-    background: rgba(255,255,255,0.05);
-    padding: 2rem;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    box-shadow: 0 0 20px violet;
-  }
-  .container {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    max-width: 420px;
-    margin: 0 auto;
-  }
-  .card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid #7b2cbf;
-    box-shadow: 0 0 15px #7b2cbf;
-    padding: 1.5rem;
-    border-radius: 1rem;
-  }
-  .glow-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 6px;
-    background-color: #7b2cbf;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 0 15px #7b2cbf;
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-  .glow-button:hover {
-    background-color: #894edd;
-  }
-  input[type="email"], input[type="password"] {
-    width: 100%;
-    padding: 0.6rem;
-    border-radius: 5px;
-    border: none;
-    margin: 0.5rem 0;
-    font-size: 1rem;
-  }
-  .checkbox-label {
-    display: flex;
-    align-items: center;
-    margin: 0.5rem 0;
-    color: white;
-    font-size: 0.9rem;
-  }
-  .checkbox-label input {
-    margin-right: 0.5rem;
-    cursor: pointer;
-  }
-  .error {
-    color: #f44336;
-    margin-top: 0.5rem;
-  }
-  .success {
-    color: #4caf50;
-    margin-top: 0.5rem;
-  }
-  .agb-link {
-    color: #5e8bff;
-    text-decoration: underline;
-  }
-  footer {
-    padding: 1rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: #aaa;
-    background: #110022;
-    margin-top: 4rem;
-  }
-</style>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hashcore Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #1b0033, #0a001a);
+      color: white;
+      overflow-x: hidden;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      box-shadow: 0 0 20px violet;
+    }
+    .container {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #7b2cbf;
+      box-shadow: 0 0 15px #7b2cbf;
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
+    .glow-button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #7b2cbf;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 15px #7b2cbf;
+      margin-top: 0.5rem;
+    }
+    .glow-button:hover {
+      background-color: #894edd;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 5px;
+      border: none;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+    small {
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
+  <header>🌐 Hashcore Dashboard</header>
 
-<header>⚡ Hashcore Dashboard</header>
+  <div class="container">
 
-<div class="container">
-
-  <!-- Register Form -->
-  <div id="registerForm">
-    <h2>Registrieren</h2>
-    <input type="email" id="registerEmail" placeholder="E-Mail" autocomplete="email" />
-    <input type="password" id="registerPassword" placeholder="Passwort" autocomplete="new-password" />
-    <label class="checkbox-label" for="registerAccept">
-      <input type="checkbox" id="registerAccept" />
-      Ich akzeptiere die <a href="https://deine-website.ch/agb" target="_blank" class="agb-link" rel="noopener noreferrer">AGB</a>.
-    </label>
-    <button class="glow-button" id="registerBtn">Registrieren</button>
-    <p id="registerError" class="error"></p>
-    <p id="registerSuccess" class="success"></p>
-  </div>
-
-  <!-- Haupt Dashboard -->
-  <div id="mainContent" style="display:none;">
-    <!-- Beispiel Dashboard-Inhalt -->
+    <!-- Hashpower kaufen -->
     <div class="card">
       <h2>⚡ Hashpower kaufen</h2>
       <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
       <ul>
-        <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.<br/>
-          <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8niF7101" target="_blank"><button class="glow-button">Kaufen</button></a>
-        </li>
-        <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.<br/>
-          <a href="https://buy.stripe.com/9B62qelcKRGZ8nif7103" target="_blank"><button class="glow-button">Kaufen</button></a>
-        </li>
-        <li><strong>Etcash:</strong> 1 Einheit = CHF 52.<br/>
-          <a href="https://buy.stripe.com/cNli28qFp018y3x5b6f7104" target="_blank"><button class="glow-button">Kaufen</button></a>
-        </li>
-        <li><strong>KawPow:</strong> 1 Einheit = CHF 78.<br/>
-          <a href="https://buy.stripe.com/4gMaEW0U41afjNavqf7105" target="_blank"><button class="glow-button">Kaufen</button></a>
-        </li>
-        <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50.<br/>
-          <a href="https://buy.stripe.com/aFa00I46GdVK4F9cDyf7106" target="_blank"><button class="glow-button">Kaufen</button></a>
-        </li>
+        <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.–<br />
+          <a href="https://buy.stripe.com/5kq6vEUwTs7xc78nhF" target="_blank">
+            <button class="glow-button">Kaufen</button></a></li>
+        <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.–<br />
+          <a href="https://buy.stripe.com/96Q2e1cKkG2R8ne1f103" target="_blank">
+            <button class="glow-button">Kaufen</button></a></li>
+        <li><strong>EtcHash:</strong> 1 Einheit = CHF 52.–<br />
+          <a href="https://buy.stripe.com/cNi28qF01By3k65bF1" target="_blank">
+            <button class="glow-button">Kaufen</button></a></li>
+        <li><strong>Kapow:</strong> 1 Einheit = CHF 59.–<br />
+          <a href="https://buy.stripe.com/00g6qS88Ud44tJaqVf" target="_blank">
+            <button class="glow-button">Kaufen</button></a></li>
+        <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50<br />
+          <a href="https://buy.stripe.com/5a014l66dkW45Pb9f7" target="_blank">
+            <button class="glow-button">Kaufen</button></a></li>
       </ul>
-      <p class="small">▲ Mehrmals kaufen für mehr Hashpower!</p>
+      <small>✨ Mehrmals kaufen für mehr Hashpower!</small>
     </div>
 
+    <!-- Referral -->
     <div class="card">
       <h2>👥 Referrals</h2>
       <p>Empfohlene Partner: <strong>12</strong></p>
-      <p>Provision: <strong>CHF 600.-</strong> (50.- pro Kauf)</p>
+      <p>Provision: <strong>CHF 600.–</strong> (50.– pro Kauf)</p>
       <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
-      <p id="refStatus" class="small"></p>
+      <small id="refStatus"></small>
     </div>
 
+    <!-- Auszahlung -->
     <div class="card">
       <h2>💸 Auszahlung</h2>
-      <p>Dein Guthaben: <strong>CHF 428.-</strong></p>
-      <input type="text" id="walletInput" placeholder="IBAN oder Krypto-Adresse hier eingeben" />
+      <p>Dein Guthaben: <strong>CHF 428.–</strong></p>
+      <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
       <button class="glow-button" onclick="submitPayout()">Auszahlung anfordern</button>
-      <p id="payoutStatus" class="small"></p>
+      <small id="payoutStatus"></small>
     </div>
+
   </div>
 
-</div>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBsg45D1XT487ZVpTCV9LH9t12m26kP1bI",
-    authDomain: "hashcore-f4d96.firebaseapp.com",
-    projectId: "hashcore-f4d96",
-    storageBucket: "hashcore-f4d96.appspot.com",
-    messagingSenderId: "386291046348",
-    appId: "1:386291046348:web:e3aa80fd0ef77900786f69"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  const registerEmail = document.getElementById('registerEmail');
-  const registerPassword = document.getElementById('registerPassword');
-  const registerAccept = document.getElementById('registerAccept');
-  const registerBtn = document.getElementById('registerBtn');
-  const registerError = document.getElementById('registerError');
-  const registerSuccess = document.getElementById('registerSuccess');
-  const registerForm = document.getElementById('registerForm');
-  const mainContent = document.getElementById('mainContent');
-
-  registerBtn.addEventListener('click', async () => {
-    registerError.textContent = '';
-    registerSuccess.textContent = '';
-
-    if (!registerEmail.value || !registerPassword.value) {
-      registerError.textContent = 'Bitte E-Mail und Passwort eingeben.';
-      return;
+  <script>
+    function copyReferral() {
+      const referralLink = window.location.origin + "?ref=DEIN_ID";
+      navigator.clipboard.writeText(referralLink)
+        .then(() => {
+          const refStatus = document.getElementById("refStatus");
+          refStatus.textContent = "Referral-Link kopiert!";
+          setTimeout(() => refStatus.textContent = "", 3000);
+        })
+        .catch(() => {
+          document.getElementById("refStatus").textContent = "Kopieren fehlgeschlagen.";
+        });
     }
 
-    if (!registerAccept.checked) {
-      registerError.textContent = 'Bitte akzeptiere die AGB.';
-      return;
+    function submitPayout() {
+      const wallet = document.getElementById("walletInput").value;
+      const payoutStatus = document.getElementById("payoutStatus");
+
+      if (!wallet) {
+        payoutStatus.textContent = "Bitte gib eine gültige Adresse ein.";
+        return;
+      }
+
+      payoutStatus.textContent = "Auszahlung angefordert: " + wallet;
+      // Hier könnte echte Auszahlung oder E-Mail/Backend-Funktion folgen
     }
-
-    try {
-      const userCredential = await auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value);
-      await userCredential.user.sendEmailVerification();
-      registerSuccess.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail.';
-      registerForm.style.display = 'none';
-      mainContent.style.display = 'flex';
-    } catch (error) {
-      registerError.textContent = 'Registrierung fehlgeschlagen: ' + error.message;
-    }
-  });
-</script>
-
-<footer>
-  Hashcore · Dorfstrasse 233 · 3433 Schwanden i.E · jaun190@gmail.com
-</footer>
-
+  </script>
 </body>
 </html>
