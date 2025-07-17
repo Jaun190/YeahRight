@@ -1,92 +1,171 @@
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import {
-    getFirestore,
-    doc,
-    setDoc
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  // Deine Firebase-Konfiguration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
-    authDomain: "fritz-95aeb.firebaseapp.com",
-    projectId: "fritz-95aeb",
-    storageBucket: "fritz-95aeb.appspot.com",
-    messagingSenderId: "172607275914",
-    appId: "1:172607275914:web:1c92d4de8022c7b6d0be73"
-  };
-
-  // Firebase initialisieren
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  // Referral aus URL speichern
-  const urlParams = new URLSearchParams(window.location.search);
-  const ref = urlParams.get("ref");
-  if (ref) localStorage.setItem("ref", ref);
-
-  // LOGIN
-  document.getElementById("loginBtn").addEventListener("click", async () => {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("Login erfolgreich!");
-      window.location.href = "dashboard.html";
-    } catch (err) {
-      alert("Login fehlgeschlagen: " + err.message);
-      console.error(err);
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hashcore Avalon Login</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #1b0f2e, #000);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-  });
-
-  // REGISTRIERUNG
-  document.getElementById("registerBtn").addEventListener("click", async () => {
-    const email = document.getElementById("registerEmail").value;
-    const password = document.getElementById("registerPassword").value;
-    const refInput = document.getElementById("registerRef").value;
-    const agbChecked = document.getElementById("agbCheck").checked;
-
-    if (!agbChecked) {
-      alert("Bitte AGB akzeptieren.");
-      return;
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 30px;
+      width: 320px;
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+      backdrop-filter: blur(10px);
+      text-align: center;
     }
-
-    const referrer = refInput || localStorage.getItem("ref") || null;
-
-    try {
-      const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCred.user.uid;
-
-      await setDoc(doc(db, "users", uid), {
-        email,
-        referrer,
-        createdAt: new Date().toISOString(),
-        provision: 0
-      });
-
-      alert("Registrierung erfolgreich!");
-      window.location.href = "dashboard.html";
-    } catch (err) {
-      alert("Fehler bei Registrierung: " + err.message);
-      console.error(err);
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
     }
-  });
+    input {
+      background: #220b40;
+      color: white;
+    }
+    button {
+      background: #8a2be2;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .toggle, .legal {
+      margin-top: 15px;
+      font-size: 0.9em;
+      cursor: pointer;
+      text-decoration: underline;
+      color: #aaa;
+    }
+    .hidden {
+      display: none;
+    }
+    label {
+      display: block;
+      text-align: left;
+      font-size: 0.8em;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
 
-  // Kartenumschaltung
-  document.getElementById("toRegister").addEventListener("click", () => {
-    document.getElementById("loginCard").classList.add("hidden");
-    document.getElementById("registerCard").classList.remove("hidden");
-  });
+  <!-- LOGIN -->
+  <div class="card" id="loginCard">
+    <h2>🔐 Login</h2>
+    <input type="email" id="loginEmail" placeholder="E-Mail" />
+    <input type="password" id="loginPassword" placeholder="Passwort" />
+    <button id="loginBtn">Einloggen</button>
+    <div class="toggle" id="toRegister">Noch kein Konto? Registrieren</div>
+  </div>
 
-  document.getElementById("toLogin").addEventListener("click", () => {
-    document.getElementById("registerCard").classList.add("hidden");
-    document.getElementById("loginCard").classList.remove("hidden");
-  });
-</script>
+  <!-- REGISTRIEREN -->
+  <div class="card hidden" id="registerCard">
+    <h2>🧙‍♂️ Registrieren</h2>
+    <input type="email" id="registerEmail" placeholder="E-Mail" />
+    <input type="password" id="registerPassword" placeholder="Passwort" />
+    <input type="text" id="registerRef" placeholder="Werbecode (optional)" />
+    <label><input type="checkbox" id="agbCheck" /> Ich akzeptiere die 
+      <a href="agb.html" target="_blank">AGB</a> und 
+      <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>.
+    </label>
+    <button id="registerBtn">Registrieren</button>
+    <div class="toggle" id="toLogin">Zurück zum Login</div>
+  </div>
+
+  <!-- Firebase + Logik -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendEmailVerification
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
+      authDomain: "fritz-95aeb.firebaseapp.com",
+      projectId: "fritz-95aeb",
+      storageBucket: "fritz-95aeb.appspot.com",
+      messagingSenderId: "172607275914",
+      appId: "1:172607275914:web:1c92d4de8022c7b6d0be73"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Referral übernehmen
+    const refFromURL = new URLSearchParams(window.location.search).get("ref");
+    if (refFromURL) localStorage.setItem("ref", refFromURL);
+
+    // Login
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Login erfolgreich!");
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        alert("Login fehlgeschlagen: " + err.message);
+      }
+    });
+
+    // Registrierung
+    document.getElementById("registerBtn").addEventListener("click", async () => {
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+      const ref = document.getElementById("registerRef").value || localStorage.getItem("ref") || null;
+      const agb = document.getElementById("agbCheck").checked;
+      if (!agb) return alert("Bitte AGB akzeptieren.");
+
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(userCred.user);
+        await setDoc(doc(db, "users", userCred.user.uid), {
+          email,
+          referrer: ref,
+          createdAt: new Date().toISOString(),
+          verified: false,
+          provision: 0
+        });
+        alert("Registrierung erfolgreich! Bitte bestätige deine E-Mail.");
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        alert("Registrierung fehlgeschlagen: " + err.message);
+      }
+    });
+
+    // Ansicht umschalten
+    document.getElementById("toRegister").addEventListener("click", () => {
+      document.getElementById("loginCard").classList.add("hidden");
+      document.getElementById("registerCard").classList.remove("hidden");
+    });
+    document.getElementById("toLogin").addEventListener("click", () => {
+      document.getElementById("registerCard").classList.add("hidden");
+      document.getElementById("loginCard").classList.remove("hidden");
+    });
+  </script>
+
+</body>
+</html>
