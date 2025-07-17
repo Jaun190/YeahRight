@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hashcore Login</title>
   <style>
     body {
@@ -15,6 +15,7 @@
       margin: 0;
       color: white;
     }
+
     .card {
       background: rgba(80, 0, 120, 0.2);
       border: 1px solid #9d4edd;
@@ -25,15 +26,17 @@
       backdrop-filter: blur(10px);
       text-align: center;
     }
+
     input {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
       border-radius: 10px;
       border: none;
-      background: #330444;
+      background: #330044;
       color: white;
     }
+
     button {
       width: 100%;
       padding: 10px;
@@ -46,25 +49,29 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+
     button:hover {
       background: #7b2cbf;
     }
+
     .toggle {
       margin-top: 15px;
       color: #bbb;
-      cursor: pointer;
       font-size: 0.9em;
+      cursor: pointer;
       text-decoration: underline;
     }
+
     .hidden {
       display: none;
     }
-    .title {
+
+    title {
       font-size: 1.4em;
-      margin-bottom: 20px;
       font-weight: bold;
       color: #00aaff;
     }
+
     label {
       font-size: 0.8em;
       text-align: left;
@@ -74,61 +81,59 @@
   </style>
 </head>
 <body>
-
   <!-- Login Card -->
   <div class="card" id="loginCard">
-    <div class="title">Login</div>
+    <div class="title">🔐 Login</div>
     <input type="email" id="loginEmail" placeholder="E-Mail" />
     <input type="password" id="loginPassword" placeholder="Passwort" />
-    <button id="loginBtn">Login</button>
+    <button id="loginBtn">Einloggen</button>
     <div class="toggle" id="toRegister">Noch kein Account? Jetzt registrieren</div>
   </div>
 
   <!-- Register Card -->
   <div class="card hidden" id="registerCard">
-    <div class="title">Registrieren</div>
+    <div class="title">🆕 Registrieren</div>
     <input type="email" id="registerEmail" placeholder="E-Mail" />
     <input type="password" id="registerPassword" placeholder="Passwort" />
-    <input type="text" id="registerRef" placeholder="Werbercode (optional)" />
+    <input type="text" id="registerRef" placeholder="Werbecode (optional)" />
     <label>
       <input type="checkbox" id="agbCheck" />
-      Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und die
-      <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>
+      Ich akzeptiere die <a href="agb.html" target="_blank">AGB</a> und die <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>
     </label>
     <button id="registerBtn">Registrieren</button>
     <div class="toggle" id="toLogin">Zurück zum Login</div>
   </div>
 
   <script type="module">
-    // Firebase SDKs importieren
+    // Firebase SDKs
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Deine Firebase-Konfiguration (korrekt eingebunden)
+    // 🔧 Deine Firebase-Daten:
     const firebaseConfig = {
-      apiKey: "AIzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtIUk",
-      authDomain: "fritz-95aeb.firebaseapp.com",
-      projectId: "fritz-95aeb",
-      storageBucket: "fritz-95aeb.appspot.com",
-      messagingSenderId: "undefined",  // Optional, falls nicht benötigt
-      appId: "undefined"               // Optional, falls nicht benötigt
+      apiKey: "DEIN_API_KEY",
+      authDomain: "DEIN_PROJEKT.firebaseapp.com",
+      projectId: "DEIN_PROJEKT_ID",
+      storageBucket: "DEIN_PROJEKT.appspot.com",
+      messagingSenderId: "DEINE_SENDER_ID",
+      appId: "DEINE_APP_ID"
     };
 
-    // Firebase initialisieren
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Reflink aus URL speichern
+    // 📌 Referral aus URL übernehmen
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get("ref");
     if (ref) localStorage.setItem("ref", ref);
 
-    // Login
+    // 🔐 Login
     document.getElementById("loginBtn").addEventListener("click", async () => {
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
+
       try {
         await signInWithEmailAndPassword(auth, email, password);
         window.location.href = "dashboard.html";
@@ -137,38 +142,39 @@
       }
     });
 
-    // Registrierung
+    // 🆕 Registrierung mit Referral
     document.getElementById("registerBtn").addEventListener("click", async () => {
       const email = document.getElementById("registerEmail").value;
       const password = document.getElementById("registerPassword").value;
       const refInput = document.getElementById("registerRef").value.trim();
+      const localRef = localStorage.getItem("ref");
+      const referrer = refInput !== "" ? refInput : (localRef || null);
       const agb = document.getElementById("agbCheck").checked;
 
-      const referrer = refInput !== "" ? refInput : localStorage.getItem("ref") || null;
-
       if (!agb) {
-        alert("Bitte akzeptiere die AGB und Datenschutzerklärung.");
+        alert("Bitte AGB akzeptieren.");
         return;
       }
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const uid = userCredential.user.uid;
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCred.user.uid;
 
         await setDoc(doc(db, "users", uid), {
           email,
           referrer,
-          createdAt: new Date().toLocaleString()
+          createdAt: new Date().toISOString(),
+          provision: 0
         });
 
-        alert("Erfolgreich registriert!");
+        alert("Registrierung erfolgreich!");
         window.location.href = "dashboard.html";
       } catch (err) {
         alert("Fehler bei Registrierung: " + err.message);
       }
     });
 
-    // Ansicht umschalten
+    // 🔄 Ansicht umschalten
     document.getElementById("toRegister").addEventListener("click", () => {
       document.getElementById("loginCard").classList.add("hidden");
       document.getElementById("registerCard").classList.remove("hidden");
@@ -179,6 +185,5 @@
       document.getElementById("loginCard").classList.remove("hidden");
     });
   </script>
-
 </body>
 </html>
