@@ -63,8 +63,8 @@
 </head>
 <body>
   <header>⚡ Hashcore Dashboard</header>
-  <div class="container">
 
+  <div class="container">
     <!-- Hashpower kaufen -->
     <div class="card">
       <h2>⚒️ Hashpower kaufen</h2>
@@ -75,26 +75,7 @@
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-        <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.–<br />
-          <a href="https://buy.stripe.com/906B2qeLkRG92t8m7j" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
-        <li><strong>Etchash:</strong> 1 Einheit = CHF 52.–<br />
-          <a href="https://buy.stripe.com/cHI28gFpo1BYb3xb6f" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
-        <li><strong>KawPow:</strong> 1 Einheit = CHF 59.–<br />
-          <a href="https://buy.stripe.com/4gW8aW00UaJlaflNaq" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
-        <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50<br />
-          <a href="https://buy.stripe.com/aFa001466GkY94ScDg" target="_blank">
-            <button class="glow-button">Kaufen</button>
-          </a>
-        </li>
+        <!-- Weitere Algorithmen können hier folgen -->
       </ul>
       <small>✨ Mehrmals kaufen für mehr Hashpower!</small>
     </div>
@@ -102,8 +83,7 @@
     <!-- Referral -->
     <div class="card">
       <h2>🎁 Referral</h2>
-      <p>Empfohlener Partner: <strong>Du</strong><br />
-        Provision: <strong>CHF 600.–</strong> (z. B. 50.– pro Kauf)</p>
+      <p>Empfohlener Partner: <strong>Du</strong></p>
       <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
       <small id="refstatus"></small>
     </div>
@@ -111,28 +91,30 @@
     <!-- Auszahlung -->
     <div class="card">
       <h2>💸 Auszahlung</h2>
-      <p>Jetzt auszahlen: <strong>CHF 428.–</strong></p>
-      <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
+      <input type="text" placeholder="IBAN oder Wallet-Adresse eingeben" id="walletInput" />
       <button class="glow-button" onclick="submitPayout()">💸 Auszahlung anfordern</button>
       <small id="payoutStatus"></small>
     </div>
   </div>
 
-  <!-- Firebase einbinden -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
+
   <script>
+    // 🔥 DEINE Firebase-Konfiguration hier eintragen:
     const firebaseConfig = {
       apiKey: "DEIN_API_KEY",
-      authDomain: "DEIN_PROJECT.firebaseapp.com",
-      projectId: "DEIN_PROJECT_ID",
+      authDomain: "DEIN_PROJEKT.firebaseapp.com",
+      projectId: "DEIN_PROJEKT_ID",
       appId: "DEINE_APP_ID"
     };
+
+    // Initialisiere Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
   </script>
 
-  <!-- Hauptfunktionen -->
   <script>
     function copyReferral() {
       const user = firebase.auth().currentUser;
@@ -144,8 +126,8 @@
 
         navigator.clipboard.writeText(referralLink)
           .then(() => {
-            refStatus.textContent = "Referral-Link kopiert!";
-            setTimeout(() => refStatus.textContent = "", 3000);
+            refStatus.textContent = "Referral-Link kopiert: " + referralLink;
+            setTimeout(() => refStatus.textContent = "", 4000);
           })
           .catch(() => {
             refStatus.textContent = "Kopieren fehlgeschlagen.";
