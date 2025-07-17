@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hashcore Dashboard</title>
   <style>
     body {
@@ -12,7 +12,6 @@
       color: white;
       overflow-x: hidden;
     }
-
     header {
       background: rgba(255, 255, 255, 0.05);
       padding: 2rem;
@@ -21,14 +20,12 @@
       font-weight: bold;
       box-shadow: 0 0 20px violet;
     }
-
     .container {
       padding: 2rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #7b2cbf;
@@ -36,7 +33,6 @@
       padding: 1.5rem;
       border-radius: 1rem;
     }
-
     .glow-button {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -46,107 +42,145 @@
       font-size: 1rem;
       cursor: pointer;
       box-shadow: 0 0 15px #7b2cbf;
+      margin-top: 0.5rem;
     }
-
     .glow-button:hover {
-      background-color: #9d4edd;
+      background-color: #894edd;
     }
-
-    .popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
+    input[type="text"] {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 5px;
+      border: none;
+      margin: 0.5rem 0;
+      font-size: 1rem;
     }
-
-    .popup-content {
-      border: 2px solid hotpink;
-      padding: 2rem;
-      background: #0a001a;
-      border-radius: 1rem;
-      max-width: 400px;
-      text-align: center;
-      color: white;
-      box-shadow: 0 0 20px hotpink;
-    }
-
-    footer {
-      padding: 1rem;
-      text-align: center;
+    small {
       font-size: 0.85rem;
-      color: #aaa;
-      background: #110022;
-      margin-top: 4rem;
+      color: #ccc;
+    }
+    ul {
+      padding-left: 1rem;
+    }
+    li {
+      margin-bottom: 1rem;
     }
   </style>
 </head>
 <body>
-
-  <header>🔷 Hashcore Dashboard</header>
+  <header>⚡ Hashcore Dashboard</header>
 
   <div class="container">
+
+    <!-- Hashpower kaufen -->
     <div class="card">
-      <h2>⚙️ Deine Hashrate</h2>
-      <p>Aktuelle Hashrate: <strong>750 MH/s</strong></p>
-      <input type="range" min="100" max="10000" value="750" />
-      <p>Preis: CHF <strong>349.–</strong></p>
-      <button class="glow-button">Jetzt Hashrate kaufen</button>
+      <h2>⚒️ Hashpower kaufen</h2>
+      <ul>
+        <li><strong>SHA-256:</strong> CHF 130.–<br />
+          <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+        <li><strong>Scrypt:</strong> CHF 65.–<br />
+          <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+        <li><strong>Etchash:</strong> CHF 52.–<br />
+          <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+        <li><strong>KawPow:</strong> CHF 59.–<br />
+          <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+        <li><strong>Octopus:</strong> CHF 58.50<br />
+          <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">
+            <button class="glow-button">Kaufen</button>
+          </a>
+        </li>
+      </ul>
+      <small>✨ Du kannst mehrere Einheiten kaufen für mehr Hashpower</small>
     </div>
 
+    <!-- Referral -->
     <div class="card">
-      <h2>🧑‍🤝‍🧑 Referrals</h2>
-      <p>Empfohlene Partner: <strong>12</strong></p>
-      <p>Provision: <strong>CHF 600.–</strong></p>
-      <button class="glow-button">Referral-Link kopieren</button>
+      <h2>🎁 Referral</h2>
+      <p>Empfohlener Partner: <strong>Du</strong><br />
+        Provision: z. B. 50.– pro Kauf</p>
+      <input type="text" id="refLinkInput" readonly style="width:100%; padding:8px; font-size:14px; border-radius:5px;" />
+      <button class="glow-button" onclick="copyReferral()">📋 Referral-Link kopieren</button>
+      <small id="refstatus"></small>
     </div>
 
+    <!-- Auszahlung -->
     <div class="card">
       <h2>💸 Auszahlung</h2>
-      <p>Dein Guthaben: <strong>428.–</strong></p>
-      <button class="glow-button" onclick="openWalletPopup()">Auszahlen</button>
+      <p>Jetzt auszahlen: <strong>CHF 428.–</strong></p>
+      <input type="text" placeholder="IBAN oder Wallet-Adresse hier eingeben" id="walletInput" />
+      <button class="glow-button" onclick="submitPayout()">💸 Auszahlung anfordern</button>
+      <small id="payoutStatus"></small>
     </div>
   </div>
 
-  <div id="walletPopup" class="popup" style="display:none;">
-    <div class="popup-content">
-      <h2>💳 Wallet-Adresse eingeben</h2>
-      <input type="text" placeholder="z. B. 1qxyz..." style="width:100%;padding:0.5rem;margin:1rem 0;border-radius:5px;" />
-      <button class="glow-button" onclick="closeWalletPopup()">Bestätigen</button>
-    </div>
-  </div>
-
-  <div id="licensePopup" class="popup">
-    <div class="popup-content">
-      <h2>🚫 Lizenz erforderlich</h2>
-      <p>Du musst eine Lizenz kaufen, um Hashcore nutzen zu können.</p>
-      <p>Preis: <strong>CHF 49.–</strong></p>
-      <button class="glow-button" onclick="closeLicensePopup()">Lizenz kaufen</button>
-    </div>
-  </div>
-
-  <footer>
-    Hashcore · Dorfstrasse 233 · 3433 Schwanden i.E · jaun190@gmail.com
-  </footer>
-
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
   <script>
-    function closeLicensePopup() {
-      document.getElementById('licensePopup').style.display = 'none';
+    const firebaseConfig = {
+      apiKey: "DEIN_API_KEY",
+      authDomain: "DEIN_PROJEKT.firebaseapp.com",
+      projectId: "DEIN_PROJEKT_ID",
+      appId: "DEINE_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    let currentUser = null;
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      if (user) {
+        const link = window.location.origin + "?ref=" + user.uid;
+        document.getElementById("refLinkInput").value = link;
+      } else {
+        document.getElementById("refLinkInput").value = "Bitte einloggen!";
+      }
+    });
+
+    function copyReferral() {
+      const input = document.getElementById("refLinkInput");
+      const refStatus = document.getElementById("refstatus");
+
+      if (!currentUser) {
+        refStatus.textContent = "❌ Du musst eingeloggt sein!";
+        return;
+      }
+
+      input.select();
+      input.setSelectionRange(0, 99999); // Für Mobilgeräte
+      navigator.clipboard.writeText(input.value)
+        .then(() => {
+          refStatus.textContent = "✅ Referral-Link kopiert!";
+          setTimeout(() => refStatus.textContent = "", 3000);
+        })
+        .catch(() => {
+          refStatus.textContent = "❌ Kopieren fehlgeschlagen.";
+        });
     }
 
-    function openWalletPopup() {
-      document.getElementById('walletPopup').style.display = 'flex';
-    }
+    function submitPayout() {
+      const wallet = document.getElementById("walletInput").value;
+      const payoutStatus = document.getElementById("payoutStatus");
 
-    function closeWalletPopup() {
-      document.getElementById('walletPopup').style.display = 'none';
+      if (!wallet) {
+        payoutStatus.textContent = "Bitte gib eine Adresse ein.";
+        return;
+      }
+
+      payoutStatus.textContent = "Auszahlung angefordert: " + wallet;
     }
   </script>
-
 </body>
 </html>
