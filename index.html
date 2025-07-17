@@ -23,34 +23,23 @@
       box-shadow: 0 0 30px purple;
       width: 300px;
     }
-    .form-box {
-      display: flex;
-      flex-direction: column;
-    }
-    input[type="email"],
-    input[type="password"] {
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      border: none;
-      border-radius: 5px;
-    }
+    .form-box { display: flex; flex-direction: column; }
+    input { margin: 0.5rem 0; padding: 0.5rem; border-radius: 5px; border: none; }
     button {
-      background: #b370ff;
-      color: white;
-      border: none;
-      padding: 0.6rem;
-      margin-top: 0.5rem;
-      cursor: pointer;
-      border-radius: 5px;
-      font-weight: bold;
+      background: #b370ff; color: white; border: none;
+      padding: 0.6rem; margin-top: 0.5rem; cursor: pointer;
+      border-radius: 5px; font-weight: bold;
     }
     a { color: #c397ff; text-decoration: none; }
     a:hover { text-decoration: underline; }
   </style>
   <script type="module">
-    // Firebase Konfiguration
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AlzaSyDt7SWkUf0gvLDj4GDQmUvYXFQhcCUtlUk",
@@ -64,42 +53,42 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Login/Register Funktionen
     window.register = async function () {
       const email = document.getElementById("regEmail").value;
-      const password = document.getElementById("regPassword").value;
-      const confirm = document.getElementById("regConfirm").value;
+      const pw = document.getElementById("regPassword").value;
+      const pwConfirm = document.getElementById("regConfirm").value;
       const agb = document.getElementById("agbCheck").checked;
+
       if (!agb) return alert("Bitte akzeptiere die AGB und Datenschutz.");
-      if (password !== confirm) return alert("Passwörter stimmen nicht überein.");
+      if (pw !== pwConfirm) return alert("Passwörter stimmen nicht überein.");
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, email, pw);
         alert("Registrierung erfolgreich!");
         window.location.href = "dashboard.html";
-      } catch (err) {
-        alert(err.message);
+      } catch (e) {
+        alert("Fehler: " + e.message);
       }
     };
 
     window.login = async function () {
       const email = document.getElementById("logEmail").value;
-      const password = document.getElementById("logPassword").value;
+      const pw = document.getElementById("logPassword").value;
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, email, pw);
         window.location.href = "dashboard.html";
-      } catch (err) {
-        alert("Login fehlgeschlagen: " + err.message);
+      } catch (e) {
+        alert("Login fehlgeschlagen: " + e.message);
       }
     };
 
-    window.showLogin = function () {
-      document.getElementById("loginBox").style.display = "block";
+    window.showLogin = () => {
       document.getElementById("registerBox").style.display = "none";
+      document.getElementById("loginBox").style.display = "flex";
     };
 
-    window.showRegister = function () {
-      document.getElementById("registerBox").style.display = "block";
+    window.showRegister = () => {
       document.getElementById("loginBox").style.display = "none";
+      document.getElementById("registerBox").style.display = "flex";
     };
   </script>
 </head>
