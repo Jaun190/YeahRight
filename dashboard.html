@@ -12,7 +12,6 @@
       color: white;
       overflow-x: hidden;
     }
-
     header {
       background: rgba(255, 255, 255, 0.05);
       padding: 2rem;
@@ -21,14 +20,12 @@
       font-weight: bold;
       box-shadow: 0 0 20px violet;
     }
-
     .container {
       padding: 2rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #7b2cbf;
@@ -36,7 +33,6 @@
       padding: 1.5rem;
       border-radius: 1rem;
     }
-
     .glow-button {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -48,11 +44,9 @@
       box-shadow: 0 0 15px #7b2cbf;
       margin-top: 0.5rem;
     }
-
     .glow-button:hover {
       background-color: #894edd;
     }
-
     input[type="text"] {
       width: 100%;
       padding: 0.6rem;
@@ -61,7 +55,6 @@
       margin: 0.5rem 0;
       font-size: 1rem;
     }
-
     small {
       font-size: 0.85rem;
       color: #ccc;
@@ -70,40 +63,35 @@
 </head>
 <body>
   <header>⚡ Hashcore Dashboard</header>
-
   <div class="container">
 
     <!-- Hashpower kaufen -->
     <div class="card">
-      <h2>💸 Hashpower kaufen</h2>
+      <h2>⚒️ Hashpower kaufen</h2>
       <p>Wähle einen Algorithmus. Für mehr Einheiten einfach mehrfach kaufen.</p>
       <ul>
         <li><strong>SHA-256:</strong> 1 Einheit = CHF 130.–<br />
-          <a href="https://buy.stripe.com/5kQaEWgTs7xmc7B8nif7i01" target="_blank">
+          <a href="https://buy.stripe.com/5kQaEgiW57xncZB8m7" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-
         <li><strong>Scrypt:</strong> 1 Einheit = CHF 65.–<br />
-          <a href="https://buy.stripe.com/9B628qeLkcRG9Zt8nif7i03" target="_blank">
+          <a href="https://buy.stripe.com/906B2qeLkRG92t8m7j" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-
         <li><strong>Etchash:</strong> 1 Einheit = CHF 52.–<br />
-          <a href="https://buy.stripe.com/cNi28qfPo18Yb3x5b6f7i04" target="_blank">
+          <a href="https://buy.stripe.com/cHI28gFpo1BYb3xb6f" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-
         <li><strong>KawPow:</strong> 1 Einheit = CHF 59.–<br />
-          <a href="https://buy.stripe.com/4gMaEW0Uu4lafjNavqf7i05" target="_blank">
+          <a href="https://buy.stripe.com/4gW8aW00UaJlaflNaq" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
-
         <li><strong>Octopus:</strong> 1 Einheit = CHF 58.50<br />
-          <a href="https://buy.stripe.com/aFa00i46GdVK4F9cDyf7i06" target="_blank">
+          <a href="https://buy.stripe.com/aFa001466GkY94ScDg" target="_blank">
             <button class="glow-button">Kaufen</button>
           </a>
         </li>
@@ -113,35 +101,58 @@
 
     <!-- Referral -->
     <div class="card">
-      <h2>🤝 Referrals</h2>
-      <p>Empfohlene Partner: <strong>12</strong><br />
-        Provision: <strong>CHF 600.–</strong> (50.– pro Kauf)</p>
+      <h2>🎁 Referral</h2>
+      <p>Empfohlener Partner: <strong>Du</strong><br />
+        Provision: <strong>CHF 600.–</strong> (z. B. 50.– pro Kauf)</p>
       <button class="glow-button" onclick="copyReferral()">Referral-Link kopieren</button>
-      <small id="refStatus"></small>
+      <small id="refstatus"></small>
     </div>
 
     <!-- Auszahlung -->
     <div class="card">
-      <h2>💵 Auszahlung</h2>
-      <p>Auszahlung: <strong>CHF 428.–</strong></p>
+      <h2>💸 Auszahlung</h2>
+      <p>Jetzt auszahlen: <strong>CHF 428.–</strong></p>
       <input type="text" placeholder="IBAN oder Krypto-Adresse hier eingeben" id="walletInput" />
       <button class="glow-button" onclick="submitPayout()">💸 Auszahlung anfordern</button>
       <small id="payoutStatus"></small>
     </div>
   </div>
 
+  <!-- Firebase einbinden -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "DEIN_API_KEY",
+      authDomain: "DEIN_PROJECT.firebaseapp.com",
+      projectId: "DEIN_PROJECT_ID",
+      appId: "DEINE_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
+
+  <!-- Hauptfunktionen -->
   <script>
     function copyReferral() {
-      const referralLink = window.location.origin + "?ref=DEIN_ID";
-      navigator.clipboard.writeText(referralLink)
-        .then(() => {
-          const refStatus = document.getElementById("refStatus");
-          refStatus.textContent = "Referral-Link kopiert!";
-          setTimeout(() => refStatus.textContent = "", 3000);
-        })
-        .catch(() => {
-          document.getElementById("refStatus").textContent = "Kopieren fehlgeschlagen.";
-        });
+      const user = firebase.auth().currentUser;
+      const refStatus = document.getElementById("refstatus");
+
+      if (user) {
+        const referralID = user.uid;
+        const referralLink = window.location.origin + "?ref=" + referralID;
+
+        navigator.clipboard.writeText(referralLink)
+          .then(() => {
+            refStatus.textContent = "Referral-Link kopiert!";
+            setTimeout(() => refStatus.textContent = "", 3000);
+          })
+          .catch(() => {
+            refStatus.textContent = "Kopieren fehlgeschlagen.";
+          });
+      } else {
+        refStatus.textContent = "Bitte zuerst einloggen!";
+      }
     }
 
     function submitPayout() {
@@ -154,7 +165,6 @@
       }
 
       payoutStatus.textContent = "Auszahlung angefordert: " + wallet;
-      // Hier könnte echte Auszahlung oder E-Mail/Backend-Funktion folgen
     }
   </script>
 </body>
