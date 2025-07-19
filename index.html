@@ -3,156 +3,112 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore – Hashpower kaufen</title>
+  <title>Hashpower – Login / Registrierung</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
     }
 
     .container {
-      max-width: 960px;
-      margin: 4rem auto;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      width: 90%;
+      max-width: 400px;
     }
 
-    h1 {
+    h2 {
       text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 25px;
     }
 
-    .product {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      background-color: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      transition: all 0.3s ease;
-    }
-
-    .product:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-      transform: scale(1.01);
-    }
-
-    .product-info {
-      flex: 1;
-    }
-
-    .product-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-
-    .product-price {
-      margin-top: 4px;
-      color: #00ffcc;
-    }
-
-    .quantity {
-      width: 60px;
-      padding: 6px;
-      margin-left: 1rem;
-      border-radius: 5px;
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
       border: none;
-      font-size: 1rem;
-    }
-
-    .buy-btn {
-      background: #00c6ff;
-      border: none;
-      padding: 0.6rem 1.2rem;
       border-radius: 8px;
-      font-weight: bold;
-      color: black;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #1db954;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
-      margin-left: 1rem;
-      transition: background 0.3s;
+      margin-top: 10px;
     }
 
-    .buy-btn:hover {
-      background: #00ffcc;
-    }
-
-    .note {
-      text-align: center;
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-
-    @media (max-width: 640px) {
-      .product {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .buy-btn, .quantity {
-        margin-top: 0.5rem;
-        margin-left: 0;
-      }
+    button:hover {
+      background-color: #1ed760;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Hashpower kaufen</h1>
-
-    <div class="product">
-      <div class="product-info">
-        <div class="product-title">Hashpower Octobus (100 Mh/s)</div>
-        <div class="product-price">58.50 CHF</div>
-      </div>
-      <input type="number" class="quantity" min="1" value="1" />
-      <button class="buy-btn">Jetzt kaufen</button>
-    </div>
-
-    <div class="product">
-      <div class="product-info">
-        <div class="product-title">Hashpower KawPow (100 Mh/s)</div>
-        <div class="product-price">78.00 CHF</div>
-      </div>
-      <input type="number" class="quantity" min="1" value="1" />
-      <button class="buy-btn">Jetzt kaufen</button>
-    </div>
-
-    <div class="product">
-      <div class="product-info">
-        <div class="product-title">Hashpower Etchash (100 Mh/s)</div>
-        <div class="product-price">52.00 CHF</div>
-      </div>
-      <input type="number" class="quantity" min="1" value="1" />
-      <button class="buy-btn">Jetzt kaufen</button>
-    </div>
-
-    <div class="product">
-      <div class="product-info">
-        <div class="product-title">Hashpower Scrypt (500 Mh/s)</div>
-        <div class="product-price">65.00 CHF</div>
-      </div>
-      <input type="number" class="quantity" min="1" value="1" />
-      <button class="buy-btn">Jetzt kaufen</button>
-    </div>
-
-    <div class="product">
-      <div class="product-info">
-        <div class="product-title">Hashpower SHA-256 (1 Th/s)</div>
-        <div class="product-price">130.00 CHF</div>
-      </div>
-      <input type="number" class="quantity" min="1" value="1" />
-      <button class="buy-btn">Jetzt kaufen</button>
-    </div>
-
-    <p class="note">* Preise inkl. MwSt. | Hashpower-Verfügbarkeit kann variieren</p>
+    <h2>Willkommen bei Hashpower</h2>
+    <form id="authForm">
+      <input type="email" id="email" placeholder="E-Mail-Adresse" required />
+      <input type="password" id="password" placeholder="Passwort" required />
+      <button type="submit">Login / Registrieren</button>
+    </form>
   </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
+
+  <script>
+    // ✅ Deine echte Firebase-Konfiguration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAbv4XhNHCxafya4MZMX9N7j6v42_kTZQ",
+      authDomain: "hashpower-ceeaf.firebaseapp.com",
+      projectId: "hashpower-ceeaf",
+      storageBucket: "hashpower-ceeaf.firebasestorage.app",
+      messagingSenderId: "653141138659",
+      appId: "1:653141138659:web:04b6d31b12c50db5f0b9d6"
+    };
+
+    // Firebase initialisieren
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Login/Register-Logik
+    document.getElementById("authForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          window.location.href = "dashboard.html";
+        })
+        .catch((error) => {
+          if (error.code === "auth/user-not-found") {
+            auth.createUserWithEmailAndPassword(email, password)
+              .then(() => {
+                window.location.href = "dashboard.html";
+              })
+              .catch((err) => alert("Registrierungsfehler: " + err.message));
+          } else {
+            alert("Fehler: " + error.message);
+          }
+        });
+    });
+  </script>
 </body>
 </html>
