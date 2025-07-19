@@ -1,114 +1,103 @@
-<!DOCTYPE html>
-<html lang="de">
+<!DOCTYPE html><html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashpower – Login / Registrierung</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hashcoins Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
+      height: 100vh;
     }
-
     .container {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      width: 90%;
+      background: #111;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,255,0,0.2);
+      width: 100%;
       max-width: 400px;
     }
-
     h2 {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 1.5rem;
     }
-
     input {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      background: #222;
+      color: white;
     }
-
     button {
       width: 100%;
-      padding: 12px;
-      background-color: #1db954;
-      color: white;
+      padding: 0.75rem;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      background-color: #00ff99;
+      color: #000;
+      font-weight: 600;
       cursor: pointer;
-      margin-top: 10px;
     }
-
-    button:hover {
-      background-color: #1ed760;
+    .error {
+      color: #ff5555;
+      text-align: center;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Willkommen bei Hashpower</h2>
-    <form id="authForm">
-      <input type="email" id="email" placeholder="E-Mail-Adresse" required />
-      <input type="password" id="password" placeholder="Passwort" required />
-      <button type="submit">Login / Registrieren</button>
-    </form>
-  </div>
+    <h2>Login / Registrierung</h2>
+    <input type="email" id="email" placeholder="E-Mail">
+    <input type="password" id="password" placeholder="Passwort">
+    <button onclick="loginOrRegister()">Login / Registrieren</button>
+    <div id="error" class="error"></div>
+  </div>  <script type="module">
+    // Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
-
-  <script>
-    // ✅ Deine echte Firebase-Konfiguration
     const firebaseConfig = {
-      apiKey: "AIzaSyAAbv4XhNHCxafya4MZMX9N7j6v42_kTZQ",
+      apiKey: "AlzaSyAAbv4XhNHCxafya4MZMX9N7j6v42_kTZQ",
       authDomain: "hashpower-ceeaf.firebaseapp.com",
       projectId: "hashpower-ceeaf",
-      storageBucket: "hashpower-ceeaf.firebasestorage.app",
+      storageBucket: "hashpower-ceeaf.appspot.com",
       messagingSenderId: "653141138659",
-      appId: "1:653141138659:web:04b6d31b12c50db5f0b9d6"
+      appId: "DEINE_APP_ID_HIER_EINFUEGEN"
     };
 
-    // Firebase initialisieren
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-    // Login/Register-Logik
-    document.getElementById("authForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+    window.loginOrRegister = async function () {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
+      const errorDiv = document.getElementById("error");
+      errorDiv.innerText = "";
 
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-          if (error.code === "auth/user-not-found") {
-            auth.createUserWithEmailAndPassword(email, password)
-              .then(() => {
-                window.location.href = "dashboard.html";
-              })
-              .catch((err) => alert("Registrierungsfehler: " + err.message));
-          } else {
-            alert("Fehler: " + error.message);
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "/dashboard.html";
+      } catch (loginError) {
+        if (loginError.code === 'auth/user-not-found') {
+          try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            window.location.href = "/dashboard.html";
+          } catch (registerError) {
+            errorDiv.innerText = registerError.message;
           }
-        });
-    });
-  </script>
-</body>
+        } else {
+          errorDiv.innerText = loginError.message;
+        }
+      }
+    }
+  </script></body>
 </html>
