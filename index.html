@@ -1,163 +1,106 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hashcore – Shop (MetaMask + Firebase, nur eingeloggt)</title>
-  <meta name="description" content="Hashcore Shop – Hashpower-Pakete, MetaMask Zahlung, Firestore-Speicherung. Aktionen nur bei Wallet-Login verfügbar.">
+  <meta charset="UTF-8">
+  <title>Hashcore – Hashpower mieten</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .chip{display:inline-flex;align-items:center;gap:.5rem;padding:.2rem .6rem;border-radius:9999px;border:1px solid #374151;background:#111827;color:#9CA3AF;font-size:.75rem}
-    .btn{padding:.7rem 1rem;border-radius:.9rem}
-    .btn-primary{background:#22d3ee;color:#000}
-    .btn-primary:hover{background:#06b6d4}
-    .btn-ghost{background:#111827;border:1px solid #374151;color:#E5E7EB}
-    .btn-ghost:hover{background:#1f2937}
-    .card{background:#0b0f1a;border:1px solid #1f2937;border-radius:1.1rem;padding:1rem}
-    .muted{color:#9CA3AF}
-    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-    .section{display:none}
-    .section.active{display:block}
-    .link{color:#67e8f9}
-    .hidden{display:none}
-    .input{background:#0b1220;border:1px solid #1f2937;border-radius:.6rem;padding:.55rem .8rem}
-    .label{font-size:.8rem;color:#9CA3AF}
-  </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen">
-  <header class="sticky top-0 z-30 bg-gray-900/80 backdrop-blur border-b border-gray-800">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="h-9 w-9 rounded-xl bg-cyan-500/20 grid place-items-center">⚡</div>
-        <div class="text-xl font-extrabold tracking-tight">Hash<span class="text-cyan-400">core</span></div>
-        <div id="vipBadge" class="chip hidden">VIP</div>
-      </div>
-      <nav class="flex gap-2">
-        <button class="btn btn-ghost" onclick="nav('shop')">Shop</button>
-        <button class="btn btn-ghost" onclick="nav('dashboard')">Dashboard</button>
-        <button id="adminTab" class="btn btn-ghost hidden" onclick="nav('admin')">Admin</button>
-      </nav>
-    </div>
-  </header>
+<body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
 
-  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
-    <!-- MetaMask Fallback Banner -->
-    <div id="noMetamask" class="card bg-red-900/30 border-red-700 hidden">
-      <h3 class="font-bold text-red-300">MetaMask nicht gefunden</h3>
-      <p class="text-sm mt-2">Öffne diese Seite im integrierten Browser der MetaMask-App oder installiere MetaMask am Desktop.</p>
-      <div class="mt-3 flex flex-col sm:flex-row gap-2">
-        <a href="https://metamask.app.link/dapp/hashcore.website" class="btn btn-primary text-center">In MetaMask-App öffnen</a>
-        <a href="https://metamask.io/download/" target="_blank" class="btn btn-ghost text-center">MetaMask installieren</a>
-      </div>
+  <!-- NAVIGATION -->
+  <nav class="p-4 flex justify-between items-center bg-gray-800 shadow">
+    <div class="text-xl font-bold text-blue-400">⚡ Hashcore</div>
+    <div class="space-x-4">
+      <button onclick="showTab('shop')" class="tablink">Shop</button>
+      <button onclick="showTab('dashboard')" class="tablink">Dashboard</button>
+      <button id="adminTab" onclick="showTab('admin')" class="hidden tablink">Admin</button>
     </div>
+  </nav>
 
-    <!-- Wallet-Bar -->
-    <div class="card flex items-center gap-3">
-      <div class="text-sm muted">Wallet</div>
-      <div id="walletInfo" class="mono text-green-400">wird geprüft…</div>
-      <div class="ml-auto flex gap-2">
-        <button id="btnConnect" class="btn btn-primary hidden" onclick="connect()">Mit MetaMask verbinden</button>
-        <button id="btnDisconnect" class="btn btn-ghost hidden" onclick="disconnect()">Trennen</button>
-      </div>
-    </div>
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-6">
+    <!-- Wallet -->
+    <div id="walletStatus" class="mb-6 text-green-400">Wallet wird geprüft…</div>
 
-    <!-- SHOP -->
-    <section id="shop" class="section active">
-      <div class="grid md:grid-cols-3 gap-4">
-        <div class="card md:col-span-2">
-          <div class="flex items-center justify-between">
-            <h1 class="text-lg font-bold text-cyan-300">Hashpower kaufen</h1>
-            <div class="chip">Aktionen nur mit Wallet-Login</div>
-          </div>
-          <div id="packages" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3"></div>
-        </div>
-        <div class="card">
-          <h3 class="font-semibold text-cyan-300 mb-2">Zahlung (MetaMask)</h3>
-          <div class="text-sm muted mb-2">Klicke „Mit MetaMask zahlen“. Die Transaktion öffnet sich in deiner Wallet.</div>
-          <div class="text-xs muted mb-1">Empfänger</div>
-          <div id="ethTo" class="mono break-all text-yellow-300 text-sm"></div>
-          <div class="text-xs muted mt-3 mb-1">Betrag (ETH)</div>
-          <div id="payAmount" class="mono text-green-400 text-lg">–</div>
-          <button id="btnPay" class="btn btn-primary w-full mt-4" onclick="payWithMetaMask()" disabled>Mit MetaMask zahlen</button>
-          <div id="payHint" class="text-xs muted mt-2"></div>
-        </div>
-      </div>
-      <div class="text-xs muted">Hinweis: Nach Zahlung muss das Paket durch den Betreiber aktiviert werden.</div>
+    <!-- Shop -->
+    <section id="shop" class="tab">
+      <h2 class="text-2xl font-semibold mb-4">Hashpower-Pakete</h2>
+      <div id="shopContent">Bitte mit Wallet verbinden…</div>
     </section>
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="section">
-      <div class="grid md:grid-cols-3 gap-4">
-        <div class="card md:col-span-2">
-          <h2 class="text-lg font-bold text-cyan-300">Meine Pakete</h2>
-          <div id="activePackages" class="mt-2 space-y-2"></div>
-        </div>
-        <div class="card">
-          <h3 class="font-semibold text-cyan-300">Übersicht</h3>
-          <div class="mt-2 text-sm">
-            <div class="flex justify-between"><span class="muted">Gesamtausgaben</span><span class="mono" id="sumSpent">0 ETH</span></div>
-            <div class="flex justify-between"><span class="muted">Gesamtertrag</span><span class="mono" id="sumEarnings">0 ETH</span></div>
-            <div class="flex justify-between"><span class="muted">VIP-Status</span><span id="vipLabel" class="mono">Nein</span></div>
-          </div>
-        </div>
-      </div>
+    <!-- Dashboard -->
+    <section id="dashboard" class="tab hidden">
+      <h2 class="text-2xl font-semibold mb-4">Deine Bestellungen</h2>
+      <div id="orders"></div>
     </section>
 
-    <!-- ADMIN (nur Owner-Wallet) -->
-    <section id="admin" class="section">
-      <div class="card">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-cyan-300">Admin</h2>
-          <div class="chip">Nur für Betreiber-Wallet</div>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-4 mt-3">
-          <div class="card">
-            <h3 class="font-semibold mb-2">Bestellungen</h3>
-            <div id="ordersAdmin" class="overflow-x-auto"></div>
-          </div>
-
-          <div class="card">
-            <h3 class="font-semibold mb-2">Aktionen</h3>
-            <div class="space-y-3">
-              <div>
-                <div class="label">Order-ID</div>
-                <input id="admOrderId" class="input mono w-full" placeholder="O... / Firestore-ID"/>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <button class="btn btn-primary w-full" onclick="admActivate()">Aktivieren</button>
-                <button class="btn btn-ghost w-full" onclick="admExpire()">Beenden</button>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <div class="label">Gutschrift (+ETH)</div>
-                  <input id="admCreditAmt" class="input mono w-full" type="number" step="0.00000001" placeholder="0.00010000"/>
-                </div>
-                <button class="btn btn-primary w-full" onclick="admCredit()">Gutschreiben</button>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <div class="label">Laufzeit verlängern (Tage)</div>
-                  <input id="admExtendDays" class="input mono w-full" type="number" step="1" placeholder="7"/>
-                </div>
-                <button class="btn btn-ghost w-full" onclick="admExtend()">Verlängern</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
+    <!-- Admin -->
+    <section id="admin" class="tab hidden">
+      <h2 class="text-2xl font-semibold mb-4">Admin-Bereich</h2>
+      <div class="mb-3">
+        <input id="admOrderId" placeholder="Order-ID" class="w-full p-2 bg-gray-800 rounded">
       </div>
+      <div class="grid grid-cols-3 gap-3 mb-3">
+        <button class="btn bg-blue-500 p-2 rounded" onclick="admActivate()">Aktivieren</button>
+        <button class="btn bg-gray-600 p-2 rounded" onclick="admExpire()">Beenden</button>
+        <button class="btn bg-red-500 p-2 rounded" onclick="admCancel()">Stornieren</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <button class="btn bg-green-500 p-2 rounded" onclick="admCredit()">Gutschrift</button>
+        <button class="btn bg-yellow-500 p-2 rounded" onclick="admExtend()">Verlängern</button>
+      </div>
+      <div id="adminOrders" class="mt-6"></div>
     </section>
   </main>
 
-  <!-- Firebase + App Code -->
-  <script type="module">
-    // ---- Firebase SDKs ----
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  <!-- FOOTER -->
+  <footer class="p-6 mt-12 bg-gray-800 text-gray-400 text-sm">
+    <div class="mb-4">
+      <h3 class="font-bold text-gray-200">Impressum</h3>
+      <p>Hashcore<br>
+      Dorfstrasse 233<br>
+      3432 Schwanden i.E<br>
+      Schweiz</p>
+      <p>Email: <a href="mailto:jaun190@gmail.com" class="text-blue-400">jaun190@gmail.com</a></p>
+    </div>
 
-    // ---- Firebase Config (deins) ----
+    <div class="mb-4">
+      <h3 class="font-bold text-gray-200">AGB</h3>
+      <p>Mit der Bestellung eines Hashpower-Pakets akzeptieren Sie unsere AGB. 
+      Hashcore vermittelt ausschließlich Rechenleistung (Hashrate). 
+      Es handelt sich nicht um Finanzprodukte oder Anlageberatung. 
+      Gewinne oder Mining-Erträge werden nicht garantiert, sondern ergeben sich aus den jeweiligen Mining-Pools. 
+      Der Kunde trägt selbst die Verantwortung für die Auswahl der Ziel-Wallets und Pools.</p>
+    </div>
+
+    <div class="mb-4">
+      <h3 class="font-bold text-gray-200">Datenschutz</h3>
+      <p>Wir speichern nur die für die Abwicklung notwendigen Daten (Wallet-Adresse, Bestellung, Status).
+      Es werden keine personenbezogenen Daten wie Name oder Adresse erhoben.
+      Alle Daten werden ausschließlich in Firebase/Firestore verarbeitet. 
+      Es erfolgt keine Weitergabe an Dritte.</p>
+    </div>
+
+    <div>
+      <h3 class="font-bold text-gray-200">Haftungsausschluss</h3>
+      <p>Hashcore übernimmt keine Haftung für Ausfälle von Mining-Pools, Marktschwankungen oder Netzwerkgebühren. 
+      Die Nutzung erfolgt auf eigenes Risiko. 
+      Wir bieten ausschließlich Hashpower-Vermietung als digitalen Service an.</p>
+    </div>
+
+    <p class="mt-6 text-xs text-gray-500">© 2025 Hashcore – Alle Rechte vorbehalten</p>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script type="module">
+    // Firebase + Firestore
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, doc, getDoc, getDocs,
+      updateDoc, onSnapshot, serverTimestamp, query, where, orderBy, limit
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyDD2Oo7F-68An2esILVDnfmga1nM-OPKcw",
       authDomain: "yeah-e9c83.firebaseapp.com",
@@ -166,310 +109,152 @@
       messagingSenderId: "94111647513",
       appId: "1:94111647513:web:c4b0596d01a9eaf7c4a788"
     };
-
-    // ---- App Init ----
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
-    signInAnonymously(auth).catch(console.error);
-    onAuthStateChanged(auth, (u)=>{ state.uid = u?.uid || null; });
 
-    // ---- Business Config ----
-    const OWNER_WALLET = '0xcb165aF669733864F27070454Ac6C37deC991fFD'.toLowerCase();
-    const CONFIG = {
-      ethRecipient: OWNER_WALLET,     // Zahlungen gehen an Betreiber-Wallet
-      costPerTHPerDayETH: 0.0005,     // Einkauf intern
-      markup: 0.10,                   // interner Aufschlag
-      feeStd: 20,                     // %
-      feeVip: 5,                      // %
-      vipThreshold: 0.5               // ETH kumuliert
-    };
-    const PACKS = [
-      { key:'micro',  name:'Micro',  th:1,  days:3  },
-      { key:'mini',   name:'Mini',   th:2,  days:7  },
-      { key:'start',  name:'Starter',th:5,  days:7  },
-      { key:'pro',    name:'Pro',    th:20, days:30 },
-      { key:'ultra',  name:'Ultra',  th:50, days:90 }
-    ];
+    // State
+    const state = { wallet:null, isAdmin:false };
 
-    // ---- State ----
-    const state = {
-      uid: null,
-      wallet: null,
-      selectedPriceEth: null,
-      selectedPack: null,
-      myOrders: [],
-      allOrders: []
+    // Tabs
+    window.showTab = (id) => {
+      document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
     };
+    showTab("shop");
 
-    // ---- Utils ----
-    const fmtAddr = a => a ? a.slice(0,6)+'…'+a.slice(-4) : '';
-    const toWeiHex = (ethStr) => {
-      ethStr = String(ethStr || '0');
-      if(!/^[0-9]+(\.[0-9]+)?$/.test(ethStr)) return '0x0';
-      const [ints,decs=''] = ethStr.split('.');
-      const decPad = (decs + '000000000000000000').slice(0,18);
-      const wei = BigInt(ints)*10n**18n + BigInt(decPad);
-      return '0x'+wei.toString(16);
-    };
-    const isVIP = (spent) => (spent||0) >= CONFIG.vipThreshold;
-    const currentFee = (spent) => isVIP(spent) ? CONFIG.feeVip : CONFIG.feeStd;
-    const calcPrice = (th, days, spent) => {
-      const base = th*days*CONFIG.costPerTHPerDayETH;
-      const plus = base*(1+CONFIG.markup);
-      const withFee = plus*(1+currentFee(spent)/100);
-      return +withFee.toFixed(6);
-    };
-
-    // ---- UI Nav ----
-    window.nav = (id)=>{
-      document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      if(id==='admin') refreshAdmin();
-    };
-
-    // ---- Wallet ----
-    window.connect = async ()=>{
-      if(!window.ethereum){ document.getElementById('noMetamask').classList.remove('hidden'); return; }
-      try{
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        state.wallet = accounts[0];
-        localStorage.setItem('wallet_eth_user', state.wallet);
-        document.getElementById('walletInfo').textContent = 'verbunden: '+fmtAddr(state.wallet);
-        document.getElementById('btnConnect').classList.add('hidden');
-        document.getElementById('btnDisconnect').classList.remove('hidden');
-        document.getElementById('adminTab').classList.toggle('hidden', state.wallet.toLowerCase() !== OWNER_WALLET);
-        watchMyOrders();
-      }catch(e){ console.error(e); alert('Verbindung abgebrochen.'); }
-    };
-    window.disconnect = ()=>{
-      state.wallet = null;
-      localStorage.removeItem('wallet_eth_user');
-      document.getElementById('walletInfo').textContent = 'nicht verbunden';
-      document.getElementById('btnConnect').classList.remove('hidden');
-      document.getElementById('btnDisconnect').classList.add('hidden');
-      document.getElementById('adminTab').classList.add('hidden');
-    };
-
-    window.addEventListener('load', ()=>{
-      if(typeof window.ethereum==='undefined'){
-        document.getElementById('noMetamask').classList.remove('hidden');
-        document.getElementById('walletInfo').textContent='MetaMask nicht gefunden';
-      }else{
-        const saved=localStorage.getItem('wallet_eth_user');
-        if(saved){
-          state.wallet=saved;
-          document.getElementById('walletInfo').textContent='verbunden: '+fmtAddr(saved);
-          document.getElementById('btnDisconnect').classList.remove('hidden');
-          document.getElementById('adminTab').classList.toggle('hidden', saved.toLowerCase() !== OWNER_WALLET);
-          watchMyOrders();
-        }else{
-          document.getElementById('walletInfo').textContent='nicht verbunden';
-          document.getElementById('btnConnect').classList.remove('hidden');
-        }
+    // Wallet Connect
+    async function connectWallet(){
+      if(typeof window.ethereum==="undefined"){
+        document.getElementById("walletStatus").textContent="MetaMask nicht gefunden.";
+        return;
       }
+      const accounts = await window.ethereum.request({method:"eth_requestAccounts"});
+      state.wallet = accounts[0];
+      document.getElementById("walletStatus").textContent = "Wallet: "+state.wallet;
+      state.isAdmin = (state.wallet.toLowerCase()==="0xcb165af669733864f27070454ac6c37dec991ffd");
+      if(state.isAdmin){ document.getElementById("adminTab").classList.remove("hidden"); }
       renderShop();
-      renderDashboard();
-      document.getElementById('ethTo').textContent = CONFIG.ethRecipient;
-    });
+      loadOrders();
+    }
+    connectWallet();
 
-    // ---- Shop ----
-    function renderShop(){
-      const cont=document.getElementById('packages'); cont.innerHTML='';
-      const spent = state.myOrders.reduce((s,o)=>s+(o.priceEth||0),0);
-      PACKS.forEach(p=>{
-        const price = calcPrice(p.th, p.days, spent);
-        const card = document.createElement('div'); card.className='card flex flex-col';
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="font-semibold">${p.name}</div>
-            <div class="chip">${p.th} TH/s • ${p.days} Tage</div>
-          </div>
-          <div class="mt-2 text-2xl font-bold text-green-400 mono">${price} ETH</div>
-          <div class="muted text-xs mt-1">inkl. Servicegebühr</div>
-          <button class="btn btn-primary mt-3" ${state.wallet?'':'disabled'}>Kaufen</button>`;
-        const btn = card.querySelector('button');
-        btn.addEventListener('click', ()=>startCheckout(p, price));
-        cont.appendChild(card);
+    // Shop
+    async function renderShop(){
+      const shopDiv=document.getElementById("shopContent");
+      if(!state.wallet){ shopDiv.textContent="Bitte Wallet verbinden."; return; }
+      shopDiv.innerHTML="";
+      const pkgs=[
+        {id:"p1",name:"Starter 10 MH/s – 24h",price:0.01},
+        {id:"p2",name:"Pro 50 MH/s – 3 Tage",price:0.05},
+        {id:"p3",name:"Elite 200 MH/s – 7 Tage",price:0.2}
+      ];
+      pkgs.forEach(p=>{
+        const div=document.createElement("div");
+        div.className="p-4 bg-gray-800 rounded mb-4";
+        div.innerHTML=`<div class="font-semibold">${p.name}</div>
+        <div>Preis: ${p.price} ETH</div>
+        <button class="mt-2 bg-blue-500 px-4 py-2 rounded" onclick="buy('${p.id}','${p.name}',${p.price})">Kaufen</button>`;
+        shopDiv.appendChild(div);
       });
-      document.getElementById('vipBadge').classList.toggle('hidden', !isVIP(spent));
     }
 
-    async function startCheckout(pack, price){
-      if(!state.wallet){ alert('Bitte zuerst Wallet verbinden.'); return; }
-      state.selectedPack = pack;
-      state.selectedPriceEth = price;
-      document.getElementById('payAmount').textContent = String(price);
-      document.getElementById('btnPay').disabled = false;
-      document.getElementById('payHint').textContent = 'Die Transaktion wird in MetaMask angezeigt.';
-
-      // Draft Order (awaiting_payment)
-      const ref = await addDoc(collection(db,'orders'), {
-        uid: state.uid || null,
-        wallet: state.wallet,
-        pkgKey: pack.key, th: pack.th, days: pack.days,
-        priceEth: price,
-        status: 'awaiting_payment',
-        createdAt: serverTimestamp()
-      });
-      localStorage.setItem('lastOrderId', ref.id);
-    }
-
-    window.payWithMetaMask = async ()=>{
-      if(!state.wallet){ alert('Bitte zuerst Wallet verbinden.'); return; }
+    window.buy=async(id,name,price)=>{
+      if(!state.wallet)return alert("Bitte Wallet verbinden.");
       try{
-        const value = toWeiHex(state.selectedPriceEth || '0');
-        const txHash = await window.ethereum.request({
-          method: 'eth_sendTransaction',
-          params: [{ from: state.wallet, to: CONFIG.ethRecipient, value }]
+        const tx=await window.ethereum.request({
+          method:"eth_sendTransaction",
+          params:[{
+            from:state.wallet,
+            to:"0xcb165aF669733864F27070454Ac6C37deC991fFD",
+            value: (BigInt(price*1e18)).toString(16)
+          }]
         });
-
-        const orderId = localStorage.getItem('lastOrderId');
-        if(orderId){
-          await updateDoc(doc(db,'orders',orderId), { status:'client_paid', txHash, paidAt: serverTimestamp() });
-        }
-        document.getElementById('btnPay').disabled=true;
-        document.getElementById('payHint').innerHTML = `Gesendet: <a class="link mono" href="https://etherscan.io/tx/${txHash}" target="_blank">${txHash}</a>. Aktivierung erfolgt durch Betreiber.`;
-      }catch(e){ console.error(e); alert('Zahlung abgebrochen oder fehlgeschlagen.'); }
+        await addDoc(collection(db,"orders"),{
+          wallet:state.wallet,package:name,price,status:"client_paid",
+          tx,createdAt:serverTimestamp()
+        });
+        alert("Bestellung eingetragen!");
+      }catch(e){alert("Fehler: "+e.message);}
     };
 
-    // ---- Dashboard (User) ----
-    function renderDashboard(){
-      const wrap=document.getElementById('activePackages'); wrap.innerHTML='';
-      const act = state.myOrders.filter(o=>['active','expired','awaiting_payment','client_paid'].includes(o.status));
-      if(act.length===0){ wrap.innerHTML='<div class="muted text-sm">Noch keine Bestellungen.</div>'; }
-      act.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-      act.forEach(o=>{
-        const a=o.active||{};
-        const rem = (a.end? Math.max(0, Math.ceil((new Date(a.end)-new Date())/(1000*60*60*24))) : '-');
-        const tx = o.txHash ? `<a class="link mono" target="_blank" href="https://etherscan.io/tx/${o.txHash}">${o.txHash.slice(0,10)}…</a>` : '-';
-        const badge = o.status==='active' ? 'bg-green-900/40 border-green-700 text-green-300' :
-                      o.status==='client_paid' ? 'bg-yellow-900/40 border-yellow-700 text-yellow-300' :
-                      o.status==='awaiting_payment' ? 'bg-zinc-900/40 border-zinc-700 text-zinc-300' :
-                      'bg-gray-900/40 border-gray-700 text-gray-300';
-        const div=document.createElement('div'); div.className='card';
-        div.innerHTML=`
-          <div class="flex items-center justify-between">
-            <div class="font-semibold">${(o.pkgKey||'Paket').toUpperCase()}</div>
-            <div class="chip ${badge}">${o.status}</div>
-          </div>
-          <div class="grid md:grid-cols-5 gap-2 mt-2 text-sm">
-            <div><div class="muted">TH/s</div><div class="mono">${o.th||'-'}</div></div>
-            <div><div class="muted">Preis</div><div class="mono">${o.priceEth?.toFixed?.(6) || o.priceEth} ETH</div></div>
-            <div><div class="muted">Ertrag</div><div class="mono">${(a.accrued||0).toFixed?.(8)||a.accrued||0} ETH</div></div>
-            <div><div class="muted">Rest</div><div class="mono">${rem} Tage</div></div>
-            <div><div class="muted">Tx</div><div>${tx}</div></div>
-          </div>`;
-        wrap.appendChild(div);
-      });
-      const spent = state.myOrders.reduce((s,o)=>s+(o.priceEth||0),0);
-      const earn  = state.myOrders.reduce((s,o)=>s+((o.active?.accrued)||0),0);
-      document.getElementById('sumSpent').textContent=spent.toFixed(6)+' ETH';
-      document.getElementById('sumEarnings').textContent=earn.toFixed(8)+' ETH';
-      document.getElementById('vipLabel').textContent = isVIP(spent) ? 'Ja (5 % Gebühr)' : 'Nein (20 % Gebühr)';
-      document.getElementById('vipBadge').classList.toggle('hidden', !isVIP(spent));
-    }
-
-    function watchMyOrders(){
+    // Dashboard
+    function loadOrders(){
       if(!state.wallet) return;
-      const q = query(collection(db,'orders'), where('wallet','==', state.wallet));
-      onSnapshot(q, (snap)=>{
-        state.myOrders = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-        renderShop(); renderDashboard();
+      const q=query(collection(db,"orders"),where("wallet","==",state.wallet),orderBy("createdAt","desc"));
+      onSnapshot(q,snap=>{
+        const div=document.getElementById("orders");
+        div.innerHTML="";
+        snap.forEach(docu=>{
+          const o=docu.data();
+          const el=document.createElement("div");
+          el.className="p-3 bg-gray-800 rounded mb-2";
+          el.innerHTML=`<div>${o.package} – ${o.price} ETH</div>
+            <div>Status: ${o.status}</div>
+            <div>TX: ${o.tx||"-"}</div>`;
+          div.appendChild(el);
+        });
       });
     }
 
-    // ---- Admin (Owner Wallet only) ----
+    // Admin Funktionen
     async function refreshAdmin(){
-      if(!state.wallet || state.wallet.toLowerCase()!==OWNER_WALLET){ return; }
-      const q = query(collection(db,'orders'), orderBy('createdAt','desc'), limit(50));
-      const snap = await getDocs(q);
-      state.allOrders = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-      const cont = document.getElementById('ordersAdmin');
-      const rows = state.allOrders.map(o=>{
-        const tx=o.txHash?`<a class="link mono" target="_blank" href="https://etherscan.io/tx/${o.txHash}">${o.txHash.slice(0,10)}…</a>`:'-';
-        return `<tr>
-          <td class="px-2 py-1 mono">${o.id}</td>
-          <td class="px-2 py-1 mono">${o.wallet?o.wallet.slice(0,8)+'…':''}</td>
-          <td class="px-2 py-1">${o.pkgKey||''}</td>
-          <td class="px-2 py-1 mono">${o.priceEth||''} ETH</td>
-          <td class="px-2 py-1">${o.status||''}</td>
-          <td class="px-2 py-1">${tx}</td>
-        </tr>`;
-      }).join('');
-      cont.innerHTML = `
-        <table class="min-w-full text-sm">
-          <thead class="muted text-xs">
-            <tr><th class="px-2 py-1 text-left">ID</th><th class="px-2 py-1 text-left">Wallet</th><th class="px-2 py-1 text-left">Paket</th><th class="px-2 py-1 text-left">Preis</th><th class="px-2 py-1 text-left">Status</th><th class="px-2 py-1 text-left">Tx</th></tr>
-          </thead>
-          <tbody>${rows || '<tr><td class="px-2 py-3 muted" colspan="6">Keine Bestellungen.</td></tr>'}</tbody>
-        </table>`;
-    }
-
-    window.admActivate = async ()=>{
-      const id = document.getElementById('admOrderId').value.trim();
-      if(!id) return alert('Order-ID eingeben.');
-      const ref = doc(db,'orders',id);
-      const snap = await getDoc(ref);
-      if(!snap.exists()) return alert('Order nicht gefunden.');
-      const o = snap.data();
-      const start = new Date();
-      const end = new Date(); end.setDate(start.getDate() + (o.days||0));
-      await updateDoc(ref, {
-        status:'active',
-        active:{
-          start: start.toISOString(),
-          end: end.toISOString(),
-          th: o.th||0,
-          days: o.days||0,
-          accrued: (o.active?.accrued)||0
-        }
+      if(!state.isAdmin)return;
+      const q=query(collection(db,"orders"),orderBy("createdAt","desc"),limit(10));
+      const snap=await getDocs(q);
+      const div=document.getElementById("adminOrders");
+      div.innerHTML="";
+      snap.forEach(d=>{
+        const o=d.data();
+        div.innerHTML+=`<div class="p-2 bg-gray-700 rounded mb-1">${d.id}: ${o.wallet} – ${o.package} – ${o.status}</div>`;
       });
-      alert('Aktiviert.');
-      refreshAdmin();
-    };
-
-    window.admExpire = async ()=>{
-      const id = document.getElementById('admOrderId').value.trim();
-      if(!id) return alert('Order-ID eingeben.');
-      await updateDoc(doc(db,'orders',id), { status:'expired' });
-      alert('Beendet.');
-      refreshAdmin();
-    };
-
-    window.admCredit = async ()=>{
-      const id = document.getElementById('admOrderId').value.trim();
-      const amt = parseFloat(document.getElementById('admCreditAmt').value||'0');
-      if(!id || !(amt>0)) return alert('Order-ID und Betrag eingeben.');
-      const ref = doc(db,'orders',id);
-      const snap = await getDoc(ref);
-      if(!snap.exists()) return alert('Order nicht gefunden.');
-      const o = snap.data();
-      const cur = o.active?.accrued || 0;
-      await updateDoc(ref, { 'active.accrued': +(cur+amt).toFixed(8) });
-      alert('Gutschrift hinzugefügt.');
-      refreshAdmin();
-    };
-
-    window.admExtend = async ()=>{
-      const id = document.getElementById('admOrderId').value.trim();
-      const days = parseInt(document.getElementById('admExtendDays').value||'0',10);
-      if(!id || !(days>0)) return alert('Order-ID und Tage eingeben.');
-      const ref = doc(db,'orders',id);
-      const snap = await getDoc(ref);
-      if(!snap.exists()) return alert('Order nicht gefunden.');
-      const o = snap.data();
-      const end = new Date(o.active?.end || new Date());
-      end.setDate(end.getDate()+days);
-      await updateDoc(ref, { 'active.end': end.toISOString() });
-      alert('Laufzeit verlängert.');
-      refreshAdmin();
-    };
-
-    // ---- Render initial ----
-    function renderDashboard(){
-      // placeholder; will be filled by watchMyOrders
     }
+    window.admActivate=async()=>{
+      const id=document.getElementById("admOrderId").value.trim();
+      if(!id)return alert("Order-ID eingeben.");
+      await updateDoc(doc(db,"orders",id),{status:"active",activatedAt:serverTimestamp()});
+      refreshAdmin();
+    };
+    window.admExpire=async()=>{
+      const id=document.getElementById("admOrderId").value.trim();
+      if(!id)return alert("Order-ID eingeben.");
+      await updateDoc(doc(db,"orders",id),{status:"expired",expiredAt:serverTimestamp()});
+      refreshAdmin();
+    };
+    window.admCredit=async()=>{
+      const id=document.getElementById("admOrderId").value.trim();
+      if(!id)return alert("Order-ID eingeben.");
+      const amount=prompt("ETH-Gutschrift:");
+      await updateDoc(doc(db,"orders",id),{credited:parseFloat(amount)||0});
+      refreshAdmin();
+    };
+    window.admExtend=async()=>{
+      const id=document.getElementById("admOrderId").value.trim();
+      if(!id)return alert("Order-ID eingeben.");
+      await updateDoc(doc(db,"orders",id),{extended:true});
+      refreshAdmin();
+    };
+    window.admCancel=async()=>{
+      const id=document.getElementById("admOrderId").value.trim();
+      if(!id)return alert("Order-ID eingeben.");
+      const ref=doc(db,"orders",id);
+      const snap=await getDoc(ref);
+      if(!snap.exists())return alert("Order nicht gefunden.");
+      const o=snap.data();
+      if(o.status==="awaiting_payment"){
+        await updateDoc(ref,{status:"cancelled",cancelledAt:serverTimestamp()});
+        alert("Bestellung storniert (nicht bezahlt).");
+      }else if(o.status==="client_paid"){
+        await updateDoc(ref,{status:"refunded",refundedAt:serverTimestamp()});
+        alert("Als erstattet markiert (bitte on-chain Rückzahlung!).");
+      }else if(o.status==="active"){
+        alert("Aktive Pakete erst beenden, dann stornieren.");
+      }else{
+        await updateDoc(ref,{status:"cancelled",cancelledAt:serverTimestamp()});
+        alert("Bestellung storniert.");
+      }
+      refreshAdmin();
+    };
+
   </script>
 </body>
 </html>
