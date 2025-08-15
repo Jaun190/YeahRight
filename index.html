@@ -56,6 +56,7 @@
 
   <!-- FOOTER -->
   <footer class="p-6 mt-12 bg-gray-800 text-gray-400 text-sm">
+    <!-- Impressum -->
     <div class="mb-4">
       <h3 class="font-bold text-gray-200">Impressum</h3>
       <p>Hashcore<br>
@@ -65,32 +66,40 @@
       <p>E-Mail: <a href="mailto:jaun190@gmail.com" class="text-blue-400">jaun190@gmail.com</a></p>
     </div>
 
+    <!-- AGB -->
     <div class="mb-4">
-      <h3 class="font-bold text-gray-200">AGB (Kurzfassung)</h3>
-      <p>Mit der Bestellung eines Hashpower-Pakets akzeptieren Sie unsere AGB. Hashcore vermittelt ausschließlich Rechenleistung (Hashrate).
-      Es handelt sich nicht um Finanzprodukte oder Anlageberatung. Gewinne oder Mining-Erträge werden nicht garantiert,
-      sondern ergeben sich aus den jeweiligen Mining-Pools. Der Kunde ist für die Auswahl der Ziel-Wallets und Pools selbst verantwortlich.</p>
+      <h3 class="font-bold text-gray-200">AGB</h3>
+      <p>Mit der Bestellung eines Hashpower-Pakets akzeptieren Sie unsere allgemeinen Geschäftsbedingungen.
+      Hashcore vermittelt ausschließlich Rechenleistung (Hashrate).
+      Es handelt sich nicht um Finanzprodukte oder Anlageberatung.
+      Gewinne oder Mining-Erträge werden nicht garantiert,
+      sondern ergeben sich aus den jeweiligen Mining-Pools.
+      Der Kunde trägt die Verantwortung für die Auswahl seiner Wallet- und Pool-Adressen.</p>
     </div>
 
+    <!-- Datenschutz -->
     <div class="mb-4">
       <h3 class="font-bold text-gray-200">Datenschutz</h3>
-      <p>Wir speichern nur die für die Abwicklung notwendigen Daten (Wallet-Adresse, Bestellung, Status).
-      Es werden keine personenbezogenen Daten wie Name oder Adresse erhoben. Alle Daten werden ausschließlich in Firebase/Firestore verarbeitet.
-      Es erfolgt keine Weitergabe an Dritte, außer soweit zur Vertragserfüllung erforderlich.</p>
+      <p>Wir speichern nur die für die Abwicklung notwendigen Daten (Wallet-Adresse, Bestellungen, Status).
+      Es werden keine personenbezogenen Daten wie Name oder Adresse erhoben.
+      Die Datenverarbeitung erfolgt ausschließlich über Firebase/Firestore.
+      Eine Weitergabe an Dritte findet nicht statt, außer soweit zur Vertragserfüllung notwendig.</p>
     </div>
 
+    <!-- Haftung -->
     <div>
       <h3 class="font-bold text-gray-200">Haftungsausschluss</h3>
       <p>Hashcore übernimmt keine Haftung für Ausfälle von Mining-Pools, Marktschwankungen oder Netzwerkgebühren.
-      Die Nutzung erfolgt auf eigenes Risiko. Wir bieten ausschließlich Hashpower-Vermietung als digitalen Service an.</p>
+      Der Service stellt ausschließlich die Vermittlung von Rechenleistung bereit.
+      Die Nutzung erfolgt auf eigenes Risiko.</p>
     </div>
 
+    <!-- Copyright -->
     <p class="mt-6 text-xs text-gray-500">© 2025 Hashcore – Alle Rechte vorbehalten</p>
   </footer>
 
   <!-- SCRIPT -->
   <script type="module">
-    // Firebase + Firestore
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getFirestore, collection, addDoc, doc, getDoc, getDocs,
@@ -108,13 +117,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ====== CONFIG ======
     const OWNER_WALLET = "0xcb165aF669733864F27070454Ac6C37deC991fFD".toLowerCase();
-
-    // State
     const state = { wallet:null, isAdmin:false };
 
-    // Tabs
     window.showTab = (id) => {
       document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
       document.getElementById(id).classList.remove("hidden");
@@ -122,7 +127,6 @@
     };
     showTab("shop");
 
-    // Wallet Connect
     async function connectWallet(){
       if(typeof window.ethereum==="undefined"){
         document.getElementById("walletStatus").textContent="MetaMask nicht gefunden. Bitte im MetaMask-Browser öffnen.";
@@ -144,17 +148,14 @@
     }
     connectWallet();
 
-    // Helper: Dezimal ETH -> Wei Hex (0x...)
     function toWeiHex(eth){
       const s = String(eth);
-      if(!/^[0-9]+(\.[0-9]+)?$/.test(s)) return "0x0";
       const [ints,decs=""] = s.split(".");
       const decPad = (decs + "000000000000000000").slice(0,18);
       const wei = BigInt(ints)*10n**18n + BigInt(decPad);
       return "0x"+wei.toString(16);
     }
 
-    // Shop
     async function renderShop(){
       const shopDiv=document.getElementById("shopContent");
       if(!state.wallet){ shopDiv.textContent="Bitte Wallet verbinden."; return; }
@@ -193,7 +194,6 @@
       }catch(e){alert("Fehler: "+(e?.message||e));}
     };
 
-    // Dashboard
     function loadOrders(){
       if(!state.wallet) return;
       const q=query(collection(db,"orders"),where("wallet","==",state.wallet),orderBy("createdAt","desc"));
@@ -212,7 +212,6 @@
       });
     }
 
-    // Admin Funktionen
     async function refreshAdmin(){
       if(!state.isAdmin)return;
       const q=query(collection(db,"orders"),orderBy("createdAt","desc"),limit(50));
@@ -228,31 +227,27 @@
       const id=document.getElementById("admOrderId").value.trim();
       if(!id)return alert("Order-ID eingeben.");
       await updateDoc(doc(db,"orders",id),{status:"active",activatedAt:serverTimestamp()});
-      alert("Aktiviert.");
-      refreshAdmin();
+      alert("Aktiviert."); refreshAdmin();
     };
     window.admExpire=async()=>{
       const id=document.getElementById("admOrderId").value.trim();
       if(!id)return alert("Order-ID eingeben.");
       await updateDoc(doc(db,"orders",id),{status:"expired",expiredAt:serverTimestamp()});
-      alert("Beendet.");
-      refreshAdmin();
+      alert("Beendet."); refreshAdmin();
     };
     window.admCredit=async()=>{
       const id=document.getElementById("admOrderId").value.trim();
       if(!id)return alert("Order-ID eingeben.");
       const amount=prompt("ETH-Gutschrift (nur Info-Feld):");
       await updateDoc(doc(db,"orders",id),{credited:(parseFloat(amount)||0)});
-      alert("Gutschrift gesetzt (Info).");
-      refreshAdmin();
+      alert("Gutschrift gesetzt."); refreshAdmin();
     };
     window.admExtend=async()=>{
       const id=document.getElementById("admOrderId").value.trim();
       if(!id)return alert("Order-ID eingeben.");
       const days=prompt("Tage verlängern (Info-Feld):");
       await updateDoc(doc(db,"orders",id),{extendDays:(parseInt(days)||0)});
-      alert("Verlängerung gesetzt (Info).");
-      refreshAdmin();
+      alert("Verlängerung gesetzt."); refreshAdmin();
     };
     window.admCancel=async()=>{
       const id=document.getElementById("admOrderId").value.trim();
