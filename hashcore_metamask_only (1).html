@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashcore – MetaMask Only • Shop • Dashboard • Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .chip{display:inline-flex;align-items:center;gap:.5rem;padding:.2rem .6rem;border-radius:9999px;border:1px solid #374151;background:#111827;color:#9CA3AF;font-size:.75rem}
+    .btn{padding:.6rem 1rem;border-radius:.75rem}
+    .btn-primary{background:#22d3ee;color:#000}
+    .btn-primary:hover{background:#06b6d4}
+    .btn-ghost{background:#111827;border:1px solid #374151;color:#E5E7EB}
+    .btn-ghost:hover{background:#1f2937}
+    .card{background:#0b0f1a;border:1px solid #1f2937;border-radius:1rem;padding:1rem}
+    .muted{color:#9CA3AF}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .section{display:none}
+    .section.active{display:block}
+    .link{color:#67e8f9}
+  </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-gray-900/80 backdrop-blur border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-xl bg-cyan-500/20 grid place-items-center">⚡</div>
+        <div class="text-xl font-extrabold tracking-tight">Hash<span class="text-cyan-400">core</span></div>
+        <div id="vipBadge" class="chip hidden">VIP</div>
+      </div>
+      <nav class="flex gap-2">
+        <button class="btn btn-ghost" onclick="nav('shop')">Shop</button>
+        <button class="btn btn-ghost" onclick="nav('dashboard')">Dashboard</button>
+        <button class="btn btn-ghost" onclick="nav('admin')">Admin</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <!-- NOTICE -->
+    <div class="card text-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="chip">MetaMask erforderlich (ETH)</div>
+        <div class="chip">Kein Server nötig</div>
+        <div class="chip">Simulation aktiv</div>
+        <div class="sm:ml-auto text-xs muted">Speicherung: lokal im Browser</div>
+      </div>
+    </div>
+
+    <!-- WALLET BAR -->
+    <div class="card flex items-center gap-3">
+      <div class="text-sm muted">Wallet</div>
+      <div id="walletInfo" class="mono text-green-400">nicht verbunden</div>
+      <div class="ml-auto flex gap-2">
+        <button id="btnConnect" class="btn btn-primary" onclick="connect()">Mit MetaMask verbinden</button>
+        <button id="btnDisconnect" class="btn btn-ghost hidden" onclick="disconnect()">Trennen</button>
+      </div>
+    </div>
+
+    <!-- SHOP -->
+    <section id="shop" class="section active">
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card md:col-span-2">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-cyan-300">Pakete</h2>
+            <button class="text-xs underline" onclick="toggleAdvanced()">Erweitert</button>
+          </div>
+          <div id="packages" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3"></div>
+        </div>
+        <div class="card">
+          <h3 class="font-semibold text-cyan-300 mb-2">Zahlung (MetaMask)</h3>
+          <div class="text-sm muted mb-2">Sende den Betrag per MetaMask-Transaktion.</div>
+          <div class="text-xs muted mb-1">Empfänger (deine ETH-Adresse)</div>
+          <div id="ethTo" class="mono break-all text-yellow-300 text-sm"></div>
+          <div class="text-xs muted mt-3 mb-1">Betrag (ETH)</div>
+          <div id="payAmount" class="mono text-green-400 text-lg">–</div>
+          <button id="btnPay" class="btn btn-primary w-full mt-4" onclick="payWithMetaMask()" disabled>Mit MetaMask zahlen</button>
+          <div id="payHint" class="text-xs muted mt-2"></div>
+        </div>
+      </div>
+
+      <!-- Advanced Panel -->
+      <div id="advanced" class="card hidden">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <div class="font-semibold mb-2">Einkauf & Gebühren (privat)</div>
+            <div class="text-sm muted mb-2">Passe nur hier an. Diese Werte werden den Kunden <b>nicht</b> angezeigt.</div>
+            <label class="text-xs muted">Einkaufspreis <b>ETH</b> / TH / Tag</label>
+            <input id="inpCostETH" type="number" step="0.00000001" class="w-full mt-1 px-3 py-2 rounded bg-gray-900 border border-gray-800 mono" />
+            <label class="text-xs muted mt-3 block">Verdeckter Aufschlag (0.10 = 10%)</label>
+            <input id="inpMarkup" type="number" step="0.01" class="w-full mt-1 px-3 py-2 rounded bg-gray-900 border border-gray-800 mono" />
+            <label class="text-xs muted mt-3 block">Gebühr Standard (%)</label>
+            <input id="inpFee" type="number" step="1" class="w-full mt-1 px-3 py-2 rounded bg-gray-900 border border-gray-800 mono" />
+            <label class="text-xs muted mt-3 block">Gebühr VIP (%)</label>
+            <input id="inpFeeVip" type="number" step="1" class="w-full mt-1 px-3 py-2 rounded bg-gray-900 border border-gray-800 mono" />
+            <label class="text-xs muted mt-3 block">VIP-Schwelle (kumulierte Käufe in ETH)</label>
+            <input id="inpVipThresh" type="number" step="0.0001" class="w-full mt-1 px-3 py-2 rounded bg-gray-900 border border-gray-800 mono" />
+            <label class="text-xs muted mt-3 block">Simulierter Ertrag <b>ETH</b> / TH / Tag</label>
+            <input id="inpYieldETH" type="number" step="0.00000001" class="w-full mt-1 px-3 py-2 rounded bg-gray-900 border border-gray-800 mono" />
+            <button class="btn btn-primary mt-3" onclick="saveAdvanced()">Speichern</button>
+          </div>
+          <div>
+            <div class="font-semibold mb-2">Empfänger-Adresse (deine ETH-Adresse)</div>
+            <input id="inpAddr" class="w-full mt-1 px-3 py-2 rounded bg-gray-900 border border-gray-800 mono" placeholder="0x..." />
+            <button class="btn btn-ghost mt-3" onclick="saveAddress()">Adresse speichern</button>
+            <div class="text-xs muted mt-2">Diese Adresse wird als <span class="mono">to</span> in der MetaMask-Transaktion verwendet.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="section">
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card md:col-span-2">
+          <h2 class="text-lg font-bold text-cyan-300">Aktive Pakete</h2>
+          <div id="activePackages" class="mt-2 space-y-2"></div>
+        </div>
+        <div class="card">
+          <h3 class="font-semibold text-cyan-300">Übersicht</h3>
+          <div class="mt-2 text-sm">
+            <div class="flex justify-between"><span class="muted">Gesamtausgaben</span><span class="mono" id="sumSpent">0 ETH</span></div>
+            <div class="flex justify-between"><span class="muted">Gesamtertrag (sim.)</span><span class="mono" id="sumEarnings">0 ETH</span></div>
+            <div class="flex justify-between"><span class="muted">VIP-Status</span><span id="vipLabel" class="mono">Nein</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="admin" class="section">
+      <div class="card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-cyan-300">Bestellungen</h2>
+          <button class="btn btn-ghost" onclick="exportData()">CSV exportieren</button>
+        </div>
+        <div id="orders" class="mt-3 overflow-x-auto"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ----- UTIL -----
+    const fmtAddr = (a) => a ? a.slice(0,6)+'…'+a.slice(-4) : '';
+    const toWeiHex = (ethStr) => {
+      const n = Number(ethStr);
+      if (!isFinite(n) || n <= 0) return '0x0';
+      // round to integer wei
+      const wei = Math.round(n * 1e18);
+      return '0x' + BigInt(wei).toString(16);
+    };
+
+    // ----- PRIVATE CONFIG -----
+    const state = {
+      // Einkaufspreis (ETH pro TH pro Tag) — intern
+      costPerTHPerDayETH: parseFloat(localStorage.getItem('costPerTHPerDayETH') || '0.0005'),
+      // Verdeckter Aufschlag (nicht anzeigen)
+      markup: parseFloat(localStorage.getItem('markup') || '0.10'),
+      // Gebühren
+      feeStd: parseFloat(localStorage.getItem('feeStd') || '20'),    // %
+      feeVip: parseFloat(localStorage.getItem('feeVip') || '5'),     // %
+      // VIP
+      vipThreshold: parseFloat(localStorage.getItem('vipThreshold') || '0.5'), // ETH kumuliert
+      // Simulierter Ertrag (pro TH/Tag in ETH)
+      yieldPerTHPerDayETH: parseFloat(localStorage.getItem('yieldPerTHPerDayETH') || '0.00001'),
+      // Deine ETH-Adresse (Empfänger der Zahlungen) — default = vom Nutzer genannt
+      ethRecipient: localStorage.getItem('ethRecipient') || '0xcb165aF669733864F27070454Ac6C37deC991fFD',
+      // Daten
+      orders: JSON.parse(localStorage.getItem('orders_eth') || '[]'),  // [{id, pkgKey, priceEth, status, ts, txHash?}]
+      packages: [
+        { key:'micro',  name:'Micro',  th:1,  days:3  },
+        { key:'mini',   name:'Mini',   th:2,  days:7  },
+        { key:'start',  name:'Starter',th:5,  days:7  },
+        { key:'pro',    name:'Pro',    th:20, days:30 },
+        { key:'ultra',  name:'Ultra',  th:50, days:90 }
+      ],
+      // UI
+      selectedPriceEth: null
+    };
+
+    // ----- NAV -----
+    function nav(id){
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if(id==='dashboard'){ renderDashboard(); }
+      if(id==='admin'){ renderAdmin(); }
+    }
+
+    function toggleAdvanced(){
+      const adv = document.getElementById('advanced');
+      adv.classList.toggle('hidden');
+      if(!adv.classList.contains('hidden')){
+        document.getElementById('inpCostETH').value = state.costPerTHPerDayETH;
+        document.getElementById('inpMarkup').value = state.markup;
+        document.getElementById('inpFee').value = state.feeStd;
+        document.getElementById('inpFeeVip').value = state.feeVip;
+        document.getElementById('inpVipThresh').value = state.vipThreshold;
+        document.getElementById('inpYieldETH').value = state.yieldPerTHPerDayETH;
+        document.getElementById('inpAddr').value = state.ethRecipient;
+      }
+    }
+
+    function saveAdvanced(){
+      const c = parseFloat(document.getElementById('inpCostETH').value||'0');
+      const m = parseFloat(document.getElementById('inpMarkup').value||'0');
+      const f = parseFloat(document.getElementById('inpFee').value||'0');
+      const fv= parseFloat(document.getElementById('inpFeeVip').value||'0');
+      const vt= parseFloat(document.getElementById('inpVipThresh').value||'0');
+      const y = parseFloat(document.getElementById('inpYieldETH').value||'0');
+      if(c>0){ state.costPerTHPerDayETH=c; localStorage.setItem('costPerTHPerDayETH',String(c)); }
+      state.markup=m; localStorage.setItem('markup',String(m));
+      state.feeStd=f; localStorage.setItem('feeStd',String(f));
+      state.feeVip=fv; localStorage.setItem('feeVip',String(fv));
+      state.vipThreshold=vt; localStorage.setItem('vipThreshold',String(vt));
+      state.yieldPerTHPerDayETH=y; localStorage.setItem('yieldPerTHPerDayETH',String(y));
+      alert('Gespeichert.');
+      renderShop();
+    }
+
+    function saveAddress(){
+      const addr = (document.getElementById('inpAddr').value||'').trim();
+      if(!/^0x[a-fA-F0-9]{40}$/.test(addr)){ alert('Ungültige ETH-Adresse.'); return; }
+      state.ethRecipient = addr;
+      localStorage.setItem('ethRecipient', addr);
+      document.getElementById('ethTo').textContent = addr;
+      alert('ETH-Adresse gespeichert.');
+    }
+
+    // ----- VIP + PRICE CALC -----
+    function isVIP(){
+      const spent = state.orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.priceEth,0);
+      return spent >= state.vipThreshold;
+    }
+    function currentFeePercent(){
+      return isVIP()? state.feeVip : state.feeStd;
+    }
+    function calcPriceEth(th, days){
+      const base = th * days * state.costPerTHPerDayETH; // Einkauf
+      const plusMarkup = base * (1 + state.markup);      // + Aufschlag (versteckt)
+      const withFee = plusMarkup * (1 + currentFeePercent()/100); // + Gebühr
+      return +withFee.toFixed(6);
+    }
+
+    // ----- SHOP RENDER -----
+    function renderShop(){
+      const cont = document.getElementById('packages');
+      cont.innerHTML = '';
+      state.packages.forEach(p => {
+        const price = calcPriceEth(p.th, p.days);
+        const card = document.createElement('div');
+        card.className='card flex flex-col';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">${p.name}</div>
+            <div class="chip">${p.th} TH/s • ${p.days} Tage</div>
+          </div>
+          <div class="mt-2 text-2xl font-bold text-green-400 mono">${price} ETH</div>
+          <div class="muted text-xs mt-1">inkl. Servicegebühr</div>
+          <button class="btn btn-primary mt-3" onclick="startCheckout('${p.key}')">Kaufen</button>
+        `;
+        cont.appendChild(card);
+      });
+      // set recipient
+      document.getElementById('ethTo').textContent = state.ethRecipient;
+      // VIP badge
+      document.getElementById('vipBadge').classList.toggle('hidden', !isVIP());
+    }
+
+    function startCheckout(pkgKey){
+      if(!window.ethereum){ alert('MetaMask nicht gefunden. Bitte MetaMask installieren.'); return; }
+      const pkg = state.packages.find(x=>x.key===pkgKey);
+      if(!pkg){ return; }
+      const price = calcPriceEth(pkg.th, pkg.days);
+      state.selectedPriceEth = price;
+      document.getElementById('payAmount').textContent = String(price);
+      document.getElementById('payHint').textContent = 'Mit MetaMask zahlen und danach wird die Bestellung im Admin sichtbar.';
+      document.getElementById('btnPay').disabled = false;
+
+      // create order placeholder
+      const order = {
+        id: 'O'+Date.now(),
+        pkgKey: pkg.key,
+        priceEth: price,
+        status: 'awaiting_payment',
+        ts: new Date().toISOString()
+      };
+      state.orders.push(order);
+      persist();
+      renderAdmin();
+      alert(`Bestellung erstellt. Bitte jetzt ${price} ETH mit MetaMask senden.`);
+    }
+
+    async function payWithMetaMask(){
+      if(!window.ethereum){ alert('MetaMask nicht gefunden.'); return; }
+      try{
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const from = accounts[0];
+        const valueHex = toWeiHex(state.selectedPriceEth || '0');
+        if(valueHex === '0x0'){ alert('Ungültiger Betrag.'); return; }
+
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [{
+            from,
+            to: state.ethRecipient,
+            value: valueHex
+          }]
+        });
+
+        // mark last awaiting order as client_paid
+        const last = [...state.orders].reverse().find(o=>o.status==='awaiting_payment');
+        if(last){
+          last.status='client_paid';
+          last.txHash=txHash;
+          persist();
+        }
+        document.getElementById('btnPay').disabled = true;
+        document.getElementById('payHint').innerHTML = `Transaktion gesendet: <span class="mono">${txHash}</span>. Wir aktivieren das Paket nach Bestätigung.`;
+        renderAdmin();
+      }catch(e){
+        console.error(e);
+        alert('Zahlung abgebrochen oder fehlgeschlagen.');
+      }
+    }
+
+    // ----- WALLET -----
+    async function connect(){
+      if(!window.ethereum){ alert('MetaMask nicht gefunden.'); return; }
+      try{
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const addr = accounts[0];
+        localStorage.setItem('wallet_eth_user', addr);
+        document.getElementById('walletInfo').textContent = 'verbunden: '+fmtAddr(addr);
+        document.getElementById('btnConnect').classList.add('hidden');
+        document.getElementById('btnDisconnect').classList.remove('hidden');
+      }catch(e){ console.error(e); alert('Verbindung abgebrochen.'); }
+    }
+    function disconnect(){
+      localStorage.removeItem('wallet_eth_user');
+      document.getElementById('walletInfo').textContent = 'nicht verbunden';
+      document.getElementById('btnConnect').classList.remove('hidden');
+      document.getElementById('btnDisconnect').classList.add('hidden');
+    }
+    // Auto-show if already connected
+    (function initWallet(){
+      const a = localStorage.getItem('wallet_eth_user');
+      if(a){
+        document.getElementById('walletInfo').textContent = 'verbunden: '+fmtAddr(a);
+        document.getElementById('btnConnect').classList.add('hidden');
+        document.getElementById('btnDisconnect').classList.remove('hidden');
+      }
+    })();
+
+    // ----- SIMULATION -----
+    function activateOrder(id){
+      const o = state.orders.find(x=>x.id===id);
+      if(!o) return;
+      const pkg = state.packages.find(x=>x.key===o.pkgKey);
+      const start = new Date();
+      const end = new Date();
+      end.setDate(start.getDate()+pkg.days);
+      o.status='active';
+      o.paidTs=new Date().toISOString();
+      o.active={
+        start: start.toISOString(),
+        end: end.toISOString(),
+        th: pkg.th,
+        days: pkg.days,
+        // simulierter Tagesertrag (VIP +10%)
+        daily: +(state.yieldPerTHPerDayETH * pkg.th * (isVIP()?1.1:1)).toFixed(8),
+        accrued: 0
+      };
+      persist();
+      renderDashboard();
+      renderAdmin();
+    }
+
+    function tickSimulation(){
+      // einfache tägliche Gutschrift alle 10s (= 1 Tag simuliert)
+      state.orders.forEach(o=>{
+        if(o.status==='active' && o.active){
+          if(!o._lastTick){ o._lastTick=Date.now(); return; }
+          const now=Date.now();
+          if(now - o._lastTick >= 10000){ // 10s ~ 1 Tag
+            o.active.accrued = +(o.active.accrued + o.active.daily).toFixed(8);
+            o._lastTick = now;
+            persist();
+            renderDashboard();
+          }
+          // auto-expire
+          const today = new Date();
+          if(today >= new Date(o.active.end)){
+            o.status='expired';
+            persist();
+            renderAdmin();
+            renderDashboard();
+          }
+        }
+      });
+    }
+    setInterval(tickSimulation, 1000);
+
+    // ----- DASHBOARD RENDER -----
+    function renderDashboard(){
+      const wrap = document.getElementById('activePackages');
+      wrap.innerHTML='';
+      const actives = state.orders.filter(o=>o.status==='active');
+      if(actives.length===0){
+        wrap.innerHTML = '<div class="muted text-sm">Keine aktiven Pakete.</div>';
+      }
+      actives.forEach(o=>{
+        const a = o.active;
+        const remDays = Math.max(0, Math.ceil((new Date(a.end)-new Date())/(1000*60*60*24)));
+        const div = document.createElement('div');
+        div.className='card';
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">${o.pkgKey.toUpperCase()}</div>
+            <div class="chip">${a.th} TH/s</div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-2 text-sm">
+            <div><div class="muted">täglich (sim.)</div><div class="mono text-green-400">${a.daily} ETH</div></div>
+            <div><div class="muted">bisher (sim.)</div><div class="mono">${a.accrued} ETH</div></div>
+            <div><div class="muted">Restlaufzeit</div><div class="mono">${remDays} Tage</div></div>
+          </div>
+        `;
+        wrap.appendChild(div);
+      });
+
+      const sumSpent = state.orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.priceEth,0);
+      const sumEarn = state.orders.filter(o=>o.status==='active').reduce((s,o)=>s+ (o.active?.accrued||0),0);
+      document.getElementById('sumSpent').textContent = sumSpent.toFixed(6)+' ETH';
+      document.getElementById('sumEarnings').textContent = sumEarn.toFixed(8)+' ETH';
+      document.getElementById('vipLabel').textContent = isVIP() ? 'Ja (5 % Gebühr)' : 'Nein (20 % Gebühr)';
+      document.getElementById('vipBadge').classList.toggle('hidden', !isVIP());
+    }
+
+    // ----- ADMIN RENDER -----
+    function renderAdmin(){
+      const cont = document.getElementById('orders');
+      const rows = state.orders.slice().reverse().map(o=>{
+        const pkg=state.packages.find(x=>x.key===o.pkgKey);
+        let actions = '';
+        if(o.status==='awaiting_payment' || o.status==='client_paid'){
+          actions = `<button class="btn btn-primary" onclick="activateOrder('${o.id}')">Aktivieren</button>`;
+        } else if(o.status==='active'){
+          actions = `<button class="btn btn-ghost" onclick="expireOrder('${o.id}')">Beenden</button>`;
+        } else {
+          actions = '';
+        }
+        const tx = o.txHash ? `<a class="link mono" target="_blank" href="https://etherscan.io/tx/${o.txHash}">${o.txHash.slice(0,10)}…</a>` : '-';
+        return `<tr>
+          <td class="px-3 py-2 mono">${o.id}</td>
+          <td class="px-3 py-2">${pkg?.name||o.pkgKey}</td>
+          <td class="px-3 py-2 mono">${o.priceEth} ETH</td>
+          <td class="px-3 py-2">${o.status}</td>
+          <td class="px-3 py-2">${tx}</td>
+          <td class="px-3 py-2">${actions}</td>
+        </tr>`;
+      }).join('');
+      cont.innerHTML = `
+        <table class="min-w-full text-sm">
+          <thead class="muted text-xs">
+            <tr><th class="px-3 py-2 text-left">ID</th><th class="px-3 py-2 text-left">Paket</th><th class="px-3 py-2 text-left">Preis</th><th class="px-3 py-2 text-left">Status</th><th class="px-3 py-2 text-left">Tx</th><th class="px-3 py-2 text-left">Aktion</th></tr>
+          </thead>
+          <tbody>${rows || '<tr><td class="px-3 py-4 muted" colspan="6">Noch keine Bestellungen.</td></tr>'}</tbody>
+        </table>`;
+    }
+
+    function expireOrder(id){
+      const o = state.orders.find(x=>x.id===id);
+      if(!o) return;
+      o.status='expired';
+      persist();
+      renderAdmin();
+      renderDashboard();
+    }
+
+    function exportData(){
+      const rows=[['id','pkg','price_eth','status','ts','txHash']].concat(state.orders.map(o=>[o.id,o.pkgKey,o.priceEth,o.status,o.ts,o.txHash||'']));
+      const csv = rows.map(r=>r.join(',')).join('\\n');
+      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='hashcore_orders_eth.csv'; a.click(); URL.revokeObjectURL(url);
+    }
+
+    function persist(){
+      localStorage.setItem('orders_eth', JSON.stringify(state.orders));
+    }
+
+    // INIT
+    renderShop();
+    renderDashboard();
+  </script>
+</body>
+</html>
