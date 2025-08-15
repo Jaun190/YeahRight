@@ -39,7 +39,7 @@
     <section id="admin" class="tab hidden">
       <h2 class="text-2xl font-semibold mb-4">Admin-Bereich</h2>
       <div class="mb-3">
-        <input id="admOrderId" placeholder="Order-ID" class="w-full p-2 bg-gray-800 rounded">
+        <input id="admOrderId" placeholder="Order-ID (Firestore-Dokument-ID)" class="w-full p-2 bg-gray-800 rounded">
       </div>
       <div class="grid grid-cols-3 gap-3 mb-3">
         <button class="btn bg-blue-500 p-2 rounded" onclick="admActivate()">Aktivieren</button>
@@ -62,31 +62,27 @@
       Dorfstrasse 233<br>
       3432 Schwanden i.E<br>
       Schweiz</p>
-      <p>Email: <a href="mailto:jaun190@gmail.com" class="text-blue-400">jaun190@gmail.com</a></p>
+      <p>E-Mail: <a href="mailto:jaun190@gmail.com" class="text-blue-400">jaun190@gmail.com</a></p>
     </div>
 
     <div class="mb-4">
-      <h3 class="font-bold text-gray-200">AGB</h3>
-      <p>Mit der Bestellung eines Hashpower-Pakets akzeptieren Sie unsere AGB. 
-      Hashcore vermittelt ausschließlich Rechenleistung (Hashrate). 
-      Es handelt sich nicht um Finanzprodukte oder Anlageberatung. 
-      Gewinne oder Mining-Erträge werden nicht garantiert, sondern ergeben sich aus den jeweiligen Mining-Pools. 
-      Der Kunde trägt selbst die Verantwortung für die Auswahl der Ziel-Wallets und Pools.</p>
+      <h3 class="font-bold text-gray-200">AGB (Kurzfassung)</h3>
+      <p>Mit der Bestellung eines Hashpower-Pakets akzeptieren Sie unsere AGB. Hashcore vermittelt ausschließlich Rechenleistung (Hashrate).
+      Es handelt sich nicht um Finanzprodukte oder Anlageberatung. Gewinne oder Mining-Erträge werden nicht garantiert,
+      sondern ergeben sich aus den jeweiligen Mining-Pools. Der Kunde ist für die Auswahl der Ziel-Wallets und Pools selbst verantwortlich.</p>
     </div>
 
     <div class="mb-4">
       <h3 class="font-bold text-gray-200">Datenschutz</h3>
       <p>Wir speichern nur die für die Abwicklung notwendigen Daten (Wallet-Adresse, Bestellung, Status).
-      Es werden keine personenbezogenen Daten wie Name oder Adresse erhoben.
-      Alle Daten werden ausschließlich in Firebase/Firestore verarbeitet. 
-      Es erfolgt keine Weitergabe an Dritte.</p>
+      Es werden keine personenbezogenen Daten wie Name oder Adresse erhoben. Alle Daten werden ausschließlich in Firebase/Firestore verarbeitet.
+      Es erfolgt keine Weitergabe an Dritte, außer soweit zur Vertragserfüllung erforderlich.</p>
     </div>
 
     <div>
       <h3 class="font-bold text-gray-200">Haftungsausschluss</h3>
-      <p>Hashcore übernimmt keine Haftung für Ausfälle von Mining-Pools, Marktschwankungen oder Netzwerkgebühren. 
-      Die Nutzung erfolgt auf eigenes Risiko. 
-      Wir bieten ausschließlich Hashpower-Vermietung als digitalen Service an.</p>
+      <p>Hashcore übernimmt keine Haftung für Ausfälle von Mining-Pools, Marktschwankungen oder Netzwerkgebühren.
+      Die Nutzung erfolgt auf eigenes Risiko. Wir bieten ausschließlich Hashpower-Vermietung als digitalen Service an.</p>
     </div>
 
     <p class="mt-6 text-xs text-gray-500">© 2025 Hashcore – Alle Rechte vorbehalten</p>
@@ -112,6 +108,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // ====== CONFIG ======
+    const OWNER_WALLET = "0xcb165aF669733864F27070454Ac6C37deC991fFD".toLowerCase();
+
     // State
     const state = { wallet:null, isAdmin:false };
 
@@ -119,24 +118,41 @@
     window.showTab = (id) => {
       document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
       document.getElementById(id).classList.remove("hidden");
+      if(id==="admin"){ refreshAdmin(); }
     };
     showTab("shop");
 
     // Wallet Connect
     async function connectWallet(){
       if(typeof window.ethereum==="undefined"){
-        document.getElementById("walletStatus").textContent="MetaMask nicht gefunden.";
+        document.getElementById("walletStatus").textContent="MetaMask nicht gefunden. Bitte im MetaMask-Browser öffnen.";
         return;
       }
-      const accounts = await window.ethereum.request({method:"eth_requestAccounts"});
-      state.wallet = accounts[0];
-      document.getElementById("walletStatus").textContent = "Wallet: "+state.wallet;
-      state.isAdmin = (state.wallet.toLowerCase()==="0xcb165af669733864f27070454ac6c37dec991ffd");
-      if(state.isAdmin){ document.getElementById("adminTab").classList.remove("hidden"); }
-      renderShop();
-      loadOrders();
+      try {
+        const accounts = await window.ethereum.request({method:"eth_requestAccounts"});
+        state.wallet = accounts[0];
+        document.getElementById("walletStatus").textContent = "Wallet: "+state.wallet;
+        state.isAdmin = (state.wallet.toLowerCase()===OWNER_WALLET);
+        if(state.isAdmin){ document.getElementById("adminTab").classList.remove("hidden"); }
+        renderShop();
+        loadOrders();
+        if(state.isAdmin) refreshAdmin();
+      } catch(e){
+        document.getElementById("walletStatus").textContent = "Wallet-Verbindung abgebrochen.";
+        console.error(e);
+      }
     }
     connectWallet();
+
+    // Helper: Dezimal ETH -> Wei Hex (0x...)
+    function toWeiHex(eth){
+      const s = String(eth);
+      if(!/^[0-9]+(\.[0-9]+)?$/.test(s)) return "0x0";
+      const [ints,decs=""] = s.split(".");
+      const decPad = (decs + "000000000000000000").slice(0,18);
+      const wei = BigInt(ints)*10n**18n + BigInt(decPad);
+      return "0x"+wei.toString(16);
+    }
 
     // Shop
     async function renderShop(){
@@ -152,7 +168,7 @@
         const div=document.createElement("div");
         div.className="p-4 bg-gray-800 rounded mb-4";
         div.innerHTML=`<div class="font-semibold">${p.name}</div>
-        <div>Preis: ${p.price} ETH</div>
+        <div>Preis: ${p.price} ETH (inkl. Servicegebühr)</div>
         <button class="mt-2 bg-blue-500 px-4 py-2 rounded" onclick="buy('${p.id}','${p.name}',${p.price})">Kaufen</button>`;
         shopDiv.appendChild(div);
       });
@@ -165,8 +181,8 @@
           method:"eth_sendTransaction",
           params:[{
             from:state.wallet,
-            to:"0xcb165aF669733864F27070454Ac6C37deC991fFD",
-            value: (BigInt(price*1e18)).toString(16)
+            to:OWNER_WALLET,
+            value: toWeiHex(price)
           }]
         });
         await addDoc(collection(db,"orders"),{
@@ -174,7 +190,7 @@
           tx,createdAt:serverTimestamp()
         });
         alert("Bestellung eingetragen!");
-      }catch(e){alert("Fehler: "+e.message);}
+      }catch(e){alert("Fehler: "+(e?.message||e));}
     };
 
     // Dashboard
@@ -188,9 +204,9 @@
           const o=docu.data();
           const el=document.createElement("div");
           el.className="p-3 bg-gray-800 rounded mb-2";
-          el.innerHTML=`<div>${o.package} – ${o.price} ETH</div>
+          el.innerHTML=`<div class="font-semibold">${o.package} – ${o.price} ETH</div>
             <div>Status: ${o.status}</div>
-            <div>TX: ${o.tx||"-"}</div>`;
+            <div>TX: ${o.tx?`<a class='text-blue-400' target='_blank' href='https://etherscan.io/tx/${o.tx}'>${o.tx.slice(0,12)}…</a>`:"-"}</div>`;
           div.appendChild(el);
         });
       });
@@ -199,38 +215,43 @@
     // Admin Funktionen
     async function refreshAdmin(){
       if(!state.isAdmin)return;
-      const q=query(collection(db,"orders"),orderBy("createdAt","desc"),limit(10));
+      const q=query(collection(db,"orders"),orderBy("createdAt","desc"),limit(50));
       const snap=await getDocs(q);
       const div=document.getElementById("adminOrders");
       div.innerHTML="";
       snap.forEach(d=>{
         const o=d.data();
-        div.innerHTML+=`<div class="p-2 bg-gray-700 rounded mb-1">${d.id}: ${o.wallet} – ${o.package} – ${o.status}</div>`;
+        div.innerHTML+=`<div class="p-2 bg-gray-700 rounded mb-1"><span class="text-xs text-gray-300">${d.id}</span><br>${o.wallet} – ${o.package} – <span class="font-semibold">${o.status}</span></div>`;
       });
     }
     window.admActivate=async()=>{
       const id=document.getElementById("admOrderId").value.trim();
       if(!id)return alert("Order-ID eingeben.");
       await updateDoc(doc(db,"orders",id),{status:"active",activatedAt:serverTimestamp()});
+      alert("Aktiviert.");
       refreshAdmin();
     };
     window.admExpire=async()=>{
       const id=document.getElementById("admOrderId").value.trim();
       if(!id)return alert("Order-ID eingeben.");
       await updateDoc(doc(db,"orders",id),{status:"expired",expiredAt:serverTimestamp()});
+      alert("Beendet.");
       refreshAdmin();
     };
     window.admCredit=async()=>{
       const id=document.getElementById("admOrderId").value.trim();
       if(!id)return alert("Order-ID eingeben.");
-      const amount=prompt("ETH-Gutschrift:");
-      await updateDoc(doc(db,"orders",id),{credited:parseFloat(amount)||0});
+      const amount=prompt("ETH-Gutschrift (nur Info-Feld):");
+      await updateDoc(doc(db,"orders",id),{credited:(parseFloat(amount)||0)});
+      alert("Gutschrift gesetzt (Info).");
       refreshAdmin();
     };
     window.admExtend=async()=>{
       const id=document.getElementById("admOrderId").value.trim();
       if(!id)return alert("Order-ID eingeben.");
-      await updateDoc(doc(db,"orders",id),{extended:true});
+      const days=prompt("Tage verlängern (Info-Feld):");
+      await updateDoc(doc(db,"orders",id),{extendDays:(parseInt(days)||0)});
+      alert("Verlängerung gesetzt (Info).");
       refreshAdmin();
     };
     window.admCancel=async()=>{
@@ -245,7 +266,7 @@
         alert("Bestellung storniert (nicht bezahlt).");
       }else if(o.status==="client_paid"){
         await updateDoc(ref,{status:"refunded",refundedAt:serverTimestamp()});
-        alert("Als erstattet markiert (bitte on-chain Rückzahlung!).");
+        alert("Als erstattet markiert (on-chain Erstattung separat durchführen).");
       }else if(o.status==="active"){
         alert("Aktive Pakete erst beenden, dann stornieren.");
       }else{
@@ -254,7 +275,6 @@
       }
       refreshAdmin();
     };
-
   </script>
 </body>
 </html>
