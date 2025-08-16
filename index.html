@@ -54,49 +54,58 @@
     </section>
   </main>
 
-  <!-- FOOTER -->
+  <!-- FOOTER mit Popup-Links -->
   <footer class="p-6 mt-12 bg-gray-800 text-gray-400 text-sm">
-    <!-- Impressum -->
-    <div class="mb-4">
-      <h3 class="font-bold text-gray-200">Impressum</h3>
+    <div class="flex justify-between items-center">
+      <!-- Links -->
+      <button onclick="openModal('impressumModal')" class="text-blue-400 hover:underline">Impressum</button>
+      
+      <!-- Mitte -->
+      <button onclick="openModal('agbModal')" class="text-blue-400 hover:underline">AGB</button>
+      
+      <!-- Rechts -->
+      <button onclick="openModal('datenschutzModal')" class="text-blue-400 hover:underline">Datenschutz</button>
+    </div>
+    <p class="mt-2 text-center text-xs text-gray-500">© 2025 Hashcore – Alle Rechte vorbehalten</p>
+  </footer>
+
+  <!-- MODAL: Impressum -->
+  <div id="impressumModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+    <div class="bg-gray-900 p-6 rounded max-w-lg">
+      <h3 class="text-xl font-bold mb-2">Impressum</h3>
       <p>Hashcore<br>
       Dorfstrasse 233<br>
       3432 Schwanden i.E<br>
       Schweiz</p>
       <p>E-Mail: <a href="mailto:jaun190@gmail.com" class="text-blue-400">jaun190@gmail.com</a></p>
+      <button onclick="closeModal('impressumModal')" class="mt-4 bg-red-500 px-4 py-2 rounded">Schließen</button>
     </div>
+  </div>
 
-    <!-- AGB -->
-    <div class="mb-4">
-      <h3 class="font-bold text-gray-200">AGB</h3>
+  <!-- MODAL: AGB -->
+  <div id="agbModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+    <div class="bg-gray-900 p-6 rounded max-w-lg">
+      <h3 class="text-xl font-bold mb-2">Allgemeine Geschäftsbedingungen (AGB)</h3>
       <p>Mit der Bestellung eines Hashpower-Pakets akzeptieren Sie unsere allgemeinen Geschäftsbedingungen.
-      Hashcore vermittelt ausschließlich Rechenleistung (Hashrate).
-      Es handelt sich nicht um Finanzprodukte oder Anlageberatung.
-      Gewinne oder Mining-Erträge werden nicht garantiert,
-      sondern ergeben sich aus den jeweiligen Mining-Pools.
+      Hashcore vermittelt ausschließlich Rechenleistung (Hashrate). 
+      Es handelt sich nicht um Finanzprodukte oder Anlageberatung. 
+      Gewinne oder Mining-Erträge werden nicht garantiert, sondern ergeben sich aus den jeweiligen Mining-Pools. 
       Der Kunde trägt die Verantwortung für die Auswahl seiner Wallet- und Pool-Adressen.</p>
+      <button onclick="closeModal('agbModal')" class="mt-4 bg-red-500 px-4 py-2 rounded">Schließen</button>
     </div>
+  </div>
 
-    <!-- Datenschutz -->
-    <div class="mb-4">
-      <h3 class="font-bold text-gray-200">Datenschutz</h3>
+  <!-- MODAL: Datenschutz -->
+  <div id="datenschutzModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+    <div class="bg-gray-900 p-6 rounded max-w-lg">
+      <h3 class="text-xl font-bold mb-2">Datenschutzerklärung</h3>
       <p>Wir speichern nur die für die Abwicklung notwendigen Daten (Wallet-Adresse, Bestellungen, Status).
-      Es werden keine personenbezogenen Daten wie Name oder Adresse erhoben.
-      Die Datenverarbeitung erfolgt ausschließlich über Firebase/Firestore.
+      Es werden keine personenbezogenen Daten wie Name oder Adresse erhoben. 
+      Die Datenverarbeitung erfolgt ausschließlich über Firebase/Firestore. 
       Eine Weitergabe an Dritte findet nicht statt, außer soweit zur Vertragserfüllung notwendig.</p>
+      <button onclick="closeModal('datenschutzModal')" class="mt-4 bg-red-500 px-4 py-2 rounded">Schließen</button>
     </div>
-
-    <!-- Haftung -->
-    <div>
-      <h3 class="font-bold text-gray-200">Haftungsausschluss</h3>
-      <p>Hashcore übernimmt keine Haftung für Ausfälle von Mining-Pools, Marktschwankungen oder Netzwerkgebühren.
-      Der Service stellt ausschließlich die Vermittlung von Rechenleistung bereit.
-      Die Nutzung erfolgt auf eigenes Risiko.</p>
-    </div>
-
-    <!-- Copyright -->
-    <p class="mt-6 text-xs text-gray-500">© 2025 Hashcore – Alle Rechte vorbehalten</p>
-  </footer>
+  </div>
 
   <!-- SCRIPT -->
   <script type="module">
@@ -270,6 +279,14 @@
       }
       refreshAdmin();
     };
+
+    // Modal-Steuerung
+    window.openModal = (id) => {
+      document.getElementById(id).classList.remove("hidden");
+    }
+    window.closeModal = (id) => {
+      document.getElementById(id).classList.add("hidden");
+    }
   </script>
 </body>
 </html>
