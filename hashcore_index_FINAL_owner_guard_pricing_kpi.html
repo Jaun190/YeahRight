@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashcore – BTC only (Pricing 10% + 5%)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+  <style>
+    :root { color-scheme: dark; }
+    body { background:#0b1220; color:#e5e7eb; }
+    .card{background:#0b0f1a;border:1px solid #1f2937;border-radius:1rem}
+    .btn{padding:.75rem 1rem;border-radius:.9rem;cursor:pointer}
+    .btn-primary{background:#3b82f6;color:#0b1220}
+    .btn-primary:hover{background:#2563eb}
+    .btn-ghost{background:#0f172a;border:1px solid #253046;color:#e5e7eb}
+    .btn-ghost:hover{background:#111827}
+    .chip{display:inline-flex;align-items:center;gap:.5rem;padding:.25rem .6rem;border-radius:9999px;border:1px solid #334155;background:#0f172a;color:#a3a3a3;font-size:.75rem}
+    .modal{display:none}
+    .modal.show{display:flex}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .disabled { opacity: .5; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 bg-gray-900/80 backdrop-blur border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-xl bg-blue-500/20 grid place-items-center">⚡</div>
+        <div class="text-xl font-extrabold tracking-tight">Hash<span class="text-blue-400">core</span></div>
+        <div id="vipBadge" class="chip hidden">VIP</div>
+      </div>
+      <nav class="flex items-center gap-2">
+        <button class="btn btn-ghost" onclick="navTo('shop')">Shop</button>
+        <button class="btn btn-ghost" onclick="navTo('dashboard')">Dashboard</button>
+        <button id="adminTab" class="btn btn-ghost hidden" onclick="secureNavAdmin()">Admin</button>
+        <button id="btnConnect" class="btn btn-primary ml-2">Mit MetaMask verbinden</button>
+        <button id="btnDisconnect" class="btn btn-ghost ml-2 hidden">Trennen</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <div class="card p-4 flex items-center gap-3">
+      <div class="text-sm text-gray-400">Wallet</div>
+      <div class="mono text-green-400 text-xs" id="walletStatus">nicht verbunden</div>
+      <div class="ml-auto text-xs text-gray-400" id="chainStatus"></div>
+    </div>
+
+    <!-- MetaMask Banner -->
+    <div id="mmMissing" class="card p-4 border border-red-800 bg-red-900/30 hidden">
+      <div class="text-lg font-semibold text-red-300">MetaMask nicht gefunden</div>
+      <p class="text-sm text-red-200 mt-1">
+        Öffne die Seite im integrierten <span class="font-semibold">MetaMask‑Browser</span> (Mobile) oder installiere die Extension (Desktop).
+      </p>
+      <div class="mt-3 flex flex-col sm:flex-row gap-2">
+        <a id="btnOpenApp" class="btn btn-primary w-full sm:w-auto" href="#">In MetaMask‑App öffnen</a>
+        <a id="btnInstallMM" class="btn btn-ghost w-full sm:w-auto" target="_blank" rel="noopener"
+           href="https://metamask.io/download/">MetaMask installieren</a>
+      </div>
+    </div>
+
+    <!-- Shop -->
+    <section id="shop" class="tab">
+      <div class="grid md:grid-cols-3 gap-4 mt-1">
+        <div class="md:col-span-2 card p-5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-blue-300">Hashpower‑Pakete</h2>
+            <div class="chip">Zahlung: BTC</div>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-3 mt-4">
+            <div class="sm:col-span-1">
+              <label class="text-xs text-gray-400" for="inputAlgo">Coin / Algorithmus</label>
+              <select id="inputAlgo" class="w-full bg-gray-900 border border-gray-700 rounded p-2">
+                <option value="etchash">ETC – Etchash</option>
+                <option value="kawpow">RVN – KawPow</option>
+                <option value="kheavyhash">KAS – kHeavyHash</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="text-xs text-gray-400" for="inputPayout">Payout‑/Wallet‑Adresse (oder Pool‑User)</label>
+              <input id="inputPayout" class="w-full bg-gray-900 border border-gray-700 rounded p-2" placeholder="0x..., RVN..., KAS...">
+            </div>
+          </div>
+
+          <div id="shopContent" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-5"></div>
+          <div id="lockHint" class="text-xs text-yellow-300 mt-2 hidden">🔒 Verbinde zuerst MetaMask, um zu bestellen.</div>
+        </div>
+
+        <div class="card p-5">
+          <h3 class="font-semibold text-blue-300">Zahlung</h3>
+          <div class="mt-2 text-sm">
+            <div class="mb-2"><span class="text-gray-400">Nur BTC:</span> Zahlung ausschließlich an deine NiceHash‑BTC‑Adresse.</div>
+            <div class="mb-2"><span class="text-gray-400">MetaMask Pflicht:</span> Ohne MetaMask kein Zugriff auf Kauf/Tracking.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="tab hidden">
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="md:col-span-2 card p-5">
+          <h2 class="text-lg font-bold text-blue-300">Meine Bestellungen</h2>
+          <div id="orders" class="mt-3 space-y-2"></div>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold text-blue-300">Übersicht</h3>
+          <div class="mt-2 text-sm">
+            <div class="flex justify-between"><span class="text-gray-400">Bestellungen</span><span class="mono" id="sumOrders">0</span></div>
+            <div class="flex justify-between"><span class="text-gray-400">VIP‑Status</span><span id="vipLabel" class="mono">Nein</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin -->
+    <section id="admin" class="tab hidden">
+      <div class="card p-5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-blue-300">Admin</h2>
+          <div class="chip">Nur Betreiber‑Wallet</div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4 mt-3">
+          <div class="card p-4 md:col-span-2">
+            <h3 class="font-semibold mb-2">Übersicht (KPIs)</h3>
+            <div id="adminKpis" class="grid sm:grid-cols-3 gap-3 text-sm">
+              <div class="card p-3"><div class="text-gray-400 text-xs">Bestellungen gesamt</div><div id="kpiOrders" class="mono text-lg">–</div></div>
+              <div class="card p-3"><div class="text-gray-400 text-xs">Summe Zahlbetrag (BTC)</div><div id="kpiSumBtc" class="mono text-lg">–</div></div>
+              <div class="card p-3"><div class="text-gray-400 text-xs">Davon „awaiting_funding“</div><div id="kpiAwait" class="mono text-lg">–</div></div>
+            </div>
+          </div>
+          <div class="card p-4">
+            <h3 class="font-semibold mb-2">Bestellungen</h3>
+            <div id="adminOrders" class="overflow-x-auto text-sm"></div>
+          </div>
+          <div class="card p-4">
+            <h3 class="font-semibold mb-2">Aktionen</h3>
+            <div class="space-y-3">
+              <div>
+                <div class="text-xs text-gray-400 mb-1">Order‑ID</div>
+                <input id="admOrderId" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="Firestore‑Dokument‑ID">
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <button class="btn btn-primary w-full" onclick="adminUpdate('active')">Aktivieren</button>
+                <button class="btn btn-ghost w-full" onclick="adminUpdate('expired')">Beenden</button>
+                <button class="btn btn-ghost w-full" onclick="adminUpdate('cancelled')">Stornieren</button>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button class="btn btn-primary w-full" onclick="adminCredit()">Gutschrift</button>
+                <button class="btn btn-ghost w-full" onclick="adminExtend()">Verlängern</button>
+              </div>
+              <div class="grid grid-cols-1 gap-2">
+                <label class="text-xs text-gray-400">Manuelle BTC‑Adresse (Fallback, nur Admin)</label>
+                <div class="flex gap-2">
+                  <input id="manualBtc" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="bc1...">
+                  <button class="btn btn-ghost" onclick="saveManual()">Speichern</button>
+                </div>
+                <p class="text-xs text-gray-500">Wird verwendet, falls die API <code class="mono">getNhDepositAddress</code> nicht erreichbar ist.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BTC Modal -->
+  <div id="btcModal" class="modal fixed inset-0 bg-black/70 items-center justify-center">
+    <div class="bg-gray-900 p-6 rounded-xl max-w-lg mx-3 border border-gray-700">
+      <h3 class="text-xl font-bold mb-2">BTC Zahlung</h3>
+      <p class="text-sm text-gray-300">Sende den Betrag an diese NiceHash‑BTC‑Adresse:</p>
+      <pre id="btcAddress" class="mt-3 p-3 bg-black/40 border border-gray-700 rounded text-yellow-300 break-all mono"></pre>
+      <div class="text-xs text-gray-400 mt-1">Zu zahlender Betrag: <span id="btcAmount" class="mono text-blue-300"></span> BTC</div>
+      <div class="text-xs text-gray-400 mt-1">Deeplink: <a id="btcLink" class="text-blue-300" target="_blank" rel="noopener">bitcoin:</a></div>
+      <div class="mt-4 flex gap-2">
+        <button class="btn btn-ghost" onclick="copyAddr()">Adresse kopieren</button>
+        <button class="btn btn-primary" onclick="document.getElementById('btcModal').classList.remove('show')">Schließen</button>
+      </div>
+      <p id="addrHint" class="text-xs text-gray-500 mt-3"></p>
+    </div>
+  </div>
+
+  <script>
+    // ---- CONFIG ----
+    const OWNER_WALLET = "0xcb165af669733864f27070454ac6c37dec991ffd";
+    const MARGIN = 0.10;         // +10% sichtbarer Aufschlag
+    const HIDDEN_FEE = 0.05;     // +5% versteckte Gebühr (nur im Zahlungsbetrag)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDD2Oo7F-68An2esILVDnfmga1nM-OPKcw",
+      authDomain: "yeah-e9c83.firebaseapp.com",
+      projectId: "yeah-e9c83",
+      storageBucket: "yeah-e9c83.firebasestorage.app",
+      messagingSenderId: "94111647513",
+      appId: "1:94111647513:web:c4b0596d01a9eaf7c4a788"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const fns = firebase.functions();
+
+    let NH_MANUAL_BTC_ADDRESS = "";
+    const state = { wallet:null, isAdmin:false };
+    const $ = (id)=>document.getElementById(id);
+    const fmt = (n)=>Number(n).toFixed(8).replace(/0+$/,'').replace(/\.$/,'');
+
+    // ---- NAV + Admin guard ----
+    function navTo(id){
+      if(id==="admin" && !state.isAdmin){ alert("Kein Zugriff (nur Betreiber‑Wallet)."); return; }
+      document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      if(id==="admin"){ refreshAdmin(); loadManualAddress(); }
+      if(id==="dashboard"){ watchOrders(); }
+    }
+    function secureNavAdmin(){
+      if(!state.isAdmin){ alert("Kein Zugriff (nur Betreiber‑Wallet)."); return; }
+      navTo("admin");
+    }
+
+    // ---- MetaMask banner ----
+    function updateMMBanner(){
+      const hasMM = !!window.ethereum;
+      if(hasMM){
+        document.getElementById("mmMissing").classList.add("hidden");
+        lockShop(!state.wallet);
+      } else {
+        const url = location.href;
+        document.getElementById("btnOpenApp").href = "metamask://dapp/" + encodeURIComponent(url);
+        document.getElementById("mmMissing").classList.remove("hidden");
+        lockShop(true);
+      }
+    }
+    function lockShop(lock){
+      document.querySelectorAll("#shop .btn-primary").forEach(b=>{
+        if(b.id==="btnConnect") return;
+        b.classList.toggle("disabled", lock);
+      });
+      document.getElementById("lockHint").classList.toggle("hidden", !lock);
+    }
+    updateMMBanner();
+
+    // ---- Connect ----
+    document.getElementById("btnConnect").onclick = async ()=>{
+      if(!window.ethereum){ updateMMBanner(); return; }
+      try{
+        const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        onLogin(accs[0]);
+      }catch(e){ alert("MetaMask Login fehlgeschlagen: " + (e?.message||e)); }
+    };
+    document.getElementById("btnDisconnect").onclick = ()=>logout();
+
+    function onLogin(addr){
+      state.wallet = addr;
+      state.isAdmin = (addr?.toLowerCase()===OWNER_WALLET.toLowerCase());
+      document.getElementById("walletStatus").textContent = addr;
+      document.getElementById("adminTab").classList.toggle("hidden", !state.isAdmin);
+      lockShop(false);
+      navTo('dashboard');
+      watchOrders();
+    }
+    function logout(){
+      state.wallet=null;
+      state.isAdmin=false;
+      document.getElementById("walletStatus").textContent="nicht verbunden";
+      document.getElementById("adminTab").classList.add("hidden");
+      lockShop(true);
+      document.getElementById("orders").innerHTML="";
+      navTo('shop');
+    }
+
+    // ---- Shop (BTC only) with pricing ----
+    const PKGS=[
+      { id:"p1", name:"Micro 10 MH/s · 24h", baseBtc:0.0005 },
+      { id:"p2", name:"Pro 50 MH/s · 3 Tage", baseBtc:0.003 },
+      { id:"p3", name:"Elite 200 MH/s · 7 Tage", baseBtc:0.02 }
+    ];
+    function renderShop(){
+      const wrap=$("shopContent"); wrap.innerHTML="";
+      PKGS.forEach(p=>{
+        const display = p.baseBtc*(1+MARGIN);           // was der Kunde im Shop sieht
+        const toPay   = p.baseBtc*(1+MARGIN+HIDDEN_FEE);// was im Zahlungslink steht
+        const div=document.createElement("div");
+        div.className="card p-4";
+        div.innerHTML=`
+          <div class="flex items-start justify-between">
+            <div class="font-semibold">${p.name}</div>
+            <div class="chip">Preis ~ ${fmt(display)} BTC</div>
+          </div>
+          <div class="text-xs text-gray-400 mt-1">Zahlung ausschließlich BTC • NiceHash Deposit</div>
+          <div class="mt-3"><button class="btn btn-primary">Mit BTC zahlen</button></div>`;
+        div.querySelector("button").onclick = ()=>payBTC(p, display, toPay);
+        wrap.appendChild(div);
+      });
+    }
+    renderShop();
+
+    // ---- BTC checkout ----
+    function readBuyer(){
+      const algo = ($("inputAlgo")?.value || "etchash").toLowerCase();
+      const payout = ($("inputPayout")?.value || "").trim();
+      if(!payout){ alert("Bitte Payout‑/Wallet‑Adresse eingeben."); return null; }
+      return { algo, payout };
+    }
+    async function payBTC(pkg, displayPrice, toPayAmount){
+      if(!state.wallet){ alert("Bitte zuerst mit MetaMask verbinden."); return; }
+      const buyer = readBuyer(); if(!buyer) return;
+      let address = "";
+      let via = "API";
+      try{
+        const callable = fns.httpsCallable("getNhDepositAddress");
+        const res = await callable({ currency: "BTC" });
+        address = res?.data?.address || "";
+      }catch(e){ console.warn("API getNhDepositAddress failed:", e); }
+      if(!address){
+        await loadManualAddress();
+        address = NH_MANUAL_BTC_ADDRESS; via = "MANUAL";
+      }
+      if(!address){ alert("Keine BTC‑Deposit‑Adresse verfügbar. Bitte später erneut versuchen."); return; }
+
+      document.getElementById("btcAddress").innerText = address;
+      document.getElementById("btcAmount").innerText = fmt(toPayAmount);
+      document.getElementById("btcLink").href = `bitcoin:${address}?amount=${fmt(toPayAmount)}`;
+      document.getElementById("btcLink").textContent = `bitcoin:${address}?amount=${fmt(toPayAmount)}`;
+      document.getElementById("addrHint").innerText = (via==="API") ? "Adresse direkt von NiceHash API geladen." : "Adresse manuell hinterlegt (Admin).";
+      document.getElementById("btcModal").classList.add("show");
+
+      try{
+        await db.collection("orders").add({
+          wallet: state.wallet,
+          package: pkg.name,
+          status: "awaiting_funding",
+          algo: buyer.algo,
+          payout: buyer.payout,
+          paymentMethod: "BTC",
+          basePriceBtc: pkg.baseBtc,
+          displayPriceBtc: Number(fmt(displayPrice)),
+          payAmountBtc: Number(fmt(toPayAmount)),
+          marginPct: MARGIN,
+          hiddenFeePct: HIDDEN_FEE,
+          nhDepositAddress: address,
+          depositSource: via,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        navTo('dashboard');
+      }catch(err){ alert("Fehler beim Anlegen der Bestellung: "+(err.message||err)); }
+    }
+
+    // ---- Dashboard ----
+    let _ordersUnsub = null;
+    function watchOrders(){
+      if(!state.wallet) return;
+      if(_ordersUnsub) { _ordersUnsub(); _ordersUnsub=null; }
+      const ordersEl = $("orders");
+      _ordersUnsub = db.collection("orders").where("wallet","==",state.wallet).orderBy("createdAt","desc")
+        .onSnapshot(snap=>{
+          ordersEl.innerHTML="";
+          let count=0;
+          snap.forEach(d=>{
+            count++;
+            const o=d.data();
+total++;
+if(o.status==='awaiting_funding') awaiting++;
+if(typeof o.payAmountBtc==='number') sumBtc += o.payAmountBtc;
+            const row=document.createElement("div");
+            row.className="card p-3";
+            row.innerHTML=`<div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold">${o.package}</div>
+                <div class="text-xs text-gray-400">Status: ${o.status} • Preis: ${o.displayPriceBtc?.toFixed ? o.displayPriceBtc.toFixed(8).replace(/0+$/,'').replace(/\.$/,'') : o.displayPriceBtc} BTC</div>
+                <div class="text-xs text-gray-500">Zu zahlen: ${o.payAmountBtc?.toFixed ? o.payAmountBtc.toFixed(8).replace(/0+$/,'').replace(/\.$/,'') : o.payAmountBtc} BTC • Algo: ${o.algo||"-"} • Payout: <span class="mono">${(o.payout||"").slice(0,12)}…</span></div>
+              </div>
+              <div class="text-xs">${o.nhDepositAddress ? ('Deposit: '+o.nhDepositAddress.slice(0,10)+'… ('+(o.depositSource||'')+')') : '-'}</div>
+            </div>`;
+            ordersEl.appendChild(row);
+          });
+          document.getElementById("sumOrders").textContent = count;
+          const vip = count >= 5;
+          document.getElementById("vipBadge").classList.toggle("hidden", !vip);
+          document.getElementById("vipLabel").textContent = vip ? "Ja" : "Nein";
+        });
+    }
+
+    // ---- Admin (guarded) ----
+    async function refreshAdmin(){
+      const cont=$("adminOrders"); cont.innerHTML="";
+      if(!state.isAdmin){ cont.innerHTML='<div class="text-sm text-gray-500">Kein Zugriff (nicht Admin).</div>'; return; }
+      const snap=await db.collection("orders").orderBy("createdAt","desc").limit(50).get();
+      let total=0, awaiting=0, sumBtc=0;
+const rows = snap.docs.map(d=>{
+        const o=d.data();
+total++;
+if(o.status==='awaiting_funding') awaiting++;
+if(typeof o.payAmountBtc==='number') sumBtc += o.payAmountBtc;
+        return `<tr>
+          <td class="px-2 py-1 mono text-xs">${d.id}</td>
+          <td class="px-2 py-1 mono text-xs">${(o.wallet||"").slice(0,8)}…</td>
+          <td class="px-2 py-1">${o.package}</td>
+          <td class="px-2 py-1">${o.paymentMethod||"BTC"}</td>
+          <td class="px-2 py-1">${o.status}</td>
+          <td class="px-2 py-1 text-xs">Base: ${o.basePriceBtc} • Vis.: ${o.displayPriceBtc} • Pay: ${o.payAmountBtc}<br/>Algo: ${o.algo||'-'} • Payout: ${(o.payout||'').slice(0,12)}…</td>
+        </tr>`;
+      }).join("");
+      document.getElementById('kpiOrders').textContent = String(total);
+document.getElementById('kpiSumBtc').textContent = (sumBtc||0).toFixed(8).replace(/0+$/,'').replace(/\.$/,'') || '0';
+document.getElementById('kpiAwait').textContent = String(awaiting);
+cont.innerHTML = `<table class="min-w-full">
+        <thead class="text-xs text-gray-400"><tr>
+          <th class="text-left px-2 py-1">ID</th><th class="text-left px-2 py-1">Wallet</th><th class="text-left px-2 py-1">Paket</th>
+          <th class="text-left px-2 py-1">Methode</th><th class="text-left px-2 py-1">Status</th><th class="text-left px-2 py-1">Preise</th>
+        </tr></thead>
+        <tbody>${rows || '<tr><td class="px-2 py-3 text-gray-500" colspan="6">Keine Bestellungen.</td></tr>'}</tbody>
+      </table>`;
+    }
+    async function adminUpdate(newStatus){
+      if(!state.isAdmin) return alert("Nur Admin.");
+      const id = $("admOrderId").value.trim(); if(!id) return alert("Order‑ID eingeben.");
+      try{ await db.collection("orders").doc(id).set({ status:newStatus }, { merge:true }); alert("Status auf '"+newStatus+"' gesetzt."); refreshAdmin(); }
+      catch(e){ alert("Fehler: "+(e.message||e)); }
+    }
+    async function adminCredit(){
+      if(!state.isAdmin) return alert("Nur Admin.");
+      const id = $("admOrderId").value.trim(); if(!id) return alert("Order‑ID eingeben.");
+      try{ await db.collection("orders").doc(id).set({ credit:true }, { merge:true }); alert("Gutschrift markiert."); refreshAdmin(); }
+      catch(e){ alert("Fehler: "+(e.message||e)); }
+    }
+    async function adminExtend(){
+      if(!state.isAdmin) return alert("Nur Admin.");
+      const id = $("admOrderId").value.trim(); if(!id) return alert("Order‑ID eingeben.");
+      try{ await db.collection("orders").doc(id).set({ extend:true }, { merge:true }); alert("Verlängerung markiert."); refreshAdmin(); }
+      catch(e){ alert("Fehler: "+(e.message||e)); }
+    }
+
+    // ---- Settings (manual BTC address) ----
+    async function loadManualAddress(){
+      try{
+        const doc = await db.collection("_settings").doc("nh").get();
+        const val = doc.exists ? (doc.data().manualBtc||"") : "";
+        NH_MANUAL_BTC_ADDRESS = val || NH_MANUAL_BTC_ADDRESS;
+        if(state.isAdmin){ $("manualBtc").value = NH_MANUAL_BTC_ADDRESS||""; }
+      }catch(e){ console.warn("loadManualAddress:", e); }
+    }
+    async function saveManual(){
+      if(!state.isAdmin) return alert("Nur Admin.");
+      const v = $("manualBtc").value.trim();
+      NH_MANUAL_BTC_ADDRESS = v;
+      try{
+        await db.collection("_settings").doc("nh").set({ manualBtc: v }, { merge:true });
+        alert("Gespeichert.");
+      }catch(e){ alert("Fehler beim Speichern: "+(e.message||e)); }
+    }
+
+    // ---- Util ----
+    function copyAddr(){
+      const text = $("btcAddress").innerText.trim();
+      navigator.clipboard?.writeText(text).then(()=>{$("addrHint").innerText="Adresse kopiert."}).catch(()=>{$("addrHint").innerText="Konnte nicht kopieren."});
+    }
+
+    // Init
+    renderShop();
+    updateMMBanner();
+  </script>
+</body>
+</html>
