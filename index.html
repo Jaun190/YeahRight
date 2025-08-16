@@ -28,10 +28,20 @@
   <header class="sticky top-0 z-40 bg-gray-900/80 backdrop-blur border-b border-gray-800">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="h-9 w-9 rounded-xl bg-blue-500/20 grid place-items-center">⚡</div>
-        <div class="text-xl font-extrabold tracking-tight">Hash<span class="text-blue-400">core</span></div>
-        <div id="vipBadge" class="chip hidden">VIP</div>
-      </div>
+        <div class="flex items-center gap-3">
+  <div class="h-9 w-9 rounded-xl bg-blue-500/20 grid place-items-center">⚡</div>
+  <div class="text-xl font-extrabold tracking-tight">Hash<span class="text-blue-400">Core</span></div>
+  <div id="vipBadge" class="chip hidden">VIP</div>
+</div>
+
+<nav class="flex items-center gap-2">
+  <button class="btn btn-ghost" onclick="navTo('shop')">Shop</button>
+  <button class="btn btn-ghost" onclick="navTo('dashboard')">Dashboard</button>
+  <button class="btn btn-ghost" onclick="navTo('agb')">AGB</button> <!-- NEU -->
+  <button id="adminTab" class="btn btn-ghost hidden" onclick="navTo('admin')">Admin</button>
+  <button id="btnConnect" class="btn btn-primary ml-2">Mit MetaMask verbinden</button>
+  <button id="btnDisconnect" class="btn btn-ghost ml-2 hidden">Trennen</button>
+</nav>
       <nav class="flex items-center gap-2">
         <button class="btn btn-ghost" onclick="navTo('shop')">Shop</button>
         <button class="btn btn-ghost" onclick="navTo('dashboard')">Dashboard</button>
