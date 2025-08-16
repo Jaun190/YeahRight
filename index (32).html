@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashcore</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <!-- EmailJS (optional E-Mail-Benachrichtigung ohne Backend) -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <style>
+    :root { color-scheme: dark; }
+    body { background:#0b1220; color:#e5e7eb; }
+    .card{background:#0b0f1a;border:1px solid #1f2937;border-radius:1rem}
+    .btn{padding:.75rem 1rem;border-radius:.9rem;cursor:pointer}
+    .btn-sm{padding:.45rem .7rem;font-size:.8rem;border-radius:.6rem}
+    .btn-primary{background:#3b82f6;color:#0b1220}
+    .btn-primary:hover{background:#2563eb}
+    .btn-ghost{background:#0f172a;border:1px solid #253046;color:#e5e7eb}
+    .btn-ghost:hover{background:#111827}
+    .chip{display:inline-flex;align-items:center;gap:.5rem;padding:.25rem .6rem;border-radius:9999px;border:1px solid #334155;background:#0f172a;color:#a3a3a3;font-size:.75rem}
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100; align-items:center; justify-content:center; }
+    .modal.show { display:flex; }
+    .modal-card { background:#0b0f1a; border:1px solid #1f2937; border-radius:1rem; max-width:800px; width:92%; max-height:80vh; overflow:auto; padding:1.25rem; }
+    .modal-close { float:right; cursor:pointer; font-size:1.25rem; color:#9ca3af; }
+    .modal-close:hover { color:#e5e7eb; }
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace}
+    .disabled { opacity: .5; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 bg-gray-900/80 backdrop-blur border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-xl bg-blue-500/20 grid place-items-center">⚡</div>
+        <div class="text-xl font-extrabold tracking-tight">Hash<span class="text-blue-400">core</span></div>
+        
+      </div>
+      <nav class="flex items-center gap-2">
+        <button class="btn btn-ghost" onclick="navTo('shop')">Shop</button>
+        <button class="btn btn-ghost" onclick="navTo('dashboard')">Dashboard</button>
+        <button id="adminTab" class="btn btn-ghost hidden" onclick="secureNavAdmin()">Admin</button>
+        <button id="btnConnect" class="btn btn-primary btn-sm ml-2">Mit MetaMask verbinden</button>
+        <button id="btnDisconnect" class="btn btn-ghost btn-sm ml-2 hidden">Trennen</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Wallet Info -->
+    <div class="card p-4 flex items-center gap-3">
+      <div class="text-sm text-gray-400">Wallet</div>
+      <div class="mono text-green-400 text-xs" id="walletStatus">nicht verbunden</div>
+      <div class="ml-auto text-xs text-gray-400" id="chainStatus"></div>
+    </div>
+
+    <!-- MetaMask Banner -->
+    <div id="mmMissing" class="card p-4 border border-red-800 bg-red-900/30 hidden">
+      <div class="text-lg font-semibold text-red-300">MetaMask nicht gefunden</div>
+      <p class="text-sm text-red-200 mt-1">
+        Öffne die Seite im integrierten <span class="font-semibold">MetaMask‑Browser</span> (Mobile) oder installiere die Extension (Desktop).
+      </p>
+      <div class="mt-3 flex flex-col sm:flex-row gap-2">
+        <a id="btnOpenApp" class="btn btn-primary w-full sm:w-auto" href="#">In MetaMask‑App öffnen</a>
+        <a id="btnInstallMM" class="btn btn-ghost w-full sm:w-auto" target="_blank" rel="noopener"
+           href="https://metamask.io/download/">MetaMask installieren</a>
+      </div>
+    </div>
+
+    <!-- SHOP -->
+    <section id="shop" class="tab">
+      <div class="grid md:grid-cols-3 gap-4 mt-1">
+        <div class="md:col-span-2 card p-5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-blue-300">Hashpower‑Pakete</h2>
+            <div class="chip">Zahlung: BTC</div>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-3 mt-4">
+            <div class="sm:col-span-1">
+              <label class="text-xs text-gray-400" for="inputAlgo">Algorithmus</label>
+              <select id="inputAlgo" class="w-full bg-gray-900 border border-gray-700 rounded p-2">
+                <option value="">Lade Algorithmen…</option>
+              </select>
+              <p id="algoHint" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="text-xs text-gray-400" for="inputPayout">Payout‑/Wallet‑Adresse (oder Pool‑User)</label>
+              <input id="inputPayout" class="w-full bg-gray-900 border border-gray-700 rounded p-2" placeholder="0x..., RVN..., KAS..., BTC..., PoolUser">
+            </div>
+          </div>
+
+          <div id="shopContent" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-5"></div>
+          <div id="lockHint" class="text-xs text-yellow-300 mt-2 hidden">🔒 Verbinde zuerst MetaMask & bestätige AGB/Datenschutz.</div>
+          <p class="text-xs text-gray-400 mt-3">
+            Mit Kauf erwirbst du eine zeitlich befristete Rechenleistung. Keine Ertragsgarantie. 
+            <a class="text-blue-300 underline" href="javascript:void(0)" onclick="openModal('agb')">AGB</a> · 
+            <a class="text-blue-300 underline" href="javascript:void(0)" onclick="openModal('dse')">Datenschutz</a> · 
+            <a class="text-blue-300 underline" href="javascript:void(0)" onclick="openModal('impressum')">Impressum</a>
+          </p>
+        </div>
+
+        <div class="card p-5">
+          <h3 class="font-semibold text-blue-300">Zahlung</h3>
+          <div class="mt-2 text-sm space-y-1">
+            <div><span class="text-gray-400">Nur BTC:</span> Zahlung ausschließlich an deine <strong>BTC‑Adresse</strong>.</div>
+            <div><span class="text-gray-400">MetaMask Pflicht:</span> Ohne MetaMask kein Zugriff auf Kauf/Tracking.</div>
+            <div class="text-green-400 font-medium">0% Gebühren – Keine zusätzlichen Kosten</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="tab hidden">
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="md:col-span-2 card p-5">
+          <h2 class="text-lg font-bold text-blue-300">Meine Bestellungen</h2>
+          <div id="orders" class="mt-3 space-y-2"></div>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold text-blue-300">Übersicht</h3>
+          <div class="mt-2 text-sm">
+            <div class="flex justify-between"><span class="text-gray-400">Bestellungen</span><span class="mono" id="sumOrders">0</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="admin" class="tab hidden">
+      <div class="card p-5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-blue-300">Admin</h2>
+          <div class="chip">Nur Betreiber‑Wallet</div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mt-3">
+          <div class="card p-4 md:col-span-2">
+            <h3 class="font-semibold mb-2">Übersicht (KPIs)</h3>
+            <div id="adminKpis" class="grid sm:grid-cols-3 gap-3 text-sm">
+              <div class="card p-3"><div class="text-gray-400 text-xs">Bestellungen gesamt</div><div id="kpiOrders" class="mono text-lg">–</div></div>
+              <div class="card p-3"><div class="text-gray-400 text-xs">Summe Zahlbetrag (BTC)</div><div id="kpiSumBtc" class="mono text-lg">–</div></div>
+              <div class="card p-3"><div class="text-gray-400 text-xs">Davon „awaiting_funding“</div><div id="kpiAwait" class="mono text-lg">–</div></div>
+            </div>
+          </div>
+
+          <div class="card p-4">
+            <h3 class="font-semibold mb-2">Bestellungen</h3>
+            <div id="adminOrders" class="overflow-x-auto text-sm"></div>
+          </div>
+          <div class="card p-4">
+            <h3 class="font-semibold mb-2">Einstellungen</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-gray-400">BTC‑Zahlungsadresse (wird Kunden angezeigt)</label>
+                <div class="flex gap-2">
+                  <input id="adminBtcAddr" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="bc1...">
+                  <button class="btn btn-ghost" onclick="saveBtcAddr()">Speichern</button>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Hinweis: Ohne BTC‑Adresse können Kunden nicht zahlen.</p>
+              </div>
+
+              <div>
+                <div class="text-xs text-gray-400 mb-1">Order‑ID (für Aktionen)</div>
+                <input id="admOrderId" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="Firestore‑Dokument‑ID">
+                <div class="grid grid-cols-3 gap-2 mt-2">
+                  <button class="btn btn-primary w-full" onclick="adminUpdate('active')">Aktivieren</button>
+                  <button class="btn btn-ghost w-full" onclick="adminUpdate('expired')">Beenden</button>
+                  <button class="btn btn-ghost w-full" onclick="adminUpdate('cancelled')">Stornieren</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-10 border-t border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-400">
+      <div class="order-2 sm:order-1">© 2025 Hashcore</div>
+      <div class="order-1 sm:order-2 flex items-center gap-4">
+        <a href="javascript:void(0)" onclick="openModal('agb')" class="hover:text-gray-200">AGB</a>
+        <a href="javascript:void(0)" onclick="openModal('dse')" class="hover:text-gray-200">Datenschutz</a>
+        <a href="javascript:void(0)" onclick="openModal('impressum')" class="hover:text-gray-200">Impressum</a>
+        <a href="javascript:void(0)" onclick="openModal(\'about\')" class="hover:text-gray-200">Über uns</a>
+      </div>
+    </div></footer>
+
+  <!-- BTC Modal -->
+  <div id="btcModal" class="modal">
+    <div class="modal-card">
+      <div class="flex items-start justify-between mb-2">
+        <h3 class="text-xl font-bold">BTC Zahlung</h3>
+        <button class="modal-close" onclick="closeModal('btc')">✕</button>
+      </div>
+      <p class="text-sm text-gray-300">Sende den Betrag an diese BTC‑Adresse:</p>
+      <pre id="btcAddress" class="mt-3 p-3 bg-black/40 border border-gray-700 rounded text-yellow-300 break-all mono"></pre>
+      <div class="text-xs text-gray-400 mt-1">Gesamtbetrag: <span id="btcAmount" class="mono text-blue-300"></span> BTC</div>
+      <div class="text-xs text-green-400 mt-1">0% Gebühren – Keine zusätzlichen Kosten</div>
+      <div class="text-xs text-gray-400 mt-1">Zahlungs‑Link: <a id="btcLink" class="text-blue-300" target="_blank" rel="noopener">bitcoin:</a></div>
+      <div class="mt-4 flex gap-2">
+        <button class="btn btn-ghost" onclick="copyAddr()">Adresse kopieren</button>
+        <button class="btn btn-primary" id="btnIPaid">Ich habe bezahlt</button>
+      </div>
+      <p id="addrHint" class="text-xs text-gray-500 mt-3"></p>
+    </div>
+  </div>
+
+  <!-- AGB -->
+  <div id="modal-agb" class="modal" onclick="backdropClose(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between mb-2">
+        <h2 class="text-lg font-bold text-blue-300">Allgemeine Geschäftsbedingungen (AGB)</h2>
+        <button class="modal-close" onclick="closeModal('agb')">✕</button>
+      </div>
+      <div class="text-sm leading-6 text-gray-300 space-y-3">
+        <p><strong>1. Geltungsbereich</strong><br>
+        Diese AGB regeln das Vertragsverhältnis zwischen <strong>Hashcore</strong>, 
+        <strong>Dorfstrasse 233, 3433 Schwanden i.E., Schweiz</strong> und den Nutzern.</p>
+        <p><strong>2. Leistungsbeschreibung</strong><br>
+        Der Anbieter stellt zeitlich befristete Rechenleistung („Hashpower“) bereit. Die Leistung kann über <strong>Drittanbieter</strong>
+        bezogen und dem Nutzer zugeordnet werden. Der Anbieter verkauft keine Kryptowährungen und bietet keine Anlageprodukte an.</p>
+        <p><strong>3. Bestellung &amp; Bezahlung</strong><br>
+        Bestellungen erfolgen ausschließlich gegen Vorauszahlung in Bitcoin (BTC) an die im Bestellprozess angegebene Adresse.
+        Erst nach Zahlungseingang wird die Bestellung ausgeführt.</p>
+        <p><strong>4. Pflichten des Nutzers</strong><br>
+        Der Nutzer ist verantwortlich für die korrekte Angabe seiner Wallet-/Payout‑Adresse. Fehlerhafte Angaben gehen zu Lasten des Nutzters.
+        Eine Rückerstattung nach Ausführung der Bestellung ist ausgeschlossen.</p>
+        <p><strong>5. Haftungsausschluss</strong><br>
+        Es besteht keine Garantie auf bestimmte Mining‑Erträge. Netzwerk‑/Pool‑/Anbieter‑Störungen können die Leistung beeinflussen.</p>
+        <p><strong>6. Recht &amp; Gerichtsstand</strong><br>
+        Es gilt das Recht der Schweiz. Gerichtsstand ist <strong>Schwanden i.E.</strong>.</p>
+        <p class="text-xs text-gray-500">Stand: 2025</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DSE -->
+  <div id="modal-dse" class="modal" onclick="backdropClose(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between mb-2">
+        <h2 class="text-lg font-bold text-blue-300">Datenschutzerklärung</h2>
+        <button class="modal-close" onclick="closeModal('dse')">✕</button>
+      </div>
+      <div class="text-sm leading-6 text-gray-300 space-y-3">
+        <p>Wir, <strong>Hashcore</strong>, nehmen den Schutz Ihrer Daten ernst. Personenbezogene Daten werden gemäß geltendem Recht
+        und dieser Erklärung verarbeitet.</p>
+        <p><strong>1. Verantwortlicher</strong><br>
+        Hashcore, Dorfstrasse 233, 3433 Schwanden i.E., Schweiz</p>
+        <p><strong>2. Verarbeitete Daten</strong><br>
+        Wallet‑Adressen, Bestell‑/Transaktionsdaten sowie technisch notwendige Informationen (z. B. Server‑Logs).</p>
+        <p><strong>3. Zwecke &amp; Rechtsgrundlagen</strong><br>
+        Vertragserfüllung, Support, Sicherheit und gesetzliche Pflichten.</p>
+        <p><strong>4. Weitergabe an Dritte</strong><br>
+        Nur soweit zur Leistungserbringung (z. B. Einbindung von Drittanbietern für Rechenleistung) oder gesetzlich erforderlich.</p>
+        <p><strong>5. Rechte der Nutzer</strong><br>
+        Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung. Anfragen an die im Impressum genannten Kontaktdaten.</p>
+        <p class="text-xs text-gray-500">Stand: 2025</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Impressum -->
+  <div id="modal-impressum" class="modal" onclick="backdropClose(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between mb-2">
+        <h2 class="text-lg font-bold text-blue-300">Impressum</h2>
+        <button class="modal-close" onclick="closeModal('impressum')">✕</button>
+      </div>
+      <div class="text-sm leading-6 text-gray-300">
+        Hashcore<br/>Dorfstrasse 233<br/>3433 Schwanden i.E.<br/>Schweiz
+        <div class="text-xs text-gray-500 mt-3">© 2025 Hashcore</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consent Modal -->
+  <div id="modal-consent" class="modal" onclick="backdropClose(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between mb-2">
+        <h2 class="text-lg font-bold text-blue-300">Rechtliches bestätigen</h2>
+        <button class="modal-close" onclick="closeModal('consent')">✕</button>
+      </div>
+      <div class="text-sm leading-6 text-gray-300 space-y-4">
+        <label class="flex items-start gap-2">
+          <input id="chkAgb" type="checkbox" class="mt-1">
+          <span>Ich habe die <a href="javascript:void(0)" onclick="openModal('agb')" class="text-blue-300 underline">AGB</a> gelesen und akzeptiere sie.</span>
+        </label>
+        <label class="flex items-start gap-2">
+          <input id="chkDse" type="checkbox" class="mt-1">
+          <span>Ich habe die <a href="javascript:void(0)" onclick="openModal('dse')" class="text-blue-300 underline">Datenschutzerklärung</a> gelesen und akzeptiere sie.</span>
+        </label>
+        <div class="flex justify-end gap-2 pt-2">
+          <button class="btn btn-ghost" onclick="closeModal('consent')">Abbrechen</button>
+          <button id="btnConsentAccept" class="btn btn-primary disabled" onclick="acceptConsent()" disabled>Akzeptieren</button>
+        </div>
+        <p class="text-xs text-gray-500">Beide Kästchen ankreuzen, um fortzufahren.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== CONFIG ======
+    const OWNER_WALLET = "0xcb165af669733864f27070454ac6c37dec991ffd".toLowerCase();
+    const CONFIG = {
+      MARGIN: 0.15,              // +15% Marge im Paketpreis
+      NICEHASH_PUBLIC_BASE: "https://api2.nicehash.com",
+      EMAILJS: {                 // Optional (nur wenn du E-Mails willst)
+        PUBLIC_KEY: "",          // emailjs public key
+        SERVICE_ID: "",          // emailjs service id
+        TEMPLATE_ID_ORDER: "",   // template id (Bestellung)
+        TEMPLATE_ID_PAID: "",    // template id („Ich habe bezahlt“)
+        NOTIFY_RECEIVER: ""      // deine E-Mail als Fallback
+      }
+    };
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDD2Oo7F-68An2esILVDnfmga1nM-OPKcw",
+      authDomain: "yeah-e9c83.firebaseapp.com",
+      projectId: "yeah-e9c83",
+      storageBucket: "yeah-e9c83.firebasestorage.app"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // EmailJS init
+    try { emailjs.init(CONFIG.EMAILJS.PUBLIC_KEY || ""); } catch(e) {}
+
+    let BTC_RECEIVE_ADDRESS = "";
+    const state = { wallet:null, isAdmin:false };
+    const $ = (id)=>document.getElementById(id);
+    const fmt = (n)=>Number(n).toFixed(8).replace(/0+$/,'').replace(/\.$/,'');
+
+    // ====== NAV + Admin guard ======
+    function navTo(id){
+      if(id==="admin" && !state.isAdmin){ alert("Kein Zugriff (nur Betreiber‑Wallet)."); return; }
+      document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      if(id==="admin"){ refreshAdmin(); loadBtcAddr(); }
+      if(id==="dashboard"){ watchOrders(); }
+    }
+    function secureNavAdmin(){
+      if(!state.isAdmin){ alert("Kein Zugriff (nur Betreiber‑Wallet)."); return; }
+      navTo("admin");
+    }
+
+    // ====== MetaMask banner ======
+    function updateMMBanner(){
+      const hasMM = !!window.ethereum;
+      if(hasMM){
+        $("mmMissing").classList.add("hidden");
+        lockShop(!state.wallet);
+      } else {
+        const url = (location.protocol === 'file:' ? (window.DAPP_PUBLIC_URL || 'https://example.com') : location.href);
+        $("btnOpenApp").href = "metamask://dapp/" + encodeURIComponent(url);
+        $("mmMissing").classList.remove("hidden");
+        lockShop(true);
+      }
+    }
+    function lockShop(lock){
+      document.querySelectorAll("#shop .btn-primary").forEach(b=>{ b.classList.toggle("disabled", lock); });
+      $("lockHint").classList.toggle("hidden", !lock);
+    }
+    updateMMBanner();
+
+    // ====== Connect ======
+    $("btnConnect").onclick = async ()=>{
+      if(!window.ethereum){ updateMMBanner(); return; }
+      try{
+        const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        onLogin(accs[0]);
+      }catch(e){ alert("MetaMask Login fehlgeschlagen: " + (e?.message||e)); }
+    };
+    $("btnDisconnect").onclick = ()=>logout();
+
+    function onLogin(addr){
+      state.wallet = addr;
+      state.isAdmin = (addr?.toLowerCase()===OWNER_WALLET);
+      $("walletStatus").textContent = addr;
+      $("adminTab").classList.toggle("hidden", !state.isAdmin);
+      $("btnConnect").classList.add("hidden");
+      $("btnDisconnect").classList.remove("hidden");
+      $("mmMissing")?.classList.add("hidden");
+      lockShop(false);
+      navTo('dashboard');
+      requireConsentGate();
+      watchOrders();
+    }
+    function logout(){
+      state.wallet=null;
+      state.isAdmin=false;
+      $("walletStatus").textContent="nicht verbunden";
+      $("adminTab").classList.add("hidden");
+      $("btnConnect").classList.remove("hidden");
+      $("btnDisconnect").classList.add("hidden");
+      lockShop(true);
+      $("orders").innerHTML="";
+      navTo('shop');
+    }
+
+    // ====== Pakete (Fallback-Preise) ======
+    let PKGS=[
+      { id:"p1", name:"Starter · 10 MH/s · 24h",  rateMh:10,  days:1,   baseBtc:0.0005 },
+      { id:"p2", name:"Standard · 50 MH/s · 3 Tage", rateMh:50,  days:3,   baseBtc:0.0030 },
+      { id:"p3", name:"Premium · 200 MH/s · 7 Tage", rateMh:200, days:7,   baseBtc:0.0200 }
+    ];
+
+    // ====== Algorithmen laden (NiceHash Public) ======
+    async function loadNicehashAlgos(){
+      const sel = $("inputAlgo");
+      try{
+        sel.innerHTML = `<option value="">Lade…</option>`;
+        const res = await fetch(CONFIG.NICEHASH_PUBLIC_BASE + "/main/api/v2/public/mining/algorithms");
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data?.miningAlgorithms || []);
+        const algos = list.map(x => (typeof x==="string"?x:(x.algorithm||x.algorithmEnum||x.name))).filter(Boolean);
+        sel.innerHTML = `<option value="">Bitte wählen…</option>` + algos.map(a=>`<option value="${a}">${a}</option>`).join("");
+        $("algoHint").textContent = `${algos.length} Algorithmen geladen`;
+      } catch(e){
+        $("algoHint").textContent = "Konnte Algorithmen nicht laden – Fallback aktiv";
+        sel.innerHTML = `
+          <option value="ETCHASH">ETCHASH</option>
+          <option value="KAWPOW">KAWPOW</option>
+          <option value="KHEAVYHASH">KHEAVYHASH">KHEAVYHASH</option>`;
+      }
+    }
+
+    // ====== Shop rendern (mit 15% Marge + 0% Gebühren Hinweis) ======
+    function renderShop(){
+      const wrap=$("shopContent"); wrap.innerHTML="";
+      PKGS.forEach(p=>{
+        const priceInclMargin = p.baseBtc*(1+CONFIG.MARGIN);  // sichtbarer Paketpreis (inkl. 15%)
+        const div=document.createElement("div");
+        div.className="card p-4";
+        div.innerHTML=`
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="font-semibold">${p.name}</div>
+              <div class="text-xs text-green-400">0% Gebühren – Keine zusätzlichen Kosten</div>
+            </div>
+            <div class="chip">Preis ${fmt(priceInclMargin)} BTC</div>
+          </div>
+          <div class="text-xs text-gray-400 mt-1">Zahlung ausschließlich BTC</div>
+          <div class="mt-3"><button class="btn btn-primary">Mit BTC zahlen</button></div>`;
+        div.querySelector("button").onclick = ()=>payBTC(p, priceInclMargin);
+        wrap.appendChild(div);
+      });
+    }
+
+    // ====== Buyer Eingaben ======
+    function readBuyer(){
+      const algo = ($("inputAlgo")?.value || "").toUpperCase();
+      const payout = ($("inputPayout")?.value || "").trim();
+      if(!algo){ alert("Bitte Algorithmus wählen."); return null; }
+      if(!payout){ alert("Bitte Payout‑/Wallet‑Adresse eingeben."); return null; }
+      return { algo, payout };
+    }
+
+    // ====== E-Mail senden (optional) ======
+    async function sendEmail(templateId, payload){
+      try{
+        const vars = Object.assign({ to_email: CONFIG.EMAILJS.NOTIFY_RECEIVER || "" }, payload||{});
+        if(!CONFIG.EMAILJS.PUBLIC_KEY || !CONFIG.EMAILJS.SERVICE_ID || !templateId){
+          console.warn("EmailJS nicht konfiguriert. Überspringe E-Mail.", vars);
+          return { skipped:true };
+        }
+        const res = await emailjs.send(CONFIG.EMAILJS.SERVICE_ID, templateId, vars);
+        return { ok:true, res };
+      }catch(e){
+        console.warn("Email send failed", e);
+        return { ok:false, error: e?.text || e?.message || String(e) };
+      }
+    }
+
+    // ====== BTC Checkout ======
+    async function payBTC(pkg, totalToPay){
+      if(!state.wallet){ alert("Bitte zuerst mit MetaMask verbinden."); return; }
+      const buyer = readBuyer(); if(!buyer) return;
+
+      await loadBtcAddr();
+      if(!BTC_RECEIVE_ADDRESS){ alert("Zahlung derzeit nicht möglich: BTC‑Adresse des Betreibers fehlt."); return; }
+
+      $("btcAddress").innerText = BTC_RECEIVE_ADDRESS;
+      $("btcAmount").innerText = fmt(totalToPay);
+      $("btcLink").href = `bitcoin:${BTC_RECEIVE_ADDRESS}?amount=${fmt(totalToPay)}`;
+      $("btcLink").textContent = `bitcoin:${BTC_RECEIVE_ADDRESS}?amount=${fmt(totalToPay)}`;
+      $("addrHint").innerText = "Adresse geladen. 0% Gebühren – du zahlst nur den Endpreis.";
+      openModal('btc');
+
+      // Bestellung speichern
+      let docRef = null;
+      try{
+        docRef = await db.collection("orders").add({
+          wallet: state.wallet,
+          package: pkg.name,
+          status: "awaiting_funding",
+          algo: buyer.algo,
+          payout: buyer.payout,
+          paymentMethod: "BTC",
+          displayPriceBtc: Number(fmt(totalToPay)),
+          btcAddress: BTC_RECEIVE_ADDRESS,
+          zeroFee: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        // E-Mail: Bestellung eingegangen (falls konfiguriert)
+        await sendEmail(CONFIG.EMAILJS.TEMPLATE_ID_ORDER, {
+          order_id: docRef.id,
+          customer_wallet: state.wallet,
+          package_name: pkg.name,
+          rate_mh: pkg.rateMh,
+          duration_days: pkg.days,
+          algo: buyer.algo,
+          payout: buyer.payout,
+          total_pay_btc: fmt(totalToPay),
+          btc_address: BTC_RECEIVE_ADDRESS
+        });
+        navTo('dashboard');
+      }catch(err){ alert("Fehler beim Anlegen der Bestellung: "+(err.message||err)); }
+    }
+
+    // „Ich habe bezahlt“
+    $("btnIPaid").onclick = async ()=>{
+      try{
+        const snap = await db.collection("orders").where("wallet", "==", state.wallet).orderBy("createdAt", "desc").limit(1).get();
+        if (!snap.empty){
+          const ref = snap.docs[0].ref;
+          const o = snap.docs[0].data();
+          await ref.set({ userMarkedPaid: true }, { merge: true });
+          await sendEmail(CONFIG.EMAILJS.TEMPLATE_ID_PAID, {
+            order_id: ref.id,
+            customer_wallet: o.wallet,
+            package_name: o.package,
+            algo: o.algo,
+            payout: o.payout,
+            total_pay_btc: fmt(o.displayPriceBtc),
+            btc_address: o.btcAddress
+          });
+          alert("Danke! Wir prüfen den Zahlungseingang.");
+        } else {
+          alert("Keine Bestellung gefunden.");
+        }
+      }catch(e){ alert("Konnte Markierung nicht speichern."); }
+    };
+
+    // ====== Dashboard ======
+    let _ordersUnsub = null;
+    function watchOrders(){
+      if(!state.wallet) return;
+      if(_ordersUnsub) { _ordersUnsub(); _ordersUnsub=null; }
+      const ordersEl = $("orders");
+      _ordersUnsub = db.collection("orders").where("wallet","==",state.wallet).orderBy("createdAt","desc")
+        .onSnapshot(snap=>{
+          ordersEl.innerHTML="";
+          let count=0;
+          snap.forEach(d=>{
+            count++;
+            const o=d.data();
+            const row=document.createElement("div");
+            row.className="card p-3";
+            row.innerHTML=`<div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold">${o.package}</div>
+                <div class="text-xs text-gray-400">Status: ${o.status} • Gesamt: ${o.displayPriceBtc} BTC</div>
+                <div class="text-xs text-green-400">0% Gebühren</div>
+                <div class="text-xs text-gray-500">Algo: ${o.algo||"-"} • Payout: <span class="mono">${(o.payout||"").slice(0,18)}…</span></div>
+              </div>
+              <div class="text-xs mono">${(o.btcAddress||"").slice(0,12)}…</div>
+            </div>`;
+            ordersEl.appendChild(row);
+          });
+          $("sumOrders").textContent = count;
+        });
+    }
+
+    // ====== Admin (guarded) ======
+    async function refreshAdmin(){
+      const cont=$("adminOrders"); cont.innerHTML="";
+      if(!state.isAdmin){ cont.innerHTML='<div class="text-sm text-gray-500">Kein Zugriff (nicht Admin).</div>'; return; }
+      const snap=await db.collection("orders").orderBy("createdAt","desc").limit(200).get();
+      let total=0, awaiting=0, sumBtc=0;
+      const rows = snap.docs.map(d=>{
+        const o=d.data();
+        total++;
+        if(o.status==='awaiting_funding') awaiting++;
+        if(typeof o.displayPriceBtc==='number') sumBtc += o.displayPriceBtc;
+        return `<tr>
+          <td class="px-2 py-1 mono text-xs">${d.id}</td>
+          <td class="px-2 py-1 mono text-xs">${(o.wallet||"").slice(0,8)}…</td>
+          <td class="px-2 py-1">${o.package}</td>
+          <td class="px-2 py-1">${o.status}</td>
+          <td class="px-2 py-1 text-xs">Total: ${o.displayPriceBtc} BTC • 0% Gebühren<br/>Algo: ${o.algo||'-'} • Payout: ${(o.payout||'').slice(0,12)}…</td>
+        </tr>`;
+      }).join("");
+      $("kpiOrders").textContent = String(total);
+      $("kpiSumBtc").textContent = (sumBtc||0).toFixed(8).replace(/0+$/,'').replace(/\.$/,'') || '0';
+      $("kpiAwait").textContent = String(awaiting);
+      cont.innerHTML = `<table class="min-w-full">
+        <thead class="text-xs text-gray-400"><tr>
+          <th class="text-left px-2 py-1">ID</th><th class="text-left px-2 py-1">Wallet</th><th class="text-left px-2 py-1">Paket</th>
+          <th class="text-left px-2 py-1">Status</th><th class="text-left px-2 py-1">Details</th>
+        </tr></thead>
+        <tbody>${rows || '<tr><td class="px-2 py-3 text-gray-500" colspan="5">Keine Bestellungen.</td></tr>'}</tbody>
+      </table>`;
+      // preload settings
+      const addr = await loadBtcAddr(); $("adminBtcAddr").value = addr || "";
+    }
+    async function adminUpdate(newStatus){
+      if(!state.isAdmin) return alert("Nur Admin.");
+      const id = $("admOrderId").value.trim(); if(!id) return alert("Order‑ID eingeben.");
+      try{ await db.collection("orders").doc(id).set({ status:newStatus }, { merge:true }); alert("Status auf '"+newStatus+"' gesetzt."); refreshAdmin(); }
+      catch(e){ alert("Fehler: "+(e.message||e)); }
+    }
+
+    // ====== Settings: BTC address ======
+    async function loadBtcAddr(){
+      try{
+        const doc = await db.collection("_settings").doc("general").get();
+        BTC_RECEIVE_ADDRESS = doc.exists ? (doc.data().btcAddress||"") : "";
+        return BTC_RECEIVE_ADDRESS;
+      }catch(e){ console.warn("loadBtcAddr:", e); return ""; }
+    }
+    async function saveBtcAddr(){
+      if(!state.isAdmin) return alert("Nur Admin.");
+      const v = $("adminBtcAddr").value.trim();
+      if(!/^([13]|bc1)[a-zA-HJ-NP-Z0-9]{25,}$/.test(v)){ if(!confirm("Adresse konnte nicht validiert werden. Trotzdem speichern?")) return; }
+      BTC_RECEIVE_ADDRESS = v;
+      try{ await db.collection("_settings").doc("general").set({ btcAddress: v }, { merge:true }); alert("Gespeichert."); }
+      catch(e){ alert("Fehler beim Speichern: "+(e.message||e)); }
+    }
+
+    // ====== Modals helpers ======
+    function openModal(which){ document.getElementById('modal-'+which).classList.add('show'); }
+    function closeModal(which){ document.getElementById('modal-'+which).classList.remove('show'); }
+    function backdropClose(ev){ if(ev.target.classList.contains('modal')){ ev.target.classList.remove('show'); } }
+    function copyAddr(){
+      const text = $("btcAddress").innerText.trim();
+      navigator.clipboard?.writeText(text).then(()=>{$("addrHint").innerText="Adresse kopiert."}).catch(()=>{$("addrHint").innerText="Konnte nicht kopieren."});
+    }
+
+    // ====== Consent Gate ======
+    const CONSENT_KEY = "hashcore_consent_v1";
+    function requireConsentGate(){
+      try {
+        const ok = localStorage.getItem(CONSENT_KEY) === "1";
+        if(!ok){
+          lockShop(true);
+          openModal('consent');
+          const a = $('chkAgb'), d = $('chkDse'), btn = $('btnConsentAccept');
+          function sync(){ const ready = a.checked && d.checked; btn.disabled = !ready; btn.classList.toggle('disabled', !ready); }
+          a.onchange = d.onchange = sync; sync();
+        }
+      } catch(e){}
+    }
+    function acceptConsent(){
+      try { localStorage.setItem(CONSENT_KEY, "1"); } catch(e){}
+      lockShop(false);
+      closeModal('consent');
+    }
+
+    // ====== Init ======
+    (async () => {
+      renderShop();
+      updateMMBanner();
+      requireConsentGate();
+      await loadNicehashAlgos();
+    })();
+  </script>
+
+<!-- Über uns Modal -->
+<div id="ueberUnsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-gray-900 rounded-lg p-6 max-w-2xl mx-4">
+    <h2 class="text-xl font-bold mb-4">Über uns</h2>
+    <p class="mb-2">
+      <strong>Über Hashcore</strong><br>
+      Hashcore wurde 2025 mit der Vision gegründet, Hashpower für jeden zugänglich zu machen – egal ob Einsteiger oder Profi.
+      Unser Ansatz ist einfach: Wir bündeln Rechenleistung von internationalen Partnern und stellen sie transparent,
+      unkompliziert und ohne zusätzliche Gebühren bereit. Dabei setzen wir auf moderne Schnittstellen, direkte Wallet-Zahlungen
+      in BTC und eine intuitive Oberfläche, die auch ohne technisches Vorwissen nutzbar ist.
+    </p>
+    <p class="mb-2">
+      <strong>Unsere Mission</strong><br>
+      Wir glauben, dass Mining nicht nur großen Unternehmen vorbehalten sein sollte. Hashcore versteht sich als Brücke zwischen
+      der Welt der professionellen Rechenzentren und privaten Nutzern. Jeder soll die Möglichkeit haben, Hashpower flexibel und
+      ohne langfristige Verträge einzusetzen.
+    </p>
+    <p class="mb-2">
+      <strong>Transparenz & Vertrauen</strong><br>
+      – Keine versteckten Gebühren<br>
+      – Zahlung direkt an deine eigene Wallet<br>
+      – Klar definierte Pakete mit voller Kostenkontrolle
+    </p>
+    <p class="mb-4">
+      <strong>Zukunft</strong><br>
+      Wir arbeiten kontinuierlich daran, neue Algorithmen, bessere Konditionen und zusätzliche Features bereitzustellen.
+      Unser Ziel ist es, Hashpower-Miete so einfach wie einen Online-Shop-Kauf zu gestalten.
+    </p>
+    <button onclick="document.getElementById('ueberUnsModal').classList.add('hidden')" class="btn btn-primary">Schließen</button>
+  </div>
+</div>
+
+
+  <div id="modal-about" class="modal" onclick="backdropClose(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between mb-2">
+        <h2 class="text-lg font-bold text-blue-300">Über uns</h2>
+        <button class="modal-close" onclick="closeModal('about')">✕</button>
+      </div>
+      <div class="text-sm leading-6 text-gray-300 space-y-4">
+        <p><strong>Über Hashcore</strong><br>
+        Hashcore wurde 2025 mit der Vision gegründet, Hashpower für jeden zugänglich zu machen – von Einsteigerinnen und Einsteigern bis zu Profis.
+        Wir bündeln Rechenleistung von internationalen Partnern und stellen sie transparent, unkompliziert und ohne zusätzliche Gebühren bereit.
+        Unsere Oberfläche ist bewusst schlank gehalten, damit du ohne Vorwissen starten kannst.</p>
+
+        <p><strong>Unsere Mission</strong><br>
+        Wir glauben, dass Mining nicht nur großen Unternehmen vorbehalten sein sollte. Hashcore versteht sich als Brücke zwischen
+        professionellen Rechenzentren und privaten Nutzerinnen und Nutzern. Du wählst ein Paket, gibst deine Payout‑Adresse an –
+        den Rest erledigen wir über verlässliche Drittanbieter‑Infrastruktur.</p>
+
+        <p><strong>Transparenz &amp; Kontrolle</strong><br>
+        • 0% Gebühren – keine versteckten Kosten<br>
+        • Zahlung in BTC, direkte Angabe deiner Wallet/Pool‑Adresse<br>
+        • Klare Laufzeiten &amp; Pakete mit voller Kostenkontrolle<br>
+        • Keine Rendite‑ oder Ertragsversprechen – Hashpower ist eine technische Dienstleistung</p>
+
+        <p><strong>Sicherheit</strong><br>
+        Wir setzen auf bewährte Partner und aktualisieren unsere Integrationen regelmäßig. Gleichzeitig bleibt dein Setup flexibel:
+        Du kannst jederzeit andere Payout‑Adressen oder Pools verwenden, soweit der jeweilige Algorithmus dies zulässt.</p>
+
+        <p><strong>Ausblick</strong><br>
+        Wir arbeiten daran, weitere Algorithmen, bessere Konditionen und zusätzliche Komfort‑Features einzubinden –
+        mit dem Ziel, Hashpower‑Miete so einfach und verlässlich wie einen normalen Online‑Kauf zu machen.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
