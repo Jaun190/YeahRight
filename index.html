@@ -1,745 +1,171 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hashcore</title>
+  <meta charset="UTF-8">
+  <title>Hashcore SaaS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root { color-scheme: dark; }
-    body { background:#0b1220; color:#e5e7eb; }
-    .card{background:#0b0f1a;border:1px solid #1f2937;border-radius:1rem}
-    .btn{padding:.75rem 1rem;border-radius:.9rem;cursor:pointer}
-    .btn-sm{padding:.45rem .7rem;font-size:.8rem;border-radius:.6rem}
-    .btn-primary{background:#3b82f6;color:#0b1220}
-    .btn-primary:hover{background:#2563eb}
-    .btn-ghost{background:#0f172a;border:1px solid #253046;color:#e5e7eb}
-    .btn-ghost:hover{background:#111827}
-    .chip{display:inline-flex;align-items:center;gap:.5rem;padding:.25rem .6rem;border-radius:9999px;border:1px solid #334155;background:#0f172a;color:#a3a3a3;font-size:.75rem}
-    .modal{display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100; align-items:center; justify-content:center;}
-    .modal.show{display:flex}
-    .modal-card{ background:#0b0f1a; border:1px solid #1f2937; border-radius:1rem; max-width:800px; width:92%; max-height:80vh; overflow:auto; padding:1.25rem; }
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace}
-    .disabled{opacity:.5; pointer-events:none}
+    .modal { display:none; }
+    .modal.show { display:flex; }
   </style>
 </head>
-<body>
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-gray-900/80 backdrop-blur border-b border-gray-800">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="h-9 w-9 rounded-xl bg-blue-500/20 grid place-items-center">⚡</div>
-        <div class="text-xl font-extrabold tracking-tight">Hash<span class="text-blue-400">core</span></div>
-      </div>
-      <nav class="flex items-center gap-2">
-        <button class="btn btn-ghost" onclick="navTo('shop')">Shop</button>
-        <button class="btn btn-ghost" onclick="navTo('dashboard')">Dashboard</button>
-        <button id="adminTab" class="btn btn-ghost hidden" onclick="secureNavAdmin()">Admin</button>
-        <button id="btnConnect" class="btn btn-primary btn-sm ml-2">Mit MetaMask verbinden</button>
-        <button id="btnDisconnect" class="btn btn-ghost btn-sm ml-2 hidden">Trennen</button>
-      </nav>
-    </div>
+<body class="bg-gray-950 text-gray-100 flex flex-col min-h-screen">
+
+  <!-- HEADER -->
+  <header class="bg-gray-900 p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">⚡ Hash<span class="text-cyan-400">core</span></h1>
+    <button id="btnConnect" class="bg-cyan-500 px-4 py-2 rounded-lg">Mit MetaMask verbinden</button>
+    <button id="btnDisconnect" class="hidden bg-red-500 px-4 py-2 rounded-lg">Trennen</button>
   </header>
 
-  <!-- MetaMask Banner (visible by default) -->
-  <div id="mmMissing" class="max-w-6xl mx-auto mt-4 card p-4 border border-red-800 bg-red-900/30">
-    <div class="text-lg font-semibold text-red-300">MetaMask nicht gefunden</div>
-    <p class="text-sm text-red-200 mt-1">
-      Öffne die Seite im integrierten <span class="font-semibold">MetaMask‑Browser</span> (Mobile) oder installiere die Extension (Desktop).
-    </p>
-    <div class="mt-3 flex flex-col sm:flex-row gap-2">
-      <a id="btnOpenApp" class="btn btn-primary w-full sm:w-auto" href="#">In MetaMask‑App öffnen</a>
-      <a id="btnInstallMM" class="btn btn-ghost w-full sm:w-auto" target="_blank" rel="noopener"
-         href="https://metamask.io/download/">MetaMask installieren</a>
-    </div>
-  </div>
-
-  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
-
-    <!-- Wallet Info -->
-    <div class="card p-4 flex items-center gap-3">
-      <div class="text-sm text-gray-400">Wallet</div>
-      <div class="mono text-green-400 text-xs" id="walletStatus">nicht verbunden</div>
-      <div class="ml-auto text-xs text-gray-400" id="chainStatus"></div>
-    </div>
-
-    <!-- SHOP: Konfigurator -->
-    <section id="shop" class="tab">
-      <div class="grid md:grid-cols-3 gap-4 mt-1">
-        <div class="md:col-span-2 card p-5">
-          <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold text-blue-300">Hashpower‑Konfigurator</h2>
-            <div class="chip">Zahlung: BTC • 0% Gebühren</div>
-          </div>
-
-          <div class="grid sm:grid-cols-3 gap-3 mt-4">
-            <div class="sm:col-span-1">
-              <label class="text-xs text-gray-400" for="selAlgo">Algorithmus</label>
-              <select id="selAlgo" class="w-full bg-gray-900 border border-gray-700 rounded p-2">
-                <option value="SHA256">SHA-256</option>
-                <option value="SCRYPT">Scrypt</option>
-                <option value="ETCHASH">Etchash (ETC)</option>
-                <option value="KAWPOW">KawPow (RVN)</option>
-                <option value="KHEAVYHASH">kHeavyHash (KAS)</option>
-              </select>
-              <p class="text-xs text-gray-500 mt-1">Preise pro Einheit und Tag werden im Admin festgelegt.</p>
-            </div>
-            <div class="sm:col-span-1">
-              <label class="text-xs text-gray-400" for="inpRate">Hashrate</label>
-              <div class="flex gap-2">
-                <input id="inpRate" type="number" min="0.001" step="0.001"
-                       class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="z. B. 1.5">
-                <span id="unitLabel" class="px-3 grid place-items-center text-xs text-gray-400 border border-gray-700 rounded">TH/s</span>
-              </div>
-            </div>
-            <div class="sm:col-span-1">
-              <label class="text-xs text-gray-400" for="selDays">Laufzeit</label>
-              <select id="selDays" class="w-full bg-gray-900 border border-gray-700 rounded p-2">
-                <option value="1">1 Tag</option>
-                <option value="3">3 Tage</option>
-                <option value="7" selected>7 Tage</option>
-                <option value="14">14 Tage</option>
-                <option value="30">30 Tage</option>
-              </select>
-            </div>
-
-            <div class="sm:col-span-3">
-              <label class="text-xs text-gray-400" for="inputMiningAddr">Deine Mining‑Wallet‑Adresse (Pflicht)</label>
-              <input id="inputMiningAddr" class="w-full bg-gray-900 border border-gray-700 rounded p-2" placeholder="BTC‑Wallet / Pool‑User / Coin‑Wallet">
-              <p class="text-xs text-gray-500 mt-1">An diese Adresse/Pool fließen die Mining‑Rewards während der Mietdauer.</p>
-            </div>
-          </div>
-
-          <div class="card p-4 mt-4">
-            <div class="flex flex-wrap items-end gap-3">
-              <div>
-                <div class="text-xs text-gray-400">Berechneter Endpreis (inkl. Marge)</div>
-                <div id="calcTotal" class="text-2xl font-bold text-blue-300 mono">– BTC</div>
-                <div id="calcDetail" class="text-xs text-gray-500 mt-1">Bitte Eingaben prüfen.</div>
-              </div>
-              <div class="ml-auto">
-                <button id="btnBuyConfig" class="btn btn-primary disabled" disabled>Mit BTC zahlen</button>
-              </div>
-            </div>
-          </div>
-
-          <p class="text-xs text-gray-400 mt-3">
-            Wir vermitteln ausschließlich Hashpower. Keine Ertragsgarantie. Rewards fließen an die angegebene Mining‑Adresse.
-            <a class="text-blue-300 underline" href="javascript:void(0)" onclick="openModal('agb')">AGB</a> · 
-            <a class="text-blue-300 underline" href="javascript:void(0)" onclick="openModal('dse')">Datenschutz</a> · 
-            <a class="text-blue-300 underline" href="javascript:void(0)" onclick="openModal('impressum')">Impressum</a> · 
-            <a class="text-blue-300 underline" href="javascript:void(0)" onclick="openModal('about')">Über uns</a>
-          </p>
+  <!-- MAIN -->
+  <main class="flex-1 max-w-4xl mx-auto p-6 space-y-6">
+    
+    <!-- Abo-Pläne -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Abo-Pläne</h2>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="bg-gray-800 p-4 rounded-xl">
+          <h3 class="text-lg font-bold">Free</h3>
+          <p class="text-sm text-gray-400">Basis-Dashboard</p>
+          <p class="mt-2 font-bold">0 ETH</p>
+          <button disabled class="bg-gray-600 w-full py-2 mt-2 rounded">Aktiv</button>
         </div>
-
-        <div class="card p-5">
-          <h3 class="font-semibold text-blue-300">Zahlung</h3>
-          <div class="mt-2 text-sm space-y-1">
-            <div><span class="text-gray-400">Nur BTC:</span> Zahlung ausschließlich an deine <strong>BTC‑Adresse</strong>.</div>
-            <div><span class="text-gray-400">MetaMask Pflicht:</span> Ohne MetaMask kein Zugriff auf Kauf/Tracking.</div>
-            <div class="text-green-400 font-medium">0% Gebühren – Keine zusätzlichen Kosten</div>
-          </div>
+        <div class="bg-gray-800 p-4 rounded-xl">
+          <h3 class="text-lg font-bold">Pro</h3>
+          <p class="text-sm text-gray-400">Erweitertes Dashboard + Analytics</p>
+          <p class="mt-2 font-bold">0.01 ETH / Monat</p>
+          <button onclick="buyPlan(0.01)" class="bg-cyan-500 w-full py-2 mt-2 rounded">Jetzt kaufen</button>
+        </div>
+        <div class="bg-gray-800 p-4 rounded-xl">
+          <h3 class="text-lg font-bold">VIP</h3>
+          <p class="text-sm text-gray-400">Alle Features + Support</p>
+          <p class="mt-2 font-bold">0.05 ETH / Monat</p>
+          <button onclick="buyPlan(0.05)" class="bg-yellow-500 w-full py-2 mt-2 rounded">Jetzt kaufen</button>
         </div>
       </div>
     </section>
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="tab hidden">
-      <div class="grid md:grid-cols-3 gap-4">
-        <div class="md:col-span-2 card p-5">
-          <h2 class="text-lg font-bold text-blue-300">Meine Bestellungen</h2>
-          <div id="orders" class="mt-3 space-y-2"></div>
-        </div>
-        <div class="card p-5">
-          <h3 class="font-semibold text-blue-300">Übersicht</h3>
-          <div class="mt-2 text-sm">
-            <div class="flex justify-between"><span class="text-gray-400">Bestellungen</span><span class="mono" id="sumOrders">0</span></div>
-          </div>
-        </div>
-      </div>
+    <!-- Dashboard -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Dashboard</h2>
+      <canvas id="chart" class="bg-gray-800 p-4 rounded-xl"></canvas>
     </section>
 
-    <!-- ADMIN -->
-    <section id="admin" class="tab hidden">
-      <div class="card p-5">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-blue-300">Admin</h2>
-          <div class="chip">Nur Betreiber‑Wallet</div>
-        </div>
-
-        <!-- Admin hint with links -->
-        <div class="p-4 bg-yellow-900/50 border border-yellow-700 rounded-lg text-yellow-200 shadow mb-4 mt-3">
-          ⚡ <strong>Hinweis für Admin:</strong> Bitte Hashpower nach Zahlungseingang <u>manuell</u> buchen:<br><br>
-          <a href="https://www.nicehash.com/marketplace" target="_blank" class="px-3 py-1 bg-yellow-700 rounded hover:bg-yellow-600 text-white">NiceHash</a>
-          <a href="https://www.miningrigrentals.com/" target="_blank" class="ml-2 px-3 py-1 bg-yellow-700 rounded hover:bg-yellow-600 text-white">MiningRigRentals</a>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-4 mt-3">
-          <div class="card p-4 md:col-span-2">
-            <h3 class="font-semibold mb-2">Übersicht (KPIs)</h3>
-            <div id="adminKpis" class="grid sm:grid-cols-3 gap-3 text-sm">
-              <div class="card p-3"><div class="text-gray-400 text-xs">Bestellungen gesamt</div><div id="kpiOrders" class="mono text-lg">–</div></div>
-              <div class="card p-3"><div class="text-gray-400 text-xs">Summe Zahlbetrag (BTC)</div><div id="kpiSumBtc" class="mono text-lg">–</div></div>
-              <div class="card p-3"><div class="text-gray-400 text-xs">Davon „awaiting_funding“</div><div id="kpiAwait" class="mono text-lg">–</div></div>
-            </div>
-          </div>
-
-          <div class="card p-4">
-            <h3 class="font-semibold mb-2">Bestellungen</h3>
-            <div id="adminOrders" class="overflow-x-auto text-sm"></div>
-          </div>
-          <div class="card p-4">
-            <h3 class="font-semibold mb-2">Einstellungen</h3>
-            <div class="space-y-3">
-              <div>
-                <label class="text-xs text-gray-400">BTC‑Zahlungsadresse (wird Kunden angezeigt)</label>
-                <div class="flex gap-2">
-                  <input id="adminBtcAddr" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="bc1...">
-                  <button class="btn btn-ghost" onclick="saveBtcAddr()">Speichern</button>
-                </div>
-                <p class="text-xs text-gray-500 mt-1">Hinweis: Ohne BTC‑Adresse können Kunden nicht zahlen.</p>
-              </div>
-
-              <div>
-                <label class="text-xs text-gray-400 mt-3 block">Marge (in %)</label>
-                <div class="flex gap-2">
-                  <input id="adminMarginPct" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="z. B. 18">
-                  <button class="btn btn-ghost" onclick="saveMargin()">Speichern</button>
-                </div>
-                <p class="text-xs text-gray-500 mt-1">Endpreis = Basis × Hashrate × Tage × (1 + Marge)</p>
-              </div>
-
-              <div class="mt-4">
-                <h4 class="font-semibold mb-1">Basispreise pro Einheit/Tag (BTC)</h4>
-                <div class="grid sm:grid-cols-2 gap-3">
-                  <div>
-                    <label class="text-xs text-gray-400">SHA‑256 (pro TH/s/Tag)</label>
-                    <input id="pr_SHA256" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="z. B. 0.00002">
-                  </div>
-                  <div>
-                    <label class="text-xs text-gray-400">Scrypt (pro MH/s/Tag)</label>
-                    <input id="pr_SCRYPT" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="z. B. 0.000001">
-                  </div>
-                  <div>
-                    <label class="text-xs text-gray-400">Etchash (pro MH/s/Tag)</label>
-                    <input id="pr_ETCHASH" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="z. B. 0.000003">
-                  </div>
-                  <div>
-                    <label class="text-xs text-gray-400">KawPow (pro MH/s/Tag)</label>
-                    <input id="pr_KAWPOW" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="z. B. 0.000004">
-                  </div>
-                  <div>
-                    <label class="text-xs text-gray-400">kHeavyHash (pro GH/s/Tag)</label>
-                    <input id="pr_KHEAVYHASH" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="z. B. 0.00002">
-                  </div>
-                </div>
-                <div class="flex gap-2 mt-2">
-                  <button class="btn btn-ghost" onclick="savePricing()">Basispreise speichern</button>
-                </div>
-                <p class="text-xs text-gray-500 mt-1">Diese Werte werden für die Preisberechnung im Konfigurator verwendet.</p>
-              </div>
-
-              <div>
-                <div class="text-xs text-gray-400 mb-1">Order‑ID (für Aktionen)</div>
-                <input id="admOrderId" class="w-full bg-gray-900 border border-gray-700 rounded p-2 mono" placeholder="Firestore‑Dokument‑ID">
-                <div class="grid grid-cols-3 gap-2 mt-2">
-                  <button class="btn btn-primary w-full" onclick="adminUpdate('active')">Aktivieren</button>
-                  <button class="btn btn-ghost w-full" onclick="adminUpdate('expired')">Beenden</button>
-                  <button class="btn btn-ghost w-full" onclick="adminUpdate('cancelled')">Stornieren</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Pool Stats -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Mining Pool Statistik (Demo)</h2>
+      <p id="poolStats" class="text-gray-400">Noch keine Daten geladen...</p>
+      <button onclick="loadPoolStats()" class="bg-cyan-600 px-4 py-2 rounded mt-2">Daten laden</button>
     </section>
-
   </main>
 
-  <!-- Footer -->
-  <footer class="mt-10 border-t border-gray-800">
-    <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-400">
-      <div class="order-2 sm:order-1">© 2025 Hashcore</div>
-      <div class="order-1 sm:order-2 flex items-center gap-4">
-        <a href="javascript:void(0)" onclick="openModal('agb')" class="hover:text-gray-200">AGB</a>
-        <a href="javascript:void(0)" onclick="openModal('dse')" class="hover:text-gray-200">Datenschutz</a>
-        <a href="javascript:void(0)" onclick="openModal('impressum')" class="hover:text-gray-200">Impressum</a>
-        <a href="javascript:void(0)" onclick="openModal('about')" class="hover:text-gray-200">Über uns</a>
-      </div>
-    </div>
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 p-4 flex justify-between text-sm">
+    <button onclick="openModal('agbModal')">AGB</button>
+    <button onclick="openModal('datenschutzModal')">Datenschutz</button>
+    <button onclick="openModal('impressumModal')">Impressum</button>
   </footer>
 
-  <!-- BTC Modal -->
-  <div id="modal-btc" class="modal" onclick="backdropClose(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div class="flex items-start justify-between mb-2">
-        <h3 class="text-xl font-bold">BTC Zahlung</h3>
-        <button class="btn btn-ghost btn-sm" onclick="closeModal('btc')">✕</button>
-      </div>
-      <p class="text-sm text-gray-300">Sende den Betrag an diese BTC‑Adresse:</p>
-      <pre id="btcAddress" class="mt-3 p-3 bg-black/40 border border-gray-700 rounded text-yellow-300 break-all mono"></pre>
-      <div class="text-xs text-gray-400 mt-1">Gesamtbetrag: <span id="btcAmount" class="mono text-blue-300"></span> BTC</div>
-      <div class="text-xs text-green-400 mt-1">0% Gebühren – Keine zusätzlichen Kosten</div>
-      <div class="text-xs text-gray-400 mt-1">Zahlungs‑Link: <a id="btcLink" class="text-blue-300" target="_blank" rel="noopener">bitcoin:</a></div>
-      <div class="mt-4 flex gap-2">
-        <button class="btn btn-ghost" onclick="copyAddr()">Adresse kopieren</button>
-        <button class="btn btn-primary" id="btnIPaid">Ich habe bezahlt</button>
-      </div>
-      <p id="addrHint" class="text-xs text-gray-500 mt-3"></p>
+  <!-- MODALS -->
+  <div id="agbModal" class="modal fixed inset-0 bg-black/70 items-center justify-center">
+    <div class="bg-gray-800 p-6 rounded-xl max-w-lg">
+      <h3 class="text-lg font-bold mb-2">AGB</h3>
+      <p class="text-sm text-gray-300">Dies sind die allgemeinen Geschäftsbedingungen von Hashcore SaaS...</p>
+      <button onclick="closeModal('agbModal')" class="mt-4 bg-cyan-500 px-3 py-1 rounded">Schließen</button>
     </div>
   </div>
 
-  <!-- AGB -->
-  <div id="modal-agb" class="modal" onclick="backdropClose(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div class="flex items-start justify-between mb-2">
-        <h2 class="text-lg font-bold text-blue-300">Allgemeine Geschäftsbedingungen (AGB)</h2>
-        <button class="btn btn-ghost btn-sm" onclick="closeModal('agb')">✕</button>
-      </div>
-      <div class="text-sm leading-6 text-gray-300 space-y-3">
-        <p><strong>1. Geltungsbereich</strong><br>
-        Diese AGB regeln das Vertragsverhältnis zwischen <strong>Hashcore</strong>, 
-        <strong>Dorfstrasse 233, 3433 Schwanden i.E., Schweiz</strong> und den Nutzern.</p>
-        <p><strong>2. Leistungsbeschreibung</strong><br>
-        Der Anbieter stellt zeitlich befristete Rechenleistung („Hashpower“) bereit. Die Leistung kann über <strong>Drittanbieter</strong>
-        bezogen und dem Nutzer zugeordnet werden. Der Anbieter verkauft keine Kryptowährungen und bietet keine Anlageprodukte an.</p>
-        <p><strong>3. Bestellung &amp; Bezahlung</strong><br>
-        Bestellungen erfolgen ausschließlich gegen Vorauszahlung in Bitcoin (BTC) an die im Bestellprozess angegebene Adresse.
-        Erst nach Zahlungseingang wird die Bestellung ausgeführt.</p>
-        <p><strong>4. Pflichten des Nutzers</strong><br>
-        Der Nutzer ist verantwortlich für die korrekte Angabe seiner Wallet-/Payout‑Adresse. Fehlerhafte Angaben gehen zu Lasten des Nutzers.
-        Eine Rückerstattung nach Ausführung der Bestellung ist ausgeschlossen.</p>
-        <p><strong>5. Haftungsausschluss</strong><br>
-        Es besteht keine Garantie auf bestimmte Mining‑Erträge. Netzwerk‑/Pool‑/Anbieter‑Störungen können die Leistung beeinflussen.</p>
-        <p><strong>6. Recht &amp; Gerichtsstand</strong><br>
-        Es gilt das Recht der Schweiz. Gerichtsstand ist <strong>Schwanden i.E.</strong>.</p>
-        <p class="text-xs text-gray-500">Stand: 2025</p>
-      </div>
+  <div id="datenschutzModal" class="modal fixed inset-0 bg-black/70 items-center justify-center">
+    <div class="bg-gray-800 p-6 rounded-xl max-w-lg">
+      <h3 class="text-lg font-bold mb-2">Datenschutz</h3>
+      <p class="text-sm text-gray-300">Wir speichern keine sensiblen Daten. MetaMask-Login ist clientseitig...</p>
+      <button onclick="closeModal('datenschutzModal')" class="mt-4 bg-cyan-500 px-3 py-1 rounded">Schließen</button>
     </div>
   </div>
 
-  <!-- DSE -->
-  <div id="modal-dse" class="modal" onclick="backdropClose(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div class="flex items-start justify-between mb-2">
-        <h2 class="text-lg font-bold text-blue-300">Datenschutzerklärung</h2>
-        <button class="btn btn-ghost btn-sm" onclick="closeModal('dse')">✕</button>
-      </div>
-      <div class="text-sm leading-6 text-gray-300 space-y-3">
-        <p>Wir, <strong>Hashcore</strong>, nehmen den Schutz Ihrer Daten ernst. Personenbezogene Daten werden gemäß geltendem Recht
-        und dieser Erklärung verarbeitet.</p>
-        <p><strong>1. Verantwortlicher</strong><br>
-        Hashcore, Dorfstrasse 233, 3433 Schwanden i.E., Schweiz</p>
-        <p><strong>2. Verarbeitete Daten</strong><br>
-        Wallet‑Adressen, Bestell‑/Transaktionsdaten sowie technisch notwendige Informationen (z. B. Server‑Logs).</p>
-        <p><strong>3. Zwecke &amp; Rechtsgrundlagen</strong><br>
-        Vertragserfüllung, Support, Sicherheit und gesetzliche Pflichten.</p>
-        <p><strong>4. Weitergabe an Dritte</strong><br>
-        Nur soweit zur Leistungserbringung (z. B. Einbindung von Drittanbietern für Rechenleistung) oder gesetzlich erforderlich.</p>
-        <p><strong>5. Rechte der Nutzer</strong><br>
-        Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung. Anfragen an die im Impressum genannten Kontaktdaten.</p>
-        <p class="text-xs text-gray-500">Stand: 2025</p>
-      </div>
+  <div id="impressumModal" class="modal fixed inset-0 bg-black/70 items-center justify-center">
+    <div class="bg-gray-800 p-6 rounded-xl max-w-lg">
+      <h3 class="text-lg font-bold mb-2">Impressum</h3>
+      <p class="text-sm text-gray-300">
+        Hashcore<br>
+        Dorfstrasse 233<br>
+        Schwanden i.E<br>
+        Support: <a href="mailto:jaun190@gmail.com" class="text-cyan-400">jaun190@gmail.com</a>
+      </p>
+      <button onclick="closeModal('impressumModal')" class="mt-4 bg-cyan-500 px-3 py-1 rounded">Schließen</button>
     </div>
   </div>
 
-  <!-- Impressum -->
-  <div id="modal-impressum" class="modal" onclick="backdropClose(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div class="flex items-start justify-between mb-2">
-        <h2 class="text-lg font-bold text-blue-300">Impressum</h2>
-        <button class="btn btn-ghost btn-sm" onclick="closeModal('impressum')">✕</button>
-      </div>
-      <div class="text-sm leading-6 text-gray-300">
-        Hashcore<br/>Dorfstrasse 233<br/>3433 Schwanden i.E.<br/>Schweiz
-        <div class="text-xs text-gray-500 mt-3">© 2025 Hashcore</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Über uns -->
-  <div id="modal-about" class="modal" onclick="backdropClose(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div class="flex items-start justify-between mb-2">
-        <h2 class="text-lg font-bold text-blue-300">Über uns</h2>
-        <button class="btn btn-ghost btn-sm" onclick="closeModal('about')">✕</button>
-      </div>
-      <div class="text-sm leading-6 text-gray-300 space-y-4">
-        <p><strong>Über Hashcore</strong><br>
-        Hashcore wurde 2025 mit der Vision gegründet, Hashpower für jeden zugänglich zu machen – von Einsteigerinnen und Einsteigern bis zu Profis.
-        Wir bündeln Rechenleistung von internationalen Partnern und stellen sie transparent, unkompliziert und ohne zusätzliche Gebühren bereit.</p>
-        <p><strong>Unsere Mission</strong><br>
-        Brücke zwischen professionellen Rechenzentren und privaten Nutzerinnen und Nutzern: Du wählst eine Konfiguration, gibst deine Mining‑Adresse an –
-        den Rest erledigen wir über verlässliche Drittanbieter‑Infrastruktur.</p>
-        <p><strong>Transparenz &amp; Kontrolle</strong><br>
-        • 0% Gebühren – keine versteckten Kosten<br>
-        • Zahlung in BTC, direkte Angabe deiner Wallet/Pool‑Adresse<br>
-        • Klare Laufzeiten &amp; volle Kostenkontrolle<br>
-        • Keine Rendite‑ oder Ertragsversprechen – Hashpower ist eine technische Dienstleistung</p>
-        <p><strong>Ausblick</strong><br>
-        Weitere Algorithmen, bessere Konditionen und Komfort‑Features – Ziel: Hashpower‑Miete so einfach wie ein normaler Online‑Kauf.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Consent Modal -->
-  <div id="modal-consent" class="modal" onclick="backdropClose(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div class="flex items-start justify-between mb-2">
-        <h2 class="text-lg font-bold text-blue-300">Rechtliches bestätigen</h2>
-        <button class="btn btn-ghost btn-sm" onclick="closeModal('consent')">✕</button>
-      </div>
-      <div class="text-sm leading-6 text-gray-300 space-y-4">
-        <label class="flex items-start gap-2">
-          <input id="chkAgb" type="checkbox" class="mt-1">
-          <span>Ich habe die <a href="javascript:void(0)" onclick="openModal('agb')" class="text-blue-300 underline">AGB</a> gelesen und akzeptiere sie.</span>
-        </label>
-        <label class="flex items-start gap-2">
-          <input id="chkDse" type="checkbox" class="mt-1">
-          <span>Ich habe die <a href="javascript:void(0)" onclick="openModal('dse')" class="text-blue-300 underline">Datenschutzerklärung</a> gelesen und akzeptiere sie.</span>
-        </label>
-        <div class="flex justify-end gap-2 pt-2">
-          <button class="btn btn-ghost" onclick="closeModal('consent')">Abbrechen</button>
-          <button id="btnConsentAccept" class="btn btn-primary disabled" onclick="acceptConsent()" disabled>Akzeptieren</button>
-        </div>
-        <p class="text-xs text-gray-500">Beide Kästchen ankreuzen, um fortzufahren.</p>
-      </div>
-    </div>
-  </div>
-
+  <!-- JS -->
   <script>
-    // ---- CONFIG ----
-    const OWNER_WALLET = "0xcb165af669733864f27070454ac6c37dec991ffd".toLowerCase();
-    const CONFIG = { MARGIN: 0.15 };
-    firebase.initializeApp({
-      apiKey: "AIzaSyDD2Oo7F-68An2esILVDnfmga1nM-OPKcw",
-      authDomain: "yeah-e9c83.firebaseapp.com",
-      projectId: "yeah-e9c83",
-      storageBucket: "yeah-e9c83.firebasestorage.app"
-    });
-    const db = firebase.firestore();
+    let userAccount = null;
+    const providerWallet = "0xcb165aF669733864F27070454Ac6C37deC991fFD"; // deine Betreiber-Wallet
 
-    // Runtime
-    let CURRENT_MARGIN = CONFIG.MARGIN;
-    let BTC_RECEIVE_ADDRESS = "";
-    let PRICING = {
-      SHA256:    { unit: "TH/s", perDayBtc: 0.00002 },
-      SCRYPT:    { unit: "MH/s", perDayBtc: 0.000001 },
-      ETCHASH:   { unit: "MH/s", perDayBtc: 0.000003 },
-      KAWPOW:    { unit: "MH/s", perDayBtc: 0.000004 },
-      KHEAVYHASH:{ unit: "GH/s", perDayBtc: 0.00002 }
-    };
-    const state = { wallet:null, isAdmin:false };
-    const $ = (id)=>document.getElementById(id);
-    const fmt = (n)=>Number(n).toFixed(8).replace(/0+$/,'').replace(/\.$/,'');
-
-    // Nav
-    function navTo(id){
-      if(id==="admin" && !state.isAdmin){ alert("Kein Zugriff (nur Betreiber‑Wallet)."); return; }
-      document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
-      document.getElementById(id).classList.remove("hidden");
-      if(id==="admin"){ refreshAdmin(); loadSettings(); }
-      if(id==="dashboard"){ watchOrders(); }
-    }
-    function secureNavAdmin(){ if(!state.isAdmin){ alert("Kein Zugriff (nur Admin)."); return; } navTo('admin'); }
-
-    // Banner + Lock
-    function lockShop(lock){
-      const btn = $("btnBuyConfig");
-      if(btn){ btn.disabled = lock; btn.classList.toggle("disabled", lock); }
-    }
-    function updateMMBanner(){
-      const banner = $("mmMissing");
-      const hasMM = !!window.ethereum;
-      if(!banner) return;
-      if(hasMM){
-        banner.classList.add("hidden");
-        lockShop(!state.wallet);
-      }else{
-        const url = (location.protocol === 'file:' ? (window.DAPP_PUBLIC_URL || location.href) : location.href);
-        $("btnOpenApp").href = "metamask://dapp/" + encodeURIComponent(url);
-        banner.classList.remove("hidden");
-        lockShop(true);
+    async function connectWallet() {
+      if (typeof window.ethereum === 'undefined') {
+        alert("MetaMask nicht gefunden!");
+        return;
       }
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      userAccount = accounts[0];
+      document.getElementById("btnConnect").classList.add("hidden");
+      document.getElementById("btnDisconnect").classList.remove("hidden");
+      alert("Verbunden: " + userAccount);
     }
 
-    // Connect
-    $("btnConnect").onclick = async ()=>{
-      if(!window.ethereum){ updateMMBanner(); return; }
-      try{
-        const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        onLogin(accs[0]);
-      }catch(e){ alert("MetaMask Login fehlgeschlagen: " + (e?.message||e)); }
-    };
-    $("btnDisconnect").onclick = ()=>logout();
-
-    function onLogin(addr){
-      state.wallet = addr;
-      state.isAdmin = (addr?.toLowerCase()===OWNER_WALLET);
-      $("walletStatus").textContent = addr;
-      $("adminTab").classList.toggle("hidden", !state.isAdmin);
-      $("btnConnect").classList.add("hidden");
-      $("btnDisconnect").classList.remove("hidden");
-      lockShop(false);
-      navTo('dashboard');
-      requireConsentGate();
-      watchOrders();
-    }
-    function logout(){
-      state.wallet=null;
-      state.isAdmin=false;
-      $("walletStatus").textContent="nicht verbunden";
-      $("adminTab").classList.add("hidden");
-      $("btnConnect").classList.remove("hidden");
-      $("btnDisconnect").classList.add("hidden");
-      lockShop(true);
-      $("orders").innerHTML="";
-      navTo('shop');
+    function disconnectWallet() {
+      userAccount = null;
+      document.getElementById("btnConnect").classList.remove("hidden");
+      document.getElementById("btnDisconnect").classList.add("hidden");
     }
 
-    // Consent
-    const CONSENT_KEY = "hashcore_consent_v1";
-    function requireConsentGate(){
+    async function buyPlan(amountEth) {
+      if (!userAccount) {
+        alert("Bitte zuerst mit MetaMask verbinden");
+        return;
+      }
       try {
-        const ok = localStorage.getItem(CONSENT_KEY) === "1";
-        if(!ok){
-          lockShop(true);
-          openModal('consent');
-          const a = $('chkAgb'), d = $('chkDse'), btn = $('btnConsentAccept');
-          function sync(){ const ready = a.checked && d.checked; btn.disabled = !ready; btn.classList.toggle('disabled', !ready); }
-          a.onchange = d.onchange = sync; sync();
-        }
-      } catch(e){}
-    }
-    function acceptConsent(){
-      try { localStorage.setItem(CONSENT_KEY, "1"); } catch(e){}
-      lockShop(false);
-      closeModal('consent');
-    }
-
-    // ---- Konfigurator Logik ----
-    function currentUnitFor(algo){ return PRICING[algo]?.unit || "MH/s"; }
-    function setUnitLabel(){ const algo = $("selAlgo").value; $("unitLabel").textContent = currentUnitFor(algo); }
-    function calcPrice(){
-      const algo = $("selAlgo").value;
-      const rate = parseFloat($("inpRate").value);
-      const days = parseInt($("selDays").value,10);
-      const base = PRICING[algo]?.perDayBtc;
-      const out = $("calcTotal"), det=$("calcDetail"), btn=$("btnBuyConfig");
-      if(!base || isNaN(rate) || rate<=0 || isNaN(days) || days<=0){
-        out.textContent = "– BTC"; det.textContent = "Bitte gültige Werte eingeben."; btn.disabled=true; btn.classList.add("disabled"); return;
+        const tx = await ethereum.request({
+          method: "eth_sendTransaction",
+          params: [{
+            from: userAccount,
+            to: providerWallet,
+            value: (BigInt(amountEth * 1e18)).toString(16)
+          }]
+        });
+        alert("Abo bezahlt. TX: " + tx);
+      } catch (err) {
+        alert("Fehler: " + err.message);
       }
-      const cost = base * rate * days;
-      const total = cost * (1 + CURRENT_MARGIN);
-      out.textContent = fmt(total) + " BTC";
-      det.textContent = `Basis: ${fmt(base)} BTC pro ${PRICING[algo].unit}/Tag × ${rate} × ${days} Tage • Marge: ${(CURRENT_MARGIN*100).toFixed(1)}%`;
-      btn.disabled=false; btn.classList.remove("disabled");
-      return { algo, rate, days, total };
     }
 
-    // Firestore Settings
-    async function loadSettings(){
-      try{
-        const doc = await db.collection("_settings").doc("general").get();
-        const data = doc.exists ? (doc.data() || {}) : {};
-        BTC_RECEIVE_ADDRESS = data.btcAddress || BTC_RECEIVE_ADDRESS || "";
-        if (typeof data.marginPct === "number") {
-          CURRENT_MARGIN = data.marginPct / 100;
-          const el = document.getElementById("adminMarginPct");
-          if (el) el.value = String(data.marginPct);
-        }
-        if (data.pricing && typeof data.pricing === "object"){
-          Object.keys(data.pricing).forEach(k=>{
-            const p = data.pricing[k];
-            if (!PRICING[k]) PRICING[k] = { unit:"MH/s", perDayBtc:0 };
-            if (typeof p.unit === "string") PRICING[k].unit = p.unit;
-            if (typeof p.perDayBtc === "number") PRICING[k].perDayBtc = p.perDayBtc;
-          });
-          const ids = ["SHA256","SCRYPT","ETCHASH","KAWPOW","KHEAVYHASH"];
-          ids.forEach(key=>{
-            const el = document.getElementById("pr_"+key);
-            if(el && PRICING[key]) el.value = String(PRICING[key].perDayBtc);
-          });
-        }
-        setUnitLabel();
-        calcPrice();
-        return data;
-      }catch(e){ console.warn("loadSettings:", e); return {}; }
+    function openModal(id) {
+      document.getElementById(id).classList.add("show");
     }
-    async function saveBtcAddr(){
-      if(!state.isAdmin) return alert("Nur Admin.");
-      const v = $("adminBtcAddr").value.trim();
-      if(!/^([13]|bc1)[a-zA-HJ-NP-Z0-9]{25,}$/.test(v)){ if(!confirm("Adresse konnte nicht validiert werden. Trotzdem speichern?")) return; }
-      try{ await db.collection("_settings").doc("general").set({ btcAddress: v }, { merge:true }); BTC_RECEIVE_ADDRESS=v; alert("Gespeichert."); }
-      catch(e){ alert("Fehler beim Speichern: "+(e.message||e)); }
-    }
-    async function saveMargin(){
-      if(!state.isAdmin) return alert("Nur Admin.");
-      const v = parseFloat($("adminMarginPct").value);
-      if (isNaN(v) || v < 0 || v > 100) return alert("Bitte gültige Prozentzahl (0–100) eingeben.");
-      try{
-        await db.collection("_settings").doc("general").set({ marginPct: v }, { merge:true });
-        CURRENT_MARGIN = v / 100;
-        alert("Marge gespeichert.");
-        calcPrice();
-      }catch(e){ alert("Fehler beim Speichern: "+(e.message||e)); }
-    }
-    async function savePricing(){
-      if(!state.isAdmin) return alert("Nur Admin.");
-      function num(id){ const v = parseFloat($(id).value); return isNaN(v) ? null : v; }
-      const update = { pricing: {} };
-      const keys = ["SHA256","SCRYPT","ETCHASH","KAWPOW","KHEAVYHASH"];
-      keys.forEach(k=>{
-        const val = num("pr_"+k);
-        if (val!==null){
-          update.pricing[k] = { unit: PRICING[k]?.unit || (k==="SHA256"?"TH/s":k==="KHEAVYHASH"?"GH/s":"MH/s"), perDayBtc: val };
-        }
-      });
-      if(Object.keys(update.pricing).length===0) return alert("Bitte mindestens einen Basispreis eingeben.");
-      try{
-        await db.collection("_settings").doc("general").set(update, { merge:true });
-        Object.keys(update.pricing).forEach(k=>{ PRICING[k] = update.pricing[k]; });
-        alert("Basispreise gespeichert.");
-        setUnitLabel(); calcPrice();
-      }catch(e){ alert("Fehler beim Speichern: " + (e.message||e)); }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("show");
     }
 
-    // BTC Checkout (Konfigurator)
-    async function payConfig(){
-      if(!state.wallet){ alert("Bitte zuerst mit MetaMask verbinden."); return; }
-      const buyer = calcPrice(); if(!buyer) return;
-      const miningAddr = ($("inputMiningAddr")?.value || "").trim();
-      if(!miningAddr){ alert("Bitte Mining‑Wallet‑Adresse angeben."); return; }
-      await loadSettings();
-      if(!BTC_RECEIVE_ADDRESS){ alert("Zahlung derzeit nicht möglich: BTC‑Adresse des Betreibers fehlt."); return; }
-      $("btcAddress").innerText = BTC_RECEIVE_ADDRESS;
-      $("btcAmount").innerText = fmt(buyer.total);
-      $("btcLink").href = `bitcoin:${BTC_RECEIVE_ADDRESS}?amount=${fmt(buyer.total)}`;
-      $("btcLink").textContent = `bitcoin:${BTC_RECEIVE_ADDRESS}?amount=${fmt(buyer.total)}`;
-      $("addrHint").innerText = "Adresse geladen. 0% Gebühren – du zahlst nur den Endpreis.";
-      openModal('btc');
-      try{
-        await db.collection("orders").add({
-          wallet: state.wallet,
-          status: "awaiting_funding",
-          paymentMethod: "BTC",
-          algo: buyer.algo,
-          rate: buyer.rate,
-          unit: PRICING[buyer.algo]?.unit || "",
-          days: buyer.days,
-          miningWallet: miningAddr,
-          pricePerUnitDayBtc: PRICING[buyer.algo]?.perDayBtc || null,
-          marginPct: CURRENT_MARGIN,
-          totalBtc: Number(fmt(buyer.total)),
-          btcAddress: BTC_RECEIVE_ADDRESS,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        navTo('dashboard');
-      }catch(err){ alert("Fehler beim Anlegen der Bestellung: "+(err.message||err)); }
+    function loadPoolStats() {
+      // Demo-Daten
+      document.getElementById("poolStats").innerText = "Hashrate: 123 MH/s, Rewards: 0.0023 ETH/Tag (Demo)";
     }
 
-    // Dashboard
-    let _ordersUnsub = null;
-    function watchOrders(){
-      if(!state.wallet) return;
-      if(_ordersUnsub) { _ordersUnsub(); _ordersUnsub=null; }
-      const ordersEl = $("orders");
-      _ordersUnsub = db.collection("orders").where("wallet","==",state.wallet).orderBy("createdAt","desc")
-        .onSnapshot(snap=>{
-          ordersEl.innerHTML="";
-          let count=0;
-          snap.forEach(d=>{
-            count++;
-            const o=d.data();
-            const row=document.createElement("div");
-            row.className="card p-3";
-            row.innerHTML=`<div class="flex items-center justify-between">
-              <div>
-                <div class="font-semibold">${o.algo||'-'} • ${o.rate||'-'} ${o.unit||''} • ${o.days||'-'} Tage</div>
-                <div class="text-xs text-gray-400">Status: ${o.status} • Gesamt: ${o.totalBtc} BTC</div>
-                <div class="text-xs text-green-400">0% Gebühren</div>
-                <div class="text-xs text-gray-500">Mining‑Adresse: <span class="mono">${(o.miningWallet||"").slice(0,22)}…</span></div>
-              </div>
-              <div class="text-xs mono">${(o.btcAddress||"").slice(0,12)}…</div>
-            </div>`;
-            ordersEl.appendChild(row);
-          });
-          $("sumOrders").textContent = count;
-        });
-    }
-
-    // Admin
-    async function refreshAdmin(){
-      const cont=$("adminOrders"); cont.innerHTML="";
-      if(!state.isAdmin){ cont.innerHTML='<div class="text-sm text-gray-500">Kein Zugriff (nicht Admin).</div>'; return; }
-      const snap=await db.collection("orders").orderBy("createdAt","desc").limit(200).get();
-      let total=0, awaiting=0, sumBtc=0;
-      const rows = snap.docs.map(d=>{
-        const o=d.data();
-        total++;
-        if(o.status==='awaiting_funding') awaiting++;
-        if(typeof o.totalBtc==='number') sumBtc += o.totalBtc;
-        return `<tr>
-          <td class="px-2 py-1 mono text-xs">${d.id}</td>
-          <td class="px-2 py-1 mono text-xs">${(o.wallet||"").slice(0,8)}…</td>
-          <td class="px-2 py-1">${o.algo||'-'} • ${o.rate||'-'} ${o.unit||''} • ${o.days||'-'}d</td>
-          <td class="px-2 py-1">${o.status}</td>
-          <td class="px-2 py-1 text-xs">Total: ${o.totalBtc} BTC<br/>Mining: ${(o.miningWallet||'').slice(0,16)}…</td>
-        </tr>`;
-      }).join("");
-      $("kpiOrders").textContent = String(total);
-      $("kpiSumBtc").textContent = (sumBtc||0).toFixed(8).replace(/0+$/,'').replace(/\.$/,'') || '0';
-      $("kpiAwait").textContent = String(awaiting);
-      cont.innerHTML = `<table class="min-w-full">
-        <thead class="text-xs text-gray-400"><tr>
-          <th class="text-left px-2 py-1">ID</th><th class="text-left px-2 py-1">Wallet</th><th class="text-left px-2 py-1">Konfiguration</th>
-          <th class="text-left px-2 py-1">Status</th><th class="text-left px-2 py-1">Details</th>
-        </tr></thead>
-        <tbody>${rows || '<tr><td class="px-2 py-3 text-gray-500" colspan="5">Keine Bestellungen.</td></tr>'}</tbody>
-      </table>`;
-      await loadSettings();
-    }
-    async function adminUpdate(newStatus){
-      if(!state.isAdmin) return alert("Nur Admin.");
-      const id = $("admOrderId").value.trim(); if(!id) return alert("Order‑ID eingeben.");
-      try{ await db.collection("orders").doc(id).set({ status:newStatus }, { merge:true }); alert("Status auf '"+newStatus+"' gesetzt."); refreshAdmin(); }
-      catch(e){ alert("Fehler: "+(e.message||e)); }
-    }
-
-    // Modals
-    function openModal(which){ $("modal-"+which)?.classList.add("show"); }
-    function closeModal(which){ $("modal-"+which)?.classList.remove("show"); }
-    function backdropClose(ev){ if(ev.target.classList.contains('modal')) ev.target.classList.remove('show'); }
-    function copyAddr(){
-      const text = $("btcAddress").innerText.trim();
-      navigator.clipboard?.writeText(text).then(()=>{$("addrHint").innerText="Adresse kopiert."}).catch(()=>{$("addrHint").innerText="Konnte nicht kopieren."});
-    }
-
-    // Events
-    document.addEventListener("DOMContentLoaded", async ()=>{
-      updateMMBanner();
-      await loadSettings();
-      setUnitLabel();
-      calcPrice();
-      requireConsentGate();
-      $("selAlgo").onchange = ()=>{ setUnitLabel(); calcPrice(); };
-      $("inpRate").oninput = calcPrice;
-      $("selDays").onchange = calcPrice;
-      $("btnBuyConfig").onclick = payConfig;
-      $("btnIPaid").onclick = async ()=>{
-        try{
-          const snap = await db.collection("orders").where("wallet", "==", state.wallet).orderBy("createdAt", "desc").limit(1).get();
-          if (!snap.empty){
-            const ref = snap.docs[0].ref;
-            await ref.set({ userMarkedPaid: true }, { merge: true });
-            alert("Danke! Wir prüfen den Zahlungseingang.");
-          } else {
-            alert("Keine Bestellung gefunden.");
-          }
-        }catch(e){ alert("Konnte Markierung nicht speichern."); }
-      };
+    // Chart Beispiel
+    const ctx = document.getElementById("chart");
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ["Mo", "Di", "Mi", "Do", "Fr"],
+        datasets: [{
+          label: "Hashrate (MH/s)",
+          data: [120, 150, 180, 140, 200],
+          borderColor: "rgb(34,211,238)"
+        }]
+      }
     });
   </script>
 </body>
