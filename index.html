@@ -2,212 +2,121 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashcore.Website - Dashboard</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Orbitron', sans-serif;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
     body {
-      background: radial-gradient(circle at top, #0a0a0a, #000000);
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at top, #0a0a0f, #000);
       color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
     header {
-      width: 100%;
-      padding: 20px 40px;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(90deg, #111, #222);
+      box-shadow: 0 0 25px rgba(0,255,255,0.2);
     }
-
     header h1 {
-      font-size: 1.5rem;
-      color: #0ff;
-      text-shadow: 0 0 8px #0ff;
+      font-size: 2.5rem;
+      color: cyan;
+      text-shadow: 0 0 20px cyan;
+      margin: 0;
     }
 
-    .logout-btn {
-      background: #f00;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      color: #fff;
-      transition: 0.3s;
-    }
-
-    .logout-btn:hover {
-      background: #c00;
-    }
-
-    main {
-      width: 100%;
-      max-width: 1400px;
-      padding: 30px;
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      grid-gap: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 20px;
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-      transition: transform 0.3s ease;
+      background: rgba(20,20,30,0.9);
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px rgba(0,255,255,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
-
     .card:hover {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 0 20px rgba(0,255,255,0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(0,255,255,0.3);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.4rem;
+      color: cyan;
+      border-bottom: 1px solid rgba(0,255,255,0.2);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
     }
 
-    .card h2 {
-      margin-bottom: 15px;
-      font-size: 1.2rem;
-      color: #0ff;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding-bottom: 5px;
+    .value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 10px cyan;
     }
 
     .status {
+      margin-top: 0.5rem;
       font-size: 1rem;
-      margin: 10px 0;
-    }
-
-    .btn {
-      margin-top: 15px;
-      background: linear-gradient(90deg, #0ff, #00f);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      color: #000;
-      transition: 0.3s;
-    }
-
-    .btn:hover {
-      background: linear-gradient(90deg, #00f, #0ff);
-      color: #fff;
-    }
-
-    .ref-code {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0,0,0,0.3);
-      padding: 10px;
-      border-radius: 12px;
-      margin-top: 10px;
-    }
-
-    .ref-code span {
-      font-size: 0.9rem;
-      color: #0ff;
-    }
-
-    .copy-btn {
-      background: #0ff;
-      color: #000;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 8px;
-      cursor: pointer;
+      color: lime;
     }
 
     footer {
-      margin-top: auto;
-      padding: 20px;
       text-align: center;
+      padding: 1rem;
       font-size: 0.8rem;
-      opacity: 0.6;
+      color: #666;
+      background: #0a0a0f;
+      border-top: 1px solid #111;
     }
   </style>
 </head>
 <body>
-
   <header>
-    <h1>HASHCORE Dashboard</h1>
-    <button class="logout-btn">Logout</button>
+    <h1>Hashcore.Website Dashboard</h1>
   </header>
 
-  <main>
-    <!-- Abo -->
+  <div class="grid">
     <div class="card">
-      <h2>Abo-Status</h2>
-      <p class="status">Hashcore Pro: <strong>Aktiv</strong> bis 31.08.2025</p>
-      <button class="btn">Verlängern</button>
+      <h2>Abo Status</h2>
+      <div class="value">Hashcore Pro</div>
+      <div class="status">Aktiv bis 20.09.2025</div>
     </div>
 
-    <!-- Starterbox -->
     <div class="card">
-      <h2>Starterbox</h2>
-      <p class="status">Gekauft: <strong>Ja</strong></p>
-      <button class="btn">Weitere kaufen</button>
+      <h2>Miner Käufe</h2>
+      <div class="value">3 Geräte</div>
+      <div class="status">Letzter Kauf: 05.08.2025</div>
     </div>
 
-    <!-- Miner -->
-    <div class="card">
-      <h2>Miner</h2>
-      <p class="status">Aktive Geräte: <strong>2</strong></p>
-      <p class="status">Erwartete Auszahlung: <strong>CHF 320.–</strong></p>
-      <button class="btn">Neue Miner kaufen</button>
-    </div>
-
-    <!-- Auszahlungen -->
     <div class="card">
       <h2>Auszahlungen</h2>
-      <p class="status">Letzte Auszahlung: <strong>CHF 150.–</strong> am 10.08.2025</p>
-      <button class="btn">Neue Auszahlung beantragen</button>
+      <div class="value">CHF 2’450.–</div>
+      <div class="status">Nächste Auszahlung: 01.09.2025</div>
     </div>
 
-    <!-- Referral -->
     <div class="card">
-      <h2>Referral</h2>
-      <p class="status">Geworbene Partner: <strong>12</strong></p>
-      <p class="status">Provision gesamt: <strong>CHF 1'200.–</strong></p>
-      <div class="ref-code">
-        <span>Code: HASH12345</span>
-        <button class="copy-btn" onclick="copyCode()">Copy</button>
-      </div>
+      <h2>Starterbox</h2>
+      <div class="value">Lizenz Aktiv</div>
+      <div class="status">Seit 12.07.2025</div>
     </div>
 
-    <!-- Statistik -->
     <div class="card">
-      <h2>Statistik</h2>
-      <p class="status">Gesamtumsatz: <strong>CHF 4'800.–</strong></p>
-      <p class="status">Level: <strong>Pro</strong></p>
-      <p class="status">Bonus: <strong>Elite</strong></p>
+      <h2>Referral Übersicht</h2>
+      <div class="value">12 Partner</div>
+      <div class="status">Provision: CHF 480.–</div>
     </div>
-  </main>
+  </div>
 
   <footer>
     © 2025 Hashcore.Website – Alle Rechte vorbehalten
   </footer>
-
-  <script>
-    function copyCode() {
-      navigator.clipboard.writeText("HASH12345");
-      alert("Referral-Code kopiert!");
-    }
-  </script>
 </body>
 </html>
