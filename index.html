@@ -1,172 +1,357 @@
-<!DOCTYPE html>
-<html lang="de">
+<!DOCTYPE html><html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Hashcore SaaS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CT‑Pool Switcher — Luxe UI</title>
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: {
+              50:  '#0b0e12',
+              100: '#0f141b',
+              200: '#141a23',
+              300: '#1a2230',
+              400: '#1f2b3d',
+              500: '#25354b',
+              600: '#2c4060'
+            },
+            accent: {
+              500: '#7df9ff',
+              600: '#4de2eb',
+              700: '#1ac7d3'
+            }
+          },
+          boxShadow: {
+            glow: '0 0 0 1px rgba(125,249,255,0.15), 0 10px 30px rgba(0,0,0,0.5), inset 0 0 40px rgba(77,226,235,0.06)'
+          },
+          backdropBlur: {
+            xs: '2px'
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    .modal { display:none; }
-    .modal.show { display:flex; }
+    /* fancy scrollbar */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #4de2eb55, #7df9ff33); border-radius: 8px; }
+    ::-webkit-scrollbar-track { background: #0f141b; }
   </style>
 </head>
-<body class="bg-gray-950 text-gray-100 flex flex-col min-h-screen">
-
-  <!-- HEADER -->
-  <header class="bg-gray-900 p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">⚡ Hash<span class="text-cyan-400">core</span></h1>
-    <button id="btnConnect" class="bg-cyan-500 px-4 py-2 rounded-lg">Mit MetaMask verbinden</button>
-    <button id="btnDisconnect" class="hidden bg-red-500 px-4 py-2 rounded-lg">Trennen</button>
-  </header>
-
-  <!-- MAIN -->
-  <main class="flex-1 max-w-4xl mx-auto p-6 space-y-6">
-    
-    <!-- Abo-Pläne -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">Abo-Pläne</h2>
-      <div class="grid sm:grid-cols-3 gap-4">
-        <div class="bg-gray-800 p-4 rounded-xl">
-          <h3 class="text-lg font-bold">Free</h3>
-          <p class="text-sm text-gray-400">Basis-Dashboard</p>
-          <p class="mt-2 font-bold">0 ETH</p>
-          <button disabled class="bg-gray-600 w-full py-2 mt-2 rounded">Aktiv</button>
+<body class="min-h-screen bg-gradient-to-b from-base-50 to-base-200 text-white">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-accent-600/20 border border-accent-600/30 flex items-center justify-center shadow-glow">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7df9ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M12 3v18"/><circle cx="12" cy="12" r="3"/></svg>
         </div>
-        <div class="bg-gray-800 p-4 rounded-xl">
-          <h3 class="text-lg font-bold">Pro</h3>
-          <p class="text-sm text-gray-400">Erweitertes Dashboard + Analytics</p>
-          <p class="mt-2 font-bold">0.01 ETH / Monat</p>
-          <button onclick="buyPlan(0.01)" class="bg-cyan-500 w-full py-2 mt-2 rounded">Jetzt kaufen</button>
-        </div>
-        <div class="bg-gray-800 p-4 rounded-xl">
-          <h3 class="text-lg font-bold">VIP</h3>
-          <p class="text-sm text-gray-400">Alle Features + Support</p>
-          <p class="mt-2 font-bold">0.05 ETH / Monat</p>
-          <button onclick="buyPlan(0.05)" class="bg-yellow-500 w-full py-2 mt-2 rounded">Jetzt kaufen</button>
+        <div>
+          <h1 class="text-2xl font-semibold tracking-tight">CT‑Pool Switcher <span class="text-accent-500">Luxe</span></h1>
+          <p class="text-sm text-white/60">Brutal schnelles UI für deinen Stratum‑Proxy – mobil tauglich.</p>
         </div>
       </div>
-    </section>
-
-    <!-- Dashboard -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">Dashboard</h2>
-      <canvas id="chart" class="bg-gray-800 p-4 rounded-xl"></canvas>
-    </section>
-
-    <!-- Pool Stats -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-4">Mining Pool Statistik (Demo)</h2>
-      <p id="poolStats" class="text-gray-400">Noch keine Daten geladen...</p>
-      <button onclick="loadPoolStats()" class="bg-cyan-600 px-4 py-2 rounded mt-2">Daten laden</button>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="bg-gray-900 p-4 flex justify-between text-sm">
-    <button onclick="openModal('agbModal')">AGB</button>
-    <button onclick="openModal('datenschutzModal')">Datenschutz</button>
-    <button onclick="openModal('impressumModal')">Impressum</button>
-  </footer>
-
-  <!-- MODALS -->
-  <div id="agbModal" class="modal fixed inset-0 bg-black/70 items-center justify-center">
-    <div class="bg-gray-800 p-6 rounded-xl max-w-lg">
-      <h3 class="text-lg font-bold mb-2">AGB</h3>
-      <p class="text-sm text-gray-300">Dies sind die allgemeinen Geschäftsbedingungen von Hashcore SaaS...</p>
-      <button onclick="closeModal('agbModal')" class="mt-4 bg-cyan-500 px-3 py-1 rounded">Schließen</button>
+      <div class="flex items-center gap-3">
+        <input id="apiBase" class="px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-600/60" placeholder="API‑URL (z.B. http://IP:8080)" />
+        <button id="btnConnect" class="px-4 py-2 rounded-xl bg-accent-600 text-black font-medium hover:bg-accent-700 transition shadow-glow">Verbinden</button>
+      </div>
+    </header><!-- Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+  <!-- Listeners -->
+  <section class="xl:col-span-2 p-4 rounded-2xl bg-base-100/60 border border-white/10 shadow-glow">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold">Listener</h2>
+      <div class="text-sm text-white/50">Port‑Switch & Failover</div>
     </div>
-  </div>
+    <div id="listeners" class="space-y-3"></div>
+  </section>
 
-  <div id="datenschutzModal" class="modal fixed inset-0 bg-black/70 items-center justify-center">
-    <div class="bg-gray-800 p-6 rounded-xl max-w-lg">
-      <h3 class="text-lg font-bold mb-2">Datenschutz</h3>
-      <p class="text-sm text-gray-300">Wir speichern keine sensiblen Daten. MetaMask-Login ist clientseitig...</p>
-      <button onclick="closeModal('datenschutzModal')" class="mt-4 bg-cyan-500 px-3 py-1 rounded">Schließen</button>
+  <!-- Quick Actions -->
+  <aside class="p-4 rounded-2xl bg-base-100/60 border border-white/10 shadow-glow">
+    <h2 class="text-lg font-semibold mb-3">Schnellaktionen</h2>
+    <div class="space-y-3">
+      <div class="p-3 rounded-xl bg-base-200/60 border border-white/10">
+        <div class="text-sm text-white/70 mb-2">Upstream hinzufügen</div>
+        <div class="grid grid-cols-3 gap-2">
+          <input id="newName" placeholder="Name" class="px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl"/>
+          <input id="newHost" placeholder="Host (z.B. eu.pool.com)" class="px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl"/>
+          <input id="newPort" placeholder="Port" type="number" class="px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl"/>
+        </div>
+        <button id="btnAddUp" class="mt-2 w-full px-4 py-2 rounded-xl bg-accent-600 text-black font-medium hover:bg-accent-700 transition">Hinzufügen</button>
+      </div>
+
+      <div class="p-3 rounded-xl bg-base-200/60 border border-white/10">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm text-white/70">Live‑Autorefresh</span>
+          <label class="inline-flex items-center cursor-pointer select-none">
+            <input id="autorefresh" type="checkbox" class="sr-only peer">
+            <span class="w-11 h-6 bg-white/10 rounded-full peer-checked:bg-accent-600 relative transition"><span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full peer-checked:translate-x-5 transition"></span></span>
+          </label>
+        </div>
+        <div class="text-xs text-white/50">Aktualisiert /metrics & /config alle 3 Sekunden.
+        </div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-base-200/60 border border-white/10">
+        <button id="btnSave" class="w-full px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 transition">Konfiguration speichern</button>
+      </div>
     </div>
-  </div>
+  </aside>
 
-  <div id="impressumModal" class="modal fixed inset-0 bg-black/70 items-center justify-center">
-    <div class="bg-gray-800 p-6 rounded-xl max-w-lg">
-      <h3 class="text-lg font-bold mb-2">Impressum</h3>
-      <p class="text-sm text-gray-300">
-        Hashcore<br>
-        Dorfstrasse 233<br>
-        Schwanden i.E<br>
-        Support: <a href="mailto:jaun190@gmail.com" class="text-cyan-400">jaun190@gmail.com</a>
-      </p>
-      <button onclick="closeModal('impressumModal')" class="mt-4 bg-cyan-500 px-3 py-1 rounded">Schließen</button>
+  <!-- Upstreams -->
+  <section class="xl:col-span-2 p-4 rounded-2xl bg-base-100/60 border border-white/10 shadow-glow">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold">Upstreams</h2>
+      <div class="text-sm text-white/50">Aktivieren, Bearbeiten, Gewichte</div>
     </div>
-  </div>
+    <div id="upstreams" class="space-y-3"></div>
+  </section>
 
-  <!-- JS -->
-  <script>
-    let userAccount = null;
-    const providerWallet = "0xcb165aF669733864F27070454Ac6C37deC991fFD"; // deine Betreiber-Wallet
+  <!-- Sessions / Metrics -->
+  <section class="p-4 rounded-2xl bg-base-100/60 border border-white/10 shadow-glow">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold">Sessions</h2>
+      <div class="text-sm text-white/50" id="since"></div>
+    </div>
+    <div id="sessions" class="space-y-2 max-h-[420px] overflow-auto"></div>
+  </section>
+</div>
 
-    async function connectWallet() {
-      if (typeof window.ethereum === 'undefined') {
-        alert("MetaMask nicht gefunden!");
-        return;
-      }
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-      userAccount = accounts[0];
-      document.getElementById("btnConnect").classList.add("hidden");
-      document.getElementById("btnDisconnect").classList.remove("hidden");
-      alert("Verbunden: " + userAccount);
+<!-- Toast -->
+<div id="toast" class="fixed bottom-4 right-4 px-4 py-2 rounded-xl bg-accent-600 text-black shadow-glow hidden">Gespeichert ✓</div>
+
+  </div>  <script>
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+    const state = {
+      api: localStorage.getItem('apiBase') || '',
+      config: null,
+      metrics: null,
+      timer: null
+    };
+
+    const apiInput = $('#apiBase');
+    apiInput.value = state.api;
+
+    function showToast(msg, ok=true){
+      const t = $('#toast');
+      t.textContent = msg;
+      t.className = `fixed bottom-4 right-4 px-4 py-2 rounded-xl ${ok? 'bg-accent-600 text-black':'bg-red-500 text-white'} shadow-glow`;
+      t.classList.remove('hidden');
+      setTimeout(()=>t.classList.add('hidden'), 2000);
     }
 
-    function disconnectWallet() {
-      userAccount = null;
-      document.getElementById("btnConnect").classList.remove("hidden");
-      document.getElementById("btnDisconnect").classList.add("hidden");
+    async function api(path, opts={}){
+      const base = state.api.replace(/\/$/, '');
+      if (!base) throw new Error('API‑Basis ist leer');
+      const res = await fetch(base + path, Object.assign({ headers: { 'Content-Type':'application/json' } }, opts));
+      if (!res.ok) throw new Error((await res.text())||('HTTP '+res.status));
+      const ct = res.headers.get('content-type')||'';
+      return ct.includes('application/json')? res.json(): res.text();
     }
 
-    async function buyPlan(amountEth) {
-      if (!userAccount) {
-        alert("Bitte zuerst mit MetaMask verbinden");
-        return;
-      }
-      try {
-        const tx = await ethereum.request({
-          method: "eth_sendTransaction",
-          params: [{
-            from: userAccount,
-            to: providerWallet,
-            value: (BigInt(amountEth * 1e18)).toString(16)
-          }]
+    function bytes(v){
+      if (v>1e9) return (v/1e9).toFixed(2)+' GB';
+      if (v>1e6) return (v/1e6).toFixed(2)+' MB';
+      if (v>1e3) return (v/1e3).toFixed(2)+' kB';
+      return v+' B';
+    }
+
+    function pill(txt, tone='ok'){
+      const colors = tone==='ok' ? 'bg-emerald-500/20 text-emerald-200 border-emerald-400/30' : tone==='warn' ? 'bg-yellow-500/20 text-yellow-200 border-yellow-400/30' : 'bg-red-500/20 text-red-200 border-red-400/30';
+      return `<span class="px-2 py-0.5 rounded-lg border ${colors} text-xs">${txt}</span>`;
+    }
+
+    function renderListeners(){
+      const wrap = $('#listeners');
+      const cfg = state.config; if (!cfg) return;
+      wrap.innerHTML = '';
+      cfg.listeners.forEach(l => {
+        const isWeighted = l.mode === 'weighted';
+        const upstreamOpts = (state.config.upstreams||[]).map(u=>`<option value="${u.id}">${u.name} (${u.host}:${u.port})</option>`).join('');
+        const weights = (state.config.weighted?.[l.id]||[]).map(w => {
+          const u = state.config.upstreams.find(x=>x.id===w.upstream_id);
+          return `<div class="flex items-center gap-2">${u? `${u.name}`:'?'}<input data-lid="${l.id}" data-uid="${w.upstream_id}" class="w-20 px-2 py-1 bg-base-200/70 border border-white/10 rounded-lg weight-input" type="number" min="0" value="${w.weight||0}"/>%</div>`;
+        }).join('');
+
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-xl bg-base-200/40 border border-white/10';
+        card.innerHTML = `
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div>
+              <div class="font-medium text-white/90">${l.name}</div>
+              <div class="text-sm text-white/50">${l.host}:${l.port}</div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <select data-lid="${l.id}" class="modeSel px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl">
+                <option value="primary" ${!isWeighted?'selected':''}>Primary + Failover</option>
+                <option value="weighted" ${isWeighted?'selected':''}>Weighted</option>
+              </select>
+              <div class="flex items-center gap-2 ${isWeighted?'hidden':''}" id="pf-${l.id}">
+                <label class="text-sm text-white/60">Primary</label>
+                <select class="px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl primarySel" data-lid="${l.id}">
+                  ${upstreamOpts}
+                </select>
+                <label class="text-sm text-white/60">Failover</label>
+                <select multiple size="1" class="px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl failoverSel" data-lid="${l.id}">
+                  ${upstreamOpts}
+                </select>
+                <button class="applyPF px-3 py-2 rounded-xl bg-accent-600 text-black">Übernehmen</button>
+              </div>
+              <div class="${isWeighted?'':'hidden'} flex items-center gap-3 w-full lg:w-auto" id="wg-${l.id}">
+                <div class="flex flex-col gap-1 w-full lg:w-auto">${weights || '<div class="text-sm text-white/50">Keine Gewichte definiert</div>'}</div>
+                <button class="applyWG px-3 py-2 rounded-xl bg-accent-600 text-black" data-lid="${l.id}">Speichern</button>
+              </div>
+            </div>
+          </div>
+        `;
+        wrap.appendChild(card);
+
+        // set defaults of selects
+        const pSel = card.querySelector('.primarySel');
+        if (pSel && l.primary_upstream_id) pSel.value = l.primary_upstream_id;
+        const fSel = card.querySelector('.failoverSel');
+        if (fSel && Array.isArray(l.failover_upstream_ids)) {
+          Array.from(fSel.options).forEach(o => { o.selected = l.failover_upstream_ids.includes(o.value); });
+        }
+
+        card.querySelector('.modeSel').addEventListener('change', async (e)=>{
+          const mode = e.target.value;
+          await api(`/listeners/${l.id}/mode`, { method:'POST', body: JSON.stringify({ mode })});
+          await refresh();
         });
-        alert("Abo bezahlt. TX: " + tx);
-      } catch (err) {
-        alert("Fehler: " + err.message);
+
+        const btnPF = card.querySelector('.applyPF');
+        if (btnPF) btnPF.addEventListener('click', async ()=>{
+          const primary_upstream_id = pSel.value;
+          const failover_upstream_ids = Array.from(fSel.selectedOptions).map(o=>o.value);
+          await api(`/listeners/${l.id}/mode`, { method:'POST', body: JSON.stringify({ mode:'primary', primary_upstream_id, failover_upstream_ids })});
+          showToast('Listener aktualisiert');
+          await refresh();
+        });
+
+        const btnWG = card.querySelector('.applyWG');
+        if (btnWG) btnWG.addEventListener('click', async ()=>{
+          // collect weight inputs
+          const inputs = $$('.weight-input', card);
+          const arr = inputs.map(inp => ({ upstream_id: inp.dataset.uid, weight: Number(inp.value||0) }));
+          // update local config + save
+          state.config.weighted = state.config.weighted || {};
+          state.config.weighted[l.id] = arr;
+          await api('/save', { method:'POST' });
+          showToast('Gewichte gespeichert');
+          await refresh();
+        });
+      });
+    }
+
+    function renderUpstreams(){
+      const wrap = $('#upstreams');
+      const list = state.config?.upstreams || [];
+      wrap.innerHTML = '';
+      list.forEach(u => {
+        const status = state.metrics?.upstreams?.find(x=>x.id===u.id)?.status || null;
+        const ok = status?.ok;
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-xl bg-base-200/40 border border-white/10';
+        card.innerHTML = `
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div>
+              <div class="font-medium">${u.name} ${ok? pill('OK','ok') : status? pill('Fehler','bad'): pill('unbekannt','warn')}</div>
+              <div class="text-sm text-white/60">${u.host}:${u.port}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-white/70">Aktiv</label>
+              <input type="checkbox" class="toggleU scale-125" ${u.enabled? 'checked':''} />
+              <input type="text" class="px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl hostInp" value="${u.host}"/>
+              <input type="number" class="w-24 px-3 py-2 bg-base-200/80 border border-white/10 rounded-xl portInp" value="${u.port}"/>
+              <button class="saveU px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15">Speichern</button>
+            </div>
+          </div>
+        `;
+        wrap.appendChild(card);
+        const toggle = card.querySelector('.toggleU');
+        const hostInp = card.querySelector('.hostInp');
+        const portInp = card.querySelector('.portInp');
+        card.querySelector('.saveU').addEventListener('click', async ()=>{
+          await api(`/upstreams/${u.id}`, { method:'PATCH', body: JSON.stringify({ enabled: toggle.checked, host: hostInp.value, port: Number(portInp.value) })});
+          showToast('Upstream gespeichert');
+          await refresh();
+        });
+      });
+    }
+
+    function renderSessions(){
+      const wrap = $('#sessions');
+      const list = state.metrics?.sessions || [];
+      $('#since').textContent = new Date().toLocaleTimeString();
+      wrap.innerHTML = '';
+      if (list.length === 0){
+        wrap.innerHTML = '<div class="text-white/50 text-sm">Noch keine aktiven Sessions.</div>';
+        return;
+      }
+      list.forEach(s => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-3 p-3 rounded-lg bg-base-200/40 border border-white/10';
+        row.innerHTML = `
+          <div class="text-xs text-white/70">${s.sessionId.slice(0,8)}…</div>
+          <div class="text-sm">Listener: <span class="text-white/80">${s.listenerId}</span></div>
+          <div class="text-sm">Upstream: <span class="text-white/80">${s.upstreamId}</span></div>
+          <div class="text-sm">↑ ${bytes(s.bytesUp)} · ↓ ${bytes(s.bytesDown)}</div>
+          <div class="text-sm text-white/70">${s.ageSec}s</div>
+        `;
+        wrap.appendChild(row);
+      });
+    }
+
+    async function refresh(){
+      try {
+        state.config = await api('/config');
+        state.metrics = await api('/metrics');
+        renderListeners();
+        renderUpstreams();
+        renderSessions();
+      } catch (e) {
+        showToast('Fehler: '+e.message, false);
       }
     }
 
-    function openModal(id) {
-      document.getElementById(id).classList.add("show");
-    }
-    function closeModal(id) {
-      document.getElementById(id).classList.remove("show");
-    }
-
-    function loadPoolStats() {
-      // Demo-Daten
-      document.getElementById("poolStats").innerText = "Hashrate: 123 MH/s, Rewards: 0.0023 ETH/Tag (Demo)";
-    }
-
-    // Chart Beispiel
-    const ctx = document.getElementById("chart");
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ["Mo", "Di", "Mi", "Do", "Fr"],
-        datasets: [{
-          label: "Hashrate (MH/s)",
-          data: [120, 150, 180, 140, 200],
-          borderColor: "rgb(34,211,238)"
-        }]
-      }
+    // actions
+    $('#btnConnect').addEventListener('click', async ()=>{
+      state.api = apiInput.value.trim();
+      localStorage.setItem('apiBase', state.api);
+      await refresh();
     });
-  </script>
-</body>
+
+    $('#btnAddUp').addEventListener('click', async ()=>{
+      try {
+        const name = $('#newName').value.trim();
+        const host = $('#newHost').value.trim();
+        const port = Number($('#newPort').value.trim());
+        if (!name||!host||!port) return showToast('Bitte Name/Host/Port füllen', false);
+        await api('/upstreams', { method:'POST', body: JSON.stringify({ name, host, port })});
+        $('#newName').value = $('#newHost').value = $('#newPort').value = '';
+        showToast('Upstream angelegt');
+        await refresh();
+      } catch (e) { showToast('Fehler: '+e.message, false); }
+    });
+
+    $('#btnSave').addEventListener('click', async ()=>{
+      try { await api('/save', { method:'POST' }); showToast('Konfiguration gespeichert'); } catch(e){ showToast('Fehler: '+e.message, false); }
+    });
+
+    $('#autorefresh').addEventListener('change', (e)=>{
+      if (e.target.checked){
+        state.timer = setInterval(refresh, 3000);
+      } else { clearInterval(state.timer); state.timer = null; }
+    });
+
+    // Auto-connect if URL preset
+    if (state.api) refresh();
+  </script></body>
 </html>
