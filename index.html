@@ -1,94 +1,192 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Mining Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NextHash Mining</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #111; color: #eee; text-align: center; }
-    .card { background: #222; padding: 20px; margin: 20px auto; border-radius: 12px; width: 400px; }
-    button { background: #28a745; color: white; padding: 10px; border: none; border-radius: 6px; cursor: pointer; }
-    button:disabled { background: gray; }
-    h1 { color: #0f0; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #0f0f0f, #000);
+      color: white;
+    }
+    header {
+      padding: 20px;
+      background: rgba(20,20,20,0.8);
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #00ffcc;
+      box-shadow: 0 0 20px #00ffcc;
+    }
+    .btn {
+      background: linear-gradient(45deg,#00ffcc,#0077ff);
+      border: none;
+      padding: 12px 25px;
+      margin: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #000;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00ffcc;
+    }
+    .container {
+      padding: 20px;
+      display: none;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 0 20px rgba(0,255,204,0.2);
+    }
+    .status {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    /* Popup */
+    .popup {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: none;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background: #111;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #00ffcc;
+      text-align: center;
+      width: 350px;
+      animation: pop 0.3s ease;
+    }
+    @keyframes pop {
+      from {transform: scale(0.7); opacity: 0;}
+      to {transform: scale(1); opacity: 1;}
+    }
+    .abo {
+      background: linear-gradient(45deg,#00ffcc,#0077ff);
+      color: #000;
+      font-weight: bold;
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .abo:hover {
+      background: linear-gradient(45deg,#0077ff,#00ffcc);
+    }
   </style>
 </head>
 <body>
-  <h1>Hashline Mining Dashboard</h1>
-  <div class="card">
-    <p><b>Wallet:</b> <span id="wallet">Nicht verbunden</span></p>
-    <button onclick="connectWallet()">Wallet verbinden</button>
+
+  <header>⚡ NextHash Mining ⚡</header>
+  <div style="text-align:center; margin:20px;">
+    <button class="btn" onclick="connectWallet()">Mit MetaMask anmelden</button>
+    <button class="btn" onclick="switchView('dashboard')">Dashboard</button>
+    <button class="btn" onclick="switchView('admin')">Admin</button>
   </div>
 
-  <div class="card">
-    <h2>Mining Abo kaufen</h2>
-    <p>Wähle dein Mining-Paket:</p>
-    <button onclick="buyPlan(1)">Basic – 0.01 ETH / Monat</button>
-    <button onclick="buyPlan(2)">Pro – 0.05 ETH / Monat</button>
-    <button onclick="buyPlan(3)">Elite – 0.1 ETH / Monat</button>
+  <!-- Dashboard -->
+  <div id="dashboard" class="container">
+    <h2>Dein Dashboard</h2>
+    <div class="card">
+      <p><b>Status:</b> <span id="status">Nicht aktiv (kein Abo)</span></p>
+      <p><b>Hashrate:</b> <span id="hashrate">0 H/s</span></p>
+      <p><b>Balance:</b> <span id="balance">0.00 ETH</span></p>
+      <button class="btn" onclick="requestPayout()">Auszahlung anfordern</button>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Deine Mining Rate</h2>
-    <p><span id="rate">0</span> Hash/s</p>
+  <!-- Admin -->
+  <div id="admin" class="container">
+    <h2>Admin-Bereich</h2>
+    <div class="card">
+      <label>Pools festlegen:</label><br/>
+      <input type="text" id="poolUrl" placeholder="Pool URL" style="width:80%; padding:8px;"/>
+      <button class="btn" onclick="savePool()">Speichern</button>
+    </div>
+    <div class="card">
+      <label>Mining-Rate einstellen:</label><br/>
+      <input type="number" id="rate" placeholder="Hashrate" style="width:80%; padding:8px;"/>
+      <button class="btn" onclick="saveRate()">Speichern</button>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Admin Bereich</h2>
-    <button onclick="withdraw()">Pool Auszahlung</button>
+  <!-- Popup Abo -->
+  <div id="aboPopup" class="popup">
+    <div class="popup-content">
+      <h2>Wähle dein Abo</h2>
+      <div class="abo" onclick="buyAbo('Basic',0.01)">Basic – 0.01 ETH / Monat</div>
+      <div class="abo" onclick="buyAbo('Pro',0.05)">Pro – 0.05 ETH / Monat</div>
+      <div class="abo" onclick="buyAbo('Elite',0.1)">Elite – 0.1 ETH / Monat</div>
+    </div>
   </div>
 
-<script>
-  let web3;
-  let contract;
-  const contractAddress = "DEINE_CONTRACT_ADRESSE"; // nach Deployment eintragen
-  const abi = [
-    {
-      "inputs":[{"internalType":"uint8","name":"plan","type":"uint8"}],
-      "name":"buyPlan","outputs":[],"stateMutability":"payable","type":"function"
-    },
-    {
-      "inputs":[],"name":"getRate","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
-      "stateMutability":"view","type":"function"
-    },
-    {
-      "inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"
+  <script>
+    let account = null;
+    const adminAddress = "0xDEINEADMINADRESSE"; // deine Metamask-Adresse hier
+    let aboActive = false;
+
+    async function connectWallet(){
+      if(window.ethereum){
+        const accounts = await ethereum.request({method: 'eth_requestAccounts'});
+        account = accounts[0];
+        alert("Angemeldet als: " + account);
+        document.getElementById("aboPopup").style.display="flex";
+      } else {
+        alert("MetaMask nicht gefunden!");
+      }
     }
-  ];
 
-  async function connectWallet() {
-    if (window.ethereum) {
-      web3 = new Web3(window.ethereum);
-      await ethereum.request({ method: "eth_requestAccounts" });
-      const accounts = await web3.eth.getAccounts();
-      document.getElementById("wallet").innerText = accounts[0];
-      contract = new web3.eth.Contract(abi, contractAddress);
-      loadRate();
-    } else {
-      alert("Bitte MetaMask installieren!");
+    function buyAbo(type, price){
+      alert(type+" Abo gekauft für "+price+" ETH!");
+      aboActive = true;
+      document.getElementById("aboPopup").style.display="none";
+      document.getElementById("status").innerText="Aktiv ("+type+")";
+      document.getElementById("hashrate").innerText=type=="Basic"?"50 H/s":type=="Pro"?"200 H/s":"500 H/s";
     }
-  }
 
-  async function buyPlan(plan) {
-    const accounts = await web3.eth.getAccounts();
-    let value = "0";
-    if (plan === 1) value = web3.utils.toWei("0.01", "ether");
-    if (plan === 2) value = web3.utils.toWei("0.05", "ether");
-    if (plan === 3) value = web3.utils.toWei("0.1", "ether");
-    await contract.methods.buyPlan(plan).send({ from: accounts[0], value });
-    loadRate();
-  }
+    function requestPayout(){
+      if(!aboActive){
+        alert("Kein aktives Abo!");
+        return;
+      }
+      alert("Auszahlung wird geprüft...");
+    }
 
-  async function loadRate() {
-    const accounts = await web3.eth.getAccounts();
-    const rate = await contract.methods.getRate().call({ from: accounts[0] });
-    document.getElementById("rate").innerText = rate;
-  }
+    function switchView(view){
+      document.getElementById("dashboard").style.display="none";
+      document.getElementById("admin").style.display="none";
+      if(view==="admin"){
+        if(account && account.toLowerCase()===adminAddress.toLowerCase()){
+          document.getElementById("admin").style.display="block";
+        } else {
+          alert("Kein Zugriff auf Admin!");
+        }
+      } else {
+        document.getElementById(view).style.display="block";
+      }
+    }
 
-  async function withdraw() {
-    const accounts = await web3.eth.getAccounts();
-    await contract.methods.withdraw().send({ from: accounts[0] });
-    alert("Auszahlung ausgeführt");
-  }
-</script>
+    function savePool(){
+      const pool = document.getElementById("poolUrl").value;
+      alert("Pool gespeichert: "+pool);
+    }
+
+    function saveRate(){
+      const rate = document.getElementById("rate").value;
+      alert("Rate gespeichert: "+rate+" H/s");
+    }
+  </script>
 </body>
 </html>
