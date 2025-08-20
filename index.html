@@ -3,120 +3,171 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hashcore.Website - Dashboard</title>
+  <title>Hashcore Dashboard</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
-
     body {
       margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: radial-gradient(circle at top, #0a0a0f, #000);
-      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1624;
+      color: white;
     }
 
-    header {
-      text-align: center;
-      padding: 2rem;
-      background: linear-gradient(90deg, #111, #222);
-      box-shadow: 0 0 25px rgba(0,255,255,0.2);
+    nav {
+      background: #101827;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1rem 0;
+      font-size: 1rem;
     }
-    header h1 {
-      font-size: 2.5rem;
-      color: cyan;
-      text-shadow: 0 0 20px cyan;
-      margin: 0;
+
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+    }
+
+    nav a.active {
+      color: #00c9ff;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtext {
+      color: #888;
+      margin-bottom: 2rem;
+    }
+
+    .plans {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .plan {
+      background: #1a2332;
+      flex: 1;
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      border: 2px solid transparent;
+    }
+
+    .plan img {
+      max-width: 80px;
+      margin-bottom: 0.5rem;
+    }
+
+    .plan.selected {
+      border-color: #00c9ff;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
-      padding: 2rem;
     }
 
     .card {
-      background: rgba(20,20,30,0.9);
-      border: 1px solid rgba(0,255,255,0.2);
-      border-radius: 16px;
+      background: #1a2332;
       padding: 1.5rem;
-      box-shadow: 0 0 20px rgba(0,255,255,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
+      border-radius: 12px;
     }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 25px rgba(0,255,255,0.3);
-    }
-    .card h2 {
+
+    .card h3 {
       margin-top: 0;
-      font-size: 1.4rem;
-      color: cyan;
-      border-bottom: 1px solid rgba(0,255,255,0.2);
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
     }
 
-    .value {
-      font-size: 1.8rem;
+    .card p {
+      margin: 0.25rem 0;
+      color: #bbb;
+    }
+
+    .button {
+      display: inline-block;
+      background: #00c9ff;
+      color: #000;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      margin-top: 0.8rem;
+      cursor: pointer;
       font-weight: bold;
-      color: #fff;
-      text-shadow: 0 0 10px cyan;
+      transition: background 0.2s ease;
     }
 
-    .status {
-      margin-top: 0.5rem;
-      font-size: 1rem;
-      color: lime;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.8rem;
-      color: #666;
-      background: #0a0a0f;
-      border-top: 1px solid #111;
+    .button:hover {
+      background: #00a7dd;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Hashcore.Website Dashboard</h1>
-  </header>
 
-  <div class="grid">
-    <div class="card">
-      <h2>Abo Status</h2>
-      <div class="value">Hashcore Pro</div>
-      <div class="status">Aktiv bis 20.09.2025</div>
+  <nav>
+    <a class="active" href="#">Dashboard</a>
+    <a href="#">Miner</a>
+    <a href="#">Abos</a>
+    <a href="#">Auszahlung</a>
+  </nav>
+
+  <div class="container">
+    <h1>Willkommen im Dashboard</h1>
+    <p class="subtext">Miner sind inaktiv bis Abo gekauft</p>
+
+    <div class="plans">
+      <div class="plan">
+        <img src="assets/miner1.png" alt="Starter Miner">
+        <h3>Starter</h3>
+        <p>1 Monat</p>
+      </div>
+      <div class="plan selected">
+        <img src="assets/miner2.png" alt="Pro Miner">
+        <h3>Pro</h3>
+        <p>3 Monate</p>
+      </div>
+      <div class="plan">
+        <img src="assets/miner3.png" alt="Premium Miner">
+        <h3>Premium</h3>
+        <p>12 Monate</p>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>Miner Käufe</h2>
-      <div class="value">3 Geräte</div>
-      <div class="status">Letzter Kauf: 05.08.2025</div>
-    </div>
-
-    <div class="card">
-      <h2>Auszahlungen</h2>
-      <div class="value">CHF 2’450.–</div>
-      <div class="status">Nächste Auszahlung: 01.09.2025</div>
-    </div>
-
-    <div class="card">
-      <h2>Starterbox</h2>
-      <div class="value">Lizenz Aktiv</div>
-      <div class="status">Seit 12.07.2025</div>
-    </div>
-
-    <div class="card">
-      <h2>Referral Übersicht</h2>
-      <div class="value">12 Partner</div>
-      <div class="status">Provision: CHF 480.–</div>
+    <div class="grid">
+      <div class="card">
+        <h3>Wähle dein Abo</h3>
+        <p><strong>Starter:</strong> 1 Monat, 1 MH/s Mining-Rate</p>
+        <button class="button">Wählen</button>
+      </div>
+      <div class="card">
+        <h3>&nbsp;</h3>
+        <p><strong>Pro:</strong> 3 Monate, 2 MH/s + Live-Support</p>
+        <button class="button">Wählen</button>
+      </div>
+      <div class="card">
+        <h3>&nbsp;</h3>
+        <p><strong>Premium:</strong> 12 Monate, 4 MH/s + Prior. Auszahlungen</p>
+        <button class="button">Wählen</button>
+      </div>
+      <div class="card">
+        <h3>Admin</h3>
+        <p><strong>Balance:</strong> 0.00 ETH</p>
+        <p><strong>Wallet Adresse:</strong></p>
+        <input type="text" placeholder="0x..." style="width: 100%; padding: 0.4rem; border-radius: 6px; margin-top: 0.4rem; border: none;" />
+        <button class="button" style="margin-top: 1rem;">Auszahlen</button>
+      </div>
     </div>
   </div>
 
-  <footer>
-    © 2025 Hashcore.Website – Alle Rechte vorbehalten
-  </footer>
 </body>
 </html>
