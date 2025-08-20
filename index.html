@@ -1,184 +1,162 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Mining Abos</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hashline Mining</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0b0f19;
-      color: #fff;
-      text-align: center;
       margin: 0;
-      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at center, #0f0f1a, #000);
+      color: #fff;
+      overflow-x: hidden;
     }
+
+    header {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(20px);
+    }
+
     h1 {
-      margin: 20px;
-      color: #4ade80;
+      font-size: 3rem;
+      background: linear-gradient(90deg, #00f6ff, #00ff99);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px #00f6ff77;
     }
-    .plans {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin: 40px auto;
-      flex-wrap: wrap;
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+      gap: 2rem;
+      padding: 3rem;
     }
-    .plan {
-      background: #1a2238;
-      border-radius: 15px;
-      padding: 20px;
-      width: 300px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      transition: transform .3s;
+      box-shadow: 0 0 30px rgba(0,255,153,0.2);
     }
-    .plan img {
-      width: 100%;
-      border-radius: 12px;
-    }
+    .card:hover { transform: translateY(-10px) scale(1.03); }
+
     .price {
-      font-size: 22px;
-      margin: 15px 0;
-      color: #facc15;
+      font-size: 2rem;
+      margin: 1rem 0;
+      color: #00ffcc;
     }
+
     button {
-      background: #4ade80;
+      background: linear-gradient(90deg, #00f6ff, #00ff99);
       border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 10px;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      border-radius: 50px;
       cursor: pointer;
       color: #000;
-      transition: 0.3s;
+      font-weight: bold;
+      transition: all .3s;
     }
-    button:hover {
-      background: #22c55e;
-    }
+    button:hover { transform: scale(1.05); box-shadow: 0 0 15px #00ffcc; }
+
     footer {
-      margin-top: 50px;
-      font-size: 12px;
-      color: #aaa;
-    }
-    .link {
-      color: #38bdf8;
-      cursor: pointer;
-    }
-    /* Popup */
-    .popup {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      justify-content: center;
-      align-items: center;
-    }
-    .popup-content {
-      background: #1f2937;
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 600px;
-      max-height: 80%;
-      overflow-y: auto;
-      text-align: left;
-      color: #fff;
-    }
-    .popup-content h2 {
-      color: #facc15;
-    }
-    .close-btn {
-      float: right;
-      cursor: pointer;
-      font-size: 20px;
-      color: #f87171;
+      text-align: center;
+      padding: 2rem;
+      font-size: .8rem;
+      opacity: .7;
     }
   </style>
 </head>
 <body>
-  <h1>⚡ Wähle dein Mining-Abo</h1>
+  <header>
+    <h1>⚡ Hashline Crypto Mining ⚡</h1>
+    <p>Wähle dein Abo – zahle mit MetaMask – starte dein Mining!</p>
+    <button onclick="connectWallet()">🔗 Mit MetaMask verbinden</button>
+    <p id="walletAddress"></p>
+  </header>
 
-  <div class="plans">
-    <div class="plan">
-      <img src="miner1.png" alt="Miner 1">
-      <h2>Starter Miner</h2>
+  <section class="container">
+    <div class="card">
+      <h2>Starter</h2>
       <p class="price">0.01 ETH / Monat</p>
-      <button onclick="pay('0.01')">Jetzt kaufen</button>
+      <p>Klein anfangen – ideal für Einsteiger.</p>
+      <button onclick="buyPlan('starter', 0.01)">Jetzt abonnieren</button>
     </div>
-    <div class="plan">
-      <img src="miner2.png" alt="Miner 2">
-      <h2>Pro Miner</h2>
+    <div class="card">
+      <h2>Pro</h2>
       <p class="price">0.05 ETH / Monat</p>
-      <button onclick="pay('0.05')">Jetzt kaufen</button>
+      <p>Mehr Hashpower, mehr Rewards!</p>
+      <button onclick="buyPlan('pro', 0.05)">Jetzt abonnieren</button>
     </div>
-    <div class="plan">
-      <img src="miner3.png" alt="Miner 3">
-      <h2>Ultra Miner</h2>
+    <div class="card">
+      <h2>Elite</h2>
       <p class="price">0.1 ETH / Monat</p>
-      <button onclick="pay('0.1')">Jetzt kaufen</button>
+      <p>Maximale Mining-Power und exklusive Vorteile.</p>
+      <button onclick="buyPlan('elite', 0.1)">Jetzt abonnieren</button>
     </div>
-  </div>
+  </section>
 
   <footer>
-    <span class="link" onclick="openPopup('agb')">AGB</span> | 
-    <span class="link" onclick="openPopup('impressum')">Impressum</span>
+    © 2025 Hashline | <a href="#" onclick="openPopup('agb')">AGB</a> | <a href="#" onclick="openPopup('impressum')">Impressum</a>
   </footer>
 
-  <!-- POPUPS -->
-  <div class="popup" id="agbPopup">
-    <div class="popup-content">
-      <span class="close-btn" onclick="closePopup('agb')">✖</span>
-      <h2>AGB</h2>
-      <p>Hier stehen deine Allgemeinen Geschäftsbedingungen...</p>
-    </div>
-  </div>
-
-  <div class="popup" id="impressumPopup">
-    <div class="popup-content">
-      <span class="close-btn" onclick="closePopup('impressum')">✖</span>
-      <h2>Impressum</h2>
-      <p><strong>Firma:</strong> Deine Firma<br>
-         <strong>Adresse:</strong> Musterstrasse 1, 1234 Musterstadt<br>
-         <strong>Email:</strong> info@deinefirma.com</p>
-    </div>
+  <!-- Popups -->
+  <div id="popup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);color:#fff;z-index:1000;padding:3rem;overflow:auto;">
+    <button onclick="closePopup()" style="float:right;background:red;color:#fff;border:none;padding:.5rem 1rem;cursor:pointer;">X</button>
+    <div id="popupContent"></div>
   </div>
 
   <script>
-    // Wallet-Adresse einfügen
-    const receiverAddress = "YOUR_WALLET_ADDRESS_HERE";
+    let web3;
+    let account;
 
-    async function pay(amountEth) {
-      if (typeof window.ethereum !== "undefined") {
+    async function connectWallet() {
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
         try {
-          await ethereum.request({ method: "eth_requestAccounts" });
-          const web3 = new Web3(window.ethereum);
-          const accounts = await web3.eth.getAccounts();
-
-          const tx = {
-            from: accounts[0],
-            to: receiverAddress,
-            value: web3.utils.toWei(amountEth, "ether"),
-          };
-
-          const txHash = await ethereum.request({
-            method: "eth_sendTransaction",
-            params: [tx],
-          });
-
-          alert("Zahlung erfolgreich! TX Hash: " + txHash);
-        } catch (err) {
-          console.error(err);
-          alert("Fehler bei der Zahlung: " + err.message);
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          account = accounts[0];
+          document.getElementById("walletAddress").innerText = "Verbunden: " + account;
+        } catch (error) {
+          console.error("Wallet Verbindung abgelehnt");
         }
       } else {
-        alert("Bitte installiere MetaMask!");
+        alert("Bitte MetaMask installieren!");
+      }
+    }
+
+    async function buyPlan(plan, ethAmount) {
+      if (!account) return alert("Bitte zuerst Wallet verbinden!");
+      const amountWei = web3.utils.toWei(ethAmount.toString(), "ether");
+      try {
+        await web3.eth.sendTransaction({
+          from: account,
+          to: "0x1234567890abcdef1234567890abcdef12345678", // Deine Wallet-Adresse hier einfügen
+          value: amountWei
+        });
+        alert(plan + " Abo erfolgreich bezahlt!");
+      } catch (err) {
+        console.error(err);
+        alert("Transaktion fehlgeschlagen!");
       }
     }
 
     function openPopup(type) {
-      document.getElementById(type + "Popup").style.display = "flex";
+      document.getElementById("popup").style.display = "block";
+      if(type === "agb") {
+        document.getElementById("popupContent").innerHTML = "<h2>Allgemeine Geschäftsbedingungen</h2><p>Hier stehen die AGB von Hashline...</p>";
+      } else {
+        document.getElementById("popupContent").innerHTML = "<h2>Impressum</h2><p>Hashline<br>Dominique Jaun<br>Dorfstrasse 233<br>Schwanden i.E.<br>Email: jaun190@gmail.com</p>";
+      }
     }
-    function closePopup(type) {
-      document.getElementById(type + "Popup").style.display = "none";
-    }
+    function closePopup() { document.getElementById("popup").style.display = "none"; }
   </script>
 </body>
 </html>
