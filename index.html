@@ -2,81 +2,101 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>CTPool – Cloud Mining</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0c10;
-      color: white;
-    }
-
-    header {
-      background: #1f2833;
-      padding: 20px;
-      text-align: center;
-      font-size: 28px;
-      font-weight: bold;
-      color: #66fcf1;
-      letter-spacing: 1px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 30px;
-    }
-
-    .card {
-      background: #1f2833;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(102, 252, 241, 0.2);
-      text-align: center;
-      transition: transform 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card h2 {
-      font-size: 40px;
-      margin: 10px 0;
-      color: #66fcf1;
-    }
-
-    .card p {
-      font-size: 18px;
-      margin: 0;
-      color: #c5c6c7;
-    }
+    body { margin:0; background:#0f172a; color:white; font-family:Arial, sans-serif; }
+    header { padding:20px; background:#1e293b; text-align:center; }
+    h1 { color:#38bdf8; margin:0; }
+    section { padding:40px 20px; text-align:center; }
+    .card { background:#1e293b; padding:20px; border-radius:12px; margin:20px auto; max-width:500px; }
+    button { background:#3b82f6; border:none; padding:10px 20px; margin:5px; border-radius:8px; color:white; cursor:pointer; }
+    input { padding:10px; border-radius:8px; border:none; width:80%; margin:10px 0; }
+    table { margin:auto; border-collapse:collapse; width:80%; }
+    th, td { border:1px solid #334155; padding:10px; }
+    th { background:#334155; }
   </style>
+  <script>
+    let isAdmin = false; // ⚡ Demo: true zeigt Adminbereich
+    
+    async function connectWallet() {
+      if (window.ethereum) {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        document.getElementById("wallet").innerText = "Wallet verbunden: " + accounts[0];
+        document.getElementById("dashboard").style.display = "block";
+        document.getElementById("auszahlung").style.display = "block";
+        if(isAdmin) document.getElementById("admin").style.display = "block";
+      } else {
+        alert("Bitte MetaMask installieren!");
+      }
+    }
+  </script>
 </head>
 <body>
   <header>
-    Dashboard
+    <h1>🚀 CTPool Cloud Mining</h1>
+    <p>Starte dein Mining in Sekunden – mit Abo & Wallet</p>
   </header>
 
-  <div class="cards">
+  <!-- Hero -->
+  <section>
+    <h2>Mit MetaMask verbinden</h2>
+    <button onclick="connectWallet()">Wallet verbinden</button>
+    <p id="wallet">Noch nicht verbunden</p>
+  </section>
+
+  <!-- Abos -->
+  <section id="abos">
+    <h2>Mining Abos</h2>
     <div class="card">
-      <h2>0</h2>
-      <p>Investiert</p>
+      <h3>🥉 Bronze</h3>
+      <p>30 €/Monat – 100 TH/s</p>
+      <button>Kaufen</button>
     </div>
     <div class="card">
-      <h2>0</h2>
-      <p>Ertrag</p>
+      <h3>🥈 Silber</h3>
+      <p>69 €/Monat – 300 TH/s</p>
+      <button>Kaufen</button>
     </div>
     <div class="card">
-      <h2>0</h2>
-      <p>Partner</p>
+      <h3>🥇 Gold</h3>
+      <p>149 €/Monat – 800 TH/s</p>
+      <button>Kaufen</button>
     </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dashboard" style="display:none;">
+    <h2>Dein Dashboard</h2>
     <div class="card">
-      <h2>0</h2>
-      <p>Level</p>
+      <p>Hashrate: <b>390 TH/s</b></p>
+      <p>Einnahmen: <b>0.052 BTC</b></p>
+      <p>Aktive Abos: Bronze + Silber</p>
     </div>
-  </div>
+  </section>
+
+  <!-- Auszahlung -->
+  <section id="auszahlung" style="display:none;">
+    <h2>💸 Auszahlung</h2>
+    <div class="card">
+      <input placeholder="Wallet-Adresse eingeben">
+      <button>Auszahlung beantragen</button>
+    </div>
+  </section>
+
+  <!-- Admin -->
+  <section id="admin" style="display:none;">
+    <h2>🛠️ Adminbereich</h2>
+    <div class="card">
+      <table>
+        <tr><th>Nutzer</th><th>Wallet</th><th>Abos</th><th>Einnahmen</th><th>Aktion</th></tr>
+        <tr><td>Alice</td><td>0x123...</td><td>Silber</td><td>0.12 BTC</td><td><button>Freigeben</button></td></tr>
+        <tr><td>Bob</td><td>0x456...</td><td>Bronze</td><td>0.05 BTC</td><td><button>Freigeben</button></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer style="padding:20px; background:#1e293b; text-align:center;">
+    <p>© 2025 CTPool – Alle Rechte vorbehalten | <a href="#" style="color:#38bdf8;">AGB</a> | <a href="#" style="color:#38bdf8;">Impressum</a></p>
+  </footer>
 </body>
 </html>
