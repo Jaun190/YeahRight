@@ -1,52 +1,124 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hashcore.Website</title>
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+    }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .miner-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .miner-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .miner-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+    }
+    .miner-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      background: #111;
+    }
+    .miner-content {
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .miner-content h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #00c6ff;
+    }
+    .miner-content p {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin-bottom: 1rem;
+    }
+    .price {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #00ff99;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      opacity: 0.85;
+    }
+  </style>
 </head>
 <body>
-  <div class="background"></div>
   <header>
-    <h1 class="logo">Hashcore<span>.Website</span></h1>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">Produkte</a>
-      <a href="#">Dashboard</a>
-      <a href="#">Kontakt</a>
-    </nav>
+    <h1>Hashcore.Website</h1>
+    <p>High-End Mining Hardware – direkt für dich</p>
   </header>
 
-  <main>
-    <section class="hero">
-      <h2>Mining auf dem nächsten Level</h2>
-      <p>Willkommen bei Hashcore.Website – Brutales Design. Brutale Power.</p>
-      <a href="#" class="btn">Jetzt starten</a>
-    </section>
-
-    <section class="products">
-      <div class="card">
-        <img src="images/miner1.jpg" alt="Antminer">
-        <h3>Antminer S19</h3>
-        <p>Leistungsstarker SHA-256 Miner</p>
-        <a href="#" class="btn">Details</a>
+  <section class="miner-grid">
+    <div class="miner-card">
+      <img src="assets/miner1.png" alt="Miner 1">
+      <div class="miner-content">
+        <h2>HashMiner X1</h2>
+        <p>Effizienter Bitcoin Miner für Einsteiger und Profis.</p>
+        <div class="price">CHF 2'499.–</div>
+        <a href="#" class="btn">Jetzt kaufen</a>
       </div>
+    </div>
 
-      <div class="card">
-        <img src="images/miner2.jpg" alt="GPU Rig">
-        <h3>GPU Mining Rig</h3>
-        <p>High-End Grafik-Mining Lösung</p>
-        <a href="#" class="btn">Details</a>
+    <div class="miner-card">
+      <img src="assets/miner2.png" alt="Miner 2">
+      <div class="miner-content">
+        <h2>HashMiner Pro</h2>
+        <p>Maximale Power für dein Mining-Business.</p>
+        <div class="price">CHF 4'299.–</div>
+        <a href="#" class="btn">Jetzt kaufen</a>
       </div>
+    </div>
 
-      <div class="card">
-        <img src="images/miner3.jpg" alt="Whatsminer">
-        <h3>Whatsminer M30S</h3>
-        <p>Zuverlässiger Bitcoin Miner</p>
-        <a href="#" class="btn">Details</a>
+    <div class="miner-card">
+      <img src="assets/miner3.png" alt="Miner 3">
+      <div class="miner-content">
+        <h2>HashMiner Ultra</h2>
+        <p>Die Zukunft des Mining – brutal stark & effizient.</p>
+        <div class="price">CHF 6'999.–</div>
+        <a href="#" class="btn">Jetzt kaufen</a>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 </body>
 </html>
