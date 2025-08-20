@@ -2,191 +2,70 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NextHash Mining</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GrowEmpire Mining</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script defer src="script.js"></script>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #0f0f0f, #000);
-      color: white;
+      background: url('https://images.unsplash.com/photo-1503264116251-35a269479413?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80') no-repeat center center fixed;
+      background-size: cover;
     }
-    header {
-      padding: 20px;
-      background: rgba(20,20,20,0.8);
-      text-align: center;
-      font-size: 28px;
-      font-weight: bold;
-      color: #00ffcc;
-      box-shadow: 0 0 20px #00ffcc;
+    .glass {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     .btn {
-      background: linear-gradient(45deg,#00ffcc,#0077ff);
-      border: none;
-      padding: 12px 25px;
-      margin: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #000;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 15px #00ffcc;
-    }
-    .container {
-      padding: 20px;
-      display: none;
-    }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 20px;
-      padding: 20px;
-      margin: 20px 0;
-      box-shadow: 0 0 20px rgba(0,255,204,0.2);
-    }
-    .status {
-      font-size: 18px;
-      margin-top: 10px;
-    }
-    /* Popup */
-    .popup {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      display: none;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-    }
-    .popup-content {
-      background: #111;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px #00ffcc;
-      text-align: center;
-      width: 350px;
-      animation: pop 0.3s ease;
-    }
-    @keyframes pop {
-      from {transform: scale(0.7); opacity: 0;}
-      to {transform: scale(1); opacity: 1;}
-    }
-    .abo {
-      background: linear-gradient(45deg,#00ffcc,#0077ff);
-      color: #000;
-      font-weight: bold;
-      margin: 15px 0;
-      padding: 15px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-    .abo:hover {
-      background: linear-gradient(45deg,#0077ff,#00ffcc);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
     }
   </style>
 </head>
-<body>
+<body class="flex flex-col items-center justify-center min-h-screen text-white">
+  
+  <!-- Header -->
+  <header class="absolute top-0 left-0 w-full flex justify-between items-center p-6">
+    <h1 class="text-3xl font-extrabold tracking-wide">🌱 GrowEmpire</h1>
+    <button id="connectBtn" class="btn px-6 py-2 rounded-lg bg-gradient-to-r from-green-400 to-emerald-600 font-bold">
+      Mit MetaMask verbinden
+    </button>
+  </header>
 
-  <header>⚡ NextHash Mining ⚡</header>
-  <div style="text-align:center; margin:20px;">
-    <button class="btn" onclick="connectWallet()">Mit MetaMask anmelden</button>
-    <button class="btn" onclick="switchView('dashboard')">Dashboard</button>
-    <button class="btn" onclick="switchView('admin')">Admin</button>
-  </div>
-
-  <!-- Dashboard -->
-  <div id="dashboard" class="container">
-    <h2>Dein Dashboard</h2>
-    <div class="card">
-      <p><b>Status:</b> <span id="status">Nicht aktiv (kein Abo)</span></p>
-      <p><b>Hashrate:</b> <span id="hashrate">0 H/s</span></p>
-      <p><b>Balance:</b> <span id="balance">0.00 ETH</span></p>
-      <button class="btn" onclick="requestPayout()">Auszahlung anfordern</button>
+  <!-- Main Card -->
+  <main id="mainContent" class="glass rounded-2xl shadow-2xl p-10 w-11/12 md:w-2/3 lg:w-1/2 mt-20 text-center hidden">
+    <h2 class="text-4xl font-bold mb-6">Dein Dashboard</h2>
+    
+    <!-- Subscription Popup -->
+    <div id="subscriptionModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden">
+      <div class="glass p-8 rounded-2xl w-11/12 md:w-2/3 lg:w-1/3">
+        <h3 class="text-2xl font-bold mb-4">Wähle dein Abo</h3>
+        <div class="grid gap-4">
+          <button onclick="buySubscription(1)" class="btn glass p-4 rounded-lg">Basic Miner – 29 CHF / Monat</button>
+          <button onclick="buySubscription(2)" class="btn glass p-4 rounded-lg">Pro Miner – 79 CHF / Monat</button>
+          <button onclick="buySubscription(3)" class="btn glass p-4 rounded-lg">Elite Miner – 199 CHF / Monat</button>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Admin -->
-  <div id="admin" class="container">
-    <h2>Admin-Bereich</h2>
-    <div class="card">
-      <label>Pools festlegen:</label><br/>
-      <input type="text" id="poolUrl" placeholder="Pool URL" style="width:80%; padding:8px;"/>
-      <button class="btn" onclick="savePool()">Speichern</button>
+    <!-- Mining Status -->
+    <div id="dashboard" class="space-y-6">
+      <p class="text-lg">Aktueller Status: <span id="status" class="font-bold text-red-400">Inaktiv ❌</span></p>
+      <p class="text-lg">Deine Hashrate: <span id="hashrate" class="font-bold">0 H/s</span></p>
+      <p class="text-lg">Deine Rewards: <span id="rewards" class="font-bold">0.0000 ETH</span></p>
     </div>
-    <div class="card">
-      <label>Mining-Rate einstellen:</label><br/>
-      <input type="number" id="rate" placeholder="Hashrate" style="width:80%; padding:8px;"/>
-      <button class="btn" onclick="saveRate()">Speichern</button>
+
+    <!-- Navigation -->
+    <div class="mt-8 flex justify-center gap-6">
+      <button onclick="switchPage('dashboard')" class="btn glass px-6 py-3 rounded-lg">Dashboard</button>
+      <button onclick="switchPage('admin')" class="btn glass px-6 py-3 rounded-lg">Admin</button>
+      <button onclick="switchPage('withdraw')" class="btn glass px-6 py-3 rounded-lg">Auszahlung</button>
     </div>
-  </div>
+  </main>
 
-  <!-- Popup Abo -->
-  <div id="aboPopup" class="popup">
-    <div class="popup-content">
-      <h2>Wähle dein Abo</h2>
-      <div class="abo" onclick="buyAbo('Basic',0.01)">Basic – 0.01 ETH / Monat</div>
-      <div class="abo" onclick="buyAbo('Pro',0.05)">Pro – 0.05 ETH / Monat</div>
-      <div class="abo" onclick="buyAbo('Elite',0.1)">Elite – 0.1 ETH / Monat</div>
-    </div>
-  </div>
-
-  <script>
-    let account = null;
-    const adminAddress = "0xDEINEADMINADRESSE"; // deine Metamask-Adresse hier
-    let aboActive = false;
-
-    async function connectWallet(){
-      if(window.ethereum){
-        const accounts = await ethereum.request({method: 'eth_requestAccounts'});
-        account = accounts[0];
-        alert("Angemeldet als: " + account);
-        document.getElementById("aboPopup").style.display="flex";
-      } else {
-        alert("MetaMask nicht gefunden!");
-      }
-    }
-
-    function buyAbo(type, price){
-      alert(type+" Abo gekauft für "+price+" ETH!");
-      aboActive = true;
-      document.getElementById("aboPopup").style.display="none";
-      document.getElementById("status").innerText="Aktiv ("+type+")";
-      document.getElementById("hashrate").innerText=type=="Basic"?"50 H/s":type=="Pro"?"200 H/s":"500 H/s";
-    }
-
-    function requestPayout(){
-      if(!aboActive){
-        alert("Kein aktives Abo!");
-        return;
-      }
-      alert("Auszahlung wird geprüft...");
-    }
-
-    function switchView(view){
-      document.getElementById("dashboard").style.display="none";
-      document.getElementById("admin").style.display="none";
-      if(view==="admin"){
-        if(account && account.toLowerCase()===adminAddress.toLowerCase()){
-          document.getElementById("admin").style.display="block";
-        } else {
-          alert("Kein Zugriff auf Admin!");
-        }
-      } else {
-        document.getElementById(view).style.display="block";
-      }
-    }
-
-    function savePool(){
-      const pool = document.getElementById("poolUrl").value;
-      alert("Pool gespeichert: "+pool);
-    }
-
-    function saveRate(){
-      const rate = document.getElementById("rate").value;
-      alert("Rate gespeichert: "+rate+" H/s");
-    }
-  </script>
 </body>
 </html>
