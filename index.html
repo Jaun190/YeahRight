@@ -1,177 +1,82 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      color: #333;
+      background: #0b0c10;
+      color: white;
     }
 
     header {
-      background: #1e1e2f;
-      color: white;
+      background: #1f2833;
       padding: 20px;
-      font-size: 1.5rem;
       text-align: center;
+      font-size: 28px;
       font-weight: bold;
-    }
-
-    .container {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      color: #66fcf1;
+      letter-spacing: 1px;
     }
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
+      padding: 30px;
     }
 
     .card {
-      background: white;
+      background: #1f2833;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(102, 252, 241, 0.2);
       text-align: center;
+      transition: transform 0.2s ease;
     }
 
-    .card h3 {
-      margin: 0;
-      font-size: 1rem;
-      color: #666;
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      font-size: 40px;
+      margin: 10px 0;
+      color: #66fcf1;
     }
 
     .card p {
-      margin: 10px 0 0;
-      font-size: 1.8rem;
-      font-weight: bold;
-    }
-
-    .chart-box {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    table thead {
-      background: #1e1e2f;
-      color: white;
-    }
-
-    table th, table td {
-      padding: 12px;
-      text-align: left;
-    }
-
-    table tbody tr:nth-child(even) {
-      background: #f4f6f9;
+      font-size: 18px;
+      margin: 0;
+      color: #c5c6c7;
     }
   </style>
 </head>
 <body>
-  <header>Dashboard</header>
+  <header>
+    Dashboard
+  </header>
 
-  <div class="container">
-    <!-- KPI Cards -->
-    <div class="cards">
-      <div class="card">
-        <h3>Umsatz</h3>
-        <p>CHF 12'340</p>
-      </div>
-      <div class="card">
-        <h3>Kunden</h3>
-        <p>324</p>
-      </div>
-      <div class="card">
-        <h3>Bestellungen</h3>
-        <p>178</p>
-      </div>
-      <div class="card">
-        <h3>Offen</h3>
-        <p>56</p>
-      </div>
+  <div class="cards">
+    <div class="card">
+      <h2>0</h2>
+      <p>Investiert</p>
     </div>
-
-    <!-- Chart -->
-    <div class="chart-box">
-      <canvas id="myChart" height="100"></canvas>
+    <div class="card">
+      <h2>0</h2>
+      <p>Ertrag</p>
     </div>
-
-    <!-- Tabelle -->
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Status</th>
-          <th>Betrag</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>#001</td>
-          <td>Max Muster</td>
-          <td>Bezahlt</td>
-          <td>CHF 120</td>
-        </tr>
-        <tr>
-          <td>#002</td>
-          <td>Anna Beispiel</td>
-          <td>Offen</td>
-          <td>CHF 89</td>
-        </tr>
-        <tr>
-          <td>#003</td>
-          <td>Tom Test</td>
-          <td>Storniert</td>
-          <td>CHF 0</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="card">
+      <h2>0</h2>
+      <p>Partner</p>
+    </div>
+    <div class="card">
+      <h2>0</h2>
+      <p>Level</p>
+    </div>
   </div>
-
-  <script>
-    const ctx = document.getElementById('myChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun'],
-        datasets: [{
-          label: 'Umsatz',
-          data: [1200, 1900, 3000, 2500, 3200, 4000],
-          borderColor: '#4CAF50',
-          backgroundColor: 'rgba(76, 175, 80, 0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    });
-  </script>
 </body>
 </html>
