@@ -1,91 +1,157 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>GrowEmpire – Abos</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashcore.Website</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+    }
+    header {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(0,0,0,0.6);
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      color: #00ffcc;
+    }
+    nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+      gap: 10px;
+      padding: 1rem;
+      background: rgba(0,0,0,0.3);
+    }
+    nav button {
+      padding: 0.8rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      transition: transform 0.2s, background 0.3s;
+    }
+    nav button:hover {
+      transform: scale(1.05);
+      background: #00ffaa;
+    }
+    .section {
+      display: none;
+      padding: 2rem;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    .miner-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .miner-card img {
+      width: 150px;
+      border-radius: 10px;
+    }
+    .miner-card h3 {
+      margin: 0;
+      color: #00ffcc;
+    }
+    .close-btn {
+      float: right;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background: rgba(255,255,255,0.1);
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .close-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white font-sans">
-
-  <!-- Header -->
-  <header class="text-center py-12">
-    <h1 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
-      Wähle dein Mining-Abo
-    </h1>
-    <p class="mt-4 text-gray-300 text-lg">
-      Starte noch heute und sichere dir die besten Vorteile!
-    </p>
+<body>
+  <header>
+    <h1>Hashcore.Website</h1>
+    <p>Dein Einstieg in die Welt des Crypto-Minings</p>
   </header>
 
-  <!-- Pricing Section -->
-  <section class="max-w-6xl mx-auto px-4 grid gap-8 md:grid-cols-4">
+  <nav>
+    <button onclick="showSection('home')">🏠 Home</button>
+    <button onclick="showSection('miner')">⚡ Miner</button>
+    <button onclick="showSection('abo')">📦 Abo</button>
+    <button onclick="showSection('kontakt')">📩 Kontakt</button>
+  </nav>
 
-    <!-- Basic -->
-    <div class="relative group bg-gray-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
-      <h2 class="text-xl font-bold mb-2">Starter</h2>
-      <p class="text-gray-400 mb-6">Ideal für Einsteiger</p>
-      <p class="text-4xl font-extrabold mb-6">CHF 19<span class="text-lg font-normal"> / Monat</span></p>
-      <ul class="space-y-2 mb-8 text-gray-300">
-        <li>✔ Zugang zum Dashboard</li>
-        <li>✔ 1 Miner-Slot</li>
-        <li>✔ Grundsupport</li>
-      </ul>
-      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 font-bold hover:scale-105 transition">
-        Jetzt starten
-      </button>
+  <main>
+    <!-- Home -->
+    <div id="home" class="section active">
+      <span class="close-btn" onclick="closeSection('home')">✖</span>
+      <h2>Willkommen bei Hashcore.Website</h2>
+      <p>Starte jetzt mit Crypto-Mining und sichere dir die besten Miner.</p>
     </div>
 
-    <!-- Pro (Empfohlen) -->
-    <div class="relative group bg-gray-900 rounded-2xl p-8 shadow-2xl hover:shadow-emerald-500/50 transition-all hover:-translate-y-1 border-2 border-emerald-500">
-      <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-full">
-        EMPFOHLEN
+    <!-- Miner -->
+    <div id="miner" class="section">
+      <span class="close-btn" onclick="closeSection('miner')">✖</span>
+      <h2>Unsere Miner</h2>
+      <div class="miner-card">
+        <img src="https://i.ibb.co/zPJn7pT/miner1.jpg" alt="Miner 1">
+        <div>
+          <h3>Antminer S19 Pro</h3>
+          <p>110 TH/s – Effizient & leistungsstark.</p>
+        </div>
       </div>
-      <h2 class="text-xl font-bold mb-2">Pro</h2>
-      <p class="text-gray-400 mb-6">Am beliebtesten!</p>
-      <p class="text-4xl font-extrabold mb-6">CHF 49<span class="text-lg font-normal"> / Monat</span></p>
-      <ul class="space-y-2 mb-8 text-gray-300">
-        <li>✔ Zugang zu allen Pools</li>
-        <li>✔ 3 Miner-Slots</li>
-        <li>✔ Premium Support</li>
-        <li>✔ Extra Rewards</li>
-      </ul>
-      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-400 font-bold hover:scale-105 transition">
-        Jetzt upgraden
-      </button>
+      <div class="miner-card">
+        <img src="https://i.ibb.co/L56N9LP/miner2.jpg" alt="Miner 2">
+        <div>
+          <h3>WhatsMiner M30S++</h3>
+          <p>112 TH/s – Perfekt für Profis.</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Advanced -->
-    <div class="relative group bg-gray-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
-      <h2 class="text-xl font-bold mb-2">Advanced</h2>
-      <p class="text-gray-400 mb-6">Für ambitionierte Miner</p>
-      <p class="text-4xl font-extrabold mb-6">CHF 99<span class="text-lg font-normal"> / Monat</span></p>
-      <ul class="space-y-2 mb-8 text-gray-300">
-        <li>✔ 10 Miner-Slots</li>
-        <li>✔ Persönlicher Support</li>
-        <li>✔ Exklusive Features</li>
-      </ul>
-      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 font-bold hover:scale-105 transition">
-        Jetzt wählen
-      </button>
+    <!-- Abo -->
+    <div id="abo" class="section">
+      <span class="close-btn" onclick="closeSection('abo')">✖</span>
+      <h2>Dein Abo</h2>
+      <p>Starte dein Mining-Abo ab nur 29 CHF/Monat.</p>
+      <button>Jetzt Abo starten</button>
     </div>
 
-    <!-- VIP -->
-    <div class="relative group bg-gray-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
-      <h2 class="text-xl font-bold mb-2">VIP</h2>
-      <p class="text-gray-400 mb-6">Maximale Power</p>
-      <p class="text-4xl font-extrabold mb-6">CHF 199<span class="text-lg font-normal"> / Monat</span></p>
-      <ul class="space-y-2 mb-8 text-gray-300">
-        <li>✔ Unbegrenzte Miner</li>
-        <li>✔ VIP-Support</li>
-        <li>✔ Beta-Features</li>
-        <li>✔ Extra hohe Rewards</li>
-      </ul>
-      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-400 font-bold hover:scale-105 transition">
-        VIP werden
-      </button>
+    <!-- Kontakt -->
+    <div id="kontakt" class="section">
+      <span class="close-btn" onclick="closeSection('kontakt')">✖</span>
+      <h2>Kontakt</h2>
+      <p>Email: support@hashcore.website</p>
+      <p>Telefon: +41 79 488 61 51</p>
     </div>
+  </main>
 
-  </section>
-
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    function closeSection(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+  </script>
 </body>
 </html>
