@@ -2,60 +2,24 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hashline Mining</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mining Dashboard</title>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
-      color: white;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
     }
-    header {
-      padding: 15px;
-      background: #111;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header h1 {
-      margin: 0;
-      color: #0ff;
-    }
-    .btn {
-      background: #0ff;
-      color: #111;
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    .btn:hover {
-      background: #09c;
-      color: white;
-    }
+
     .dashboard {
-      padding: 20px;
-      text-align: center;
-    }
-    .mining-box {
-      margin: 20px auto;
-      background: #222;
-      border-radius: 12px;
-      padding: 20px;
-      width: 300px;
-      box-shadow: 0 0 20px #0ff3;
-    }
-    .mining-btn {
-      background: #444;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
-      cursor: not-allowed;
-      opacity: 0.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      font-size: 2rem;
     }
 
     /* Popup Overlay */
@@ -63,172 +27,194 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
       display: flex;
       justify-content: center;
       align-items: center;
-      visibility: visible;
+      z-index: 999;
     }
+
+    /* Popup Box */
     .popup {
-      background: #111;
-      padding: 30px;
-      border-radius: 15px;
-      width: 80%;
-      max-width: 900px;
-      box-shadow: 0 0 30px #0ff;
-      position: relative;
+      background: rgba(30,41,59,0.9);
+      border-radius: 20px;
+      padding: 20px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 80%;
+      overflow-y: auto;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      animation: fadeIn 0.5s ease;
     }
-    .popup h2 {
-      text-align: center;
-      color: #0ff;
-      margin-bottom: 20px;
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
     }
+
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .popup-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
     .close-btn {
-      position: absolute;
-      top: 15px; right: 20px;
-      font-size: 20px;
       cursor: pointer;
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: none;
+      border: none;
       color: #fff;
+      transition: 0.2s;
     }
-    .plans {
+    .close-btn:hover { color: #f87171; }
+
+    /* Abo Cards */
+    .abo-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
+      margin-top: 20px;
     }
-    .plan {
-      background: #222;
-      border-radius: 12px;
+
+    .abo-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
       padding: 20px;
       text-align: center;
-      box-shadow: 0 0 15px #0ff3;
-      transition: transform 0.3s;
+      transition: 0.3s;
+      border: 2px solid transparent;
     }
-    .plan:hover {
-      transform: scale(1.05);
+
+    .abo-card:hover {
+      transform: translateY(-5px);
+      border: 2px solid #38bdf8;
     }
-    .plan h3 {
-      color: #0ff;
+
+    .abo-card.recommended {
+      border: 2px solid #38bdf8;
+      background: rgba(56,189,248,0.1);
+      box-shadow: 0 0 15px rgba(56,189,248,0.5);
     }
-    .plan p {
-      color: #aaa;
+
+    .abo-title {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
     }
-    .recommended {
-      border: 2px solid #0f0;
-      position: relative;
+
+    .abo-price {
+      font-size: 1.8rem;
+      margin: 10px 0;
+      color: #38bdf8;
     }
-    .recommended::after {
-      content: "Empfohlen";
-      position: absolute;
-      top: -12px; right: 10px;
-      background: #0f0;
-      color: #111;
-      padding: 2px 8px;
-      font-size: 12px;
-      border-radius: 6px;
+
+    .abo-duration {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .abo-benefits {
+      margin: 15px 0;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .abo-btn {
+      background: #38bdf8;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
       font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
     }
+    .abo-btn:hover {
+      background: #0ea5e9;
+    }
+
   </style>
 </head>
 <body>
-  <header>
-    <h1>Hashline Dashboard</h1>
-    <button class="btn" onclick="connectWallet()">Mit MetaMask verbinden</button>
-  </header>
-
   <div class="dashboard">
-    <h2>Mining Dashboard</h2>
-    <div class="mining-box">
-      <h3>Miner</h3>
-      <div class="mining-btn">Miner 1 (inaktiv)</div>
-      <div class="mining-btn">Miner 2 (inaktiv)</div>
-      <div class="mining-btn">Miner 3 (inaktiv)</div>
-    </div>
+    Willkommen im Dashboard – Miner sind inaktiv bis Abo gekauft.
   </div>
 
-  <!-- Abo-Popup -->
-  <div class="overlay" id="aboPopup">
+  <!-- Popup -->
+  <div class="overlay" id="aboOverlay">
     <div class="popup">
-      <span class="close-btn" onclick="closePopup()">&times;</span>
-      <h2>Wähle dein Mining-Abo</h2>
-      <div class="plans">
-        <div class="plan">
-          <h3>Basic Miner</h3>
-          <p>30 Tage</p>
-          <p><strong>0.02 ETH</strong></p>
-          <p>Einsteiger-Paket</p>
-          <button class="btn" onclick="buyPlan('Basic', 0.02)">Jetzt starten</button>
+      <div class="popup-header">
+        <h2>Wähle dein Mining-Abo</h2>
+        <button class="close-btn" onclick="closePopup()">✕</button>
+      </div>
+      <div class="abo-container">
+        
+        <!-- Abo 1 -->
+        <div class="abo-card">
+          <div class="abo-title">Starter</div>
+          <div class="abo-price">0.02 ETH</div>
+          <div class="abo-duration">Laufzeit: 30 Tage</div>
+          <div class="abo-benefits">
+            ✅ 1 Miner aktiv<br>
+            ✅ 5% Gewinnsteigerung<br>
+            ❌ Keine Auszahlung möglich
+          </div>
+          <button class="abo-btn">Abo kaufen</button>
         </div>
-        <div class="plan recommended">
-          <h3>Standard Miner</h3>
-          <p>90 Tage</p>
-          <p><strong>0.05 ETH</strong></p>
-          <p>Bester Preis-Leistung</p>
-          <button class="btn" onclick="buyPlan('Standard', 0.05)">Jetzt starten</button>
+
+        <!-- Abo 2 -->
+        <div class="abo-card">
+          <div class="abo-title">Basic</div>
+          <div class="abo-price">0.05 ETH</div>
+          <div class="abo-duration">Laufzeit: 90 Tage</div>
+          <div class="abo-benefits">
+            ✅ 3 Miner aktiv<br>
+            ✅ 10% Gewinnsteigerung<br>
+            ✅ Auszahlung ab 0.1 ETH
+          </div>
+          <button class="abo-btn">Abo kaufen</button>
         </div>
-        <div class="plan">
-          <h3>Pro Miner</h3>
-          <p>180 Tage</p>
-          <p><strong>0.09 ETH</strong></p>
-          <p>Für ernsthafte Miner</p>
-          <button class="btn" onclick="buyPlan('Pro', 0.09)">Jetzt starten</button>
+
+        <!-- Abo 3 (Empfohlen) -->
+        <div class="abo-card recommended">
+          <div class="abo-title">Pro (Empfohlen)</div>
+          <div class="abo-price">0.1 ETH</div>
+          <div class="abo-duration">Laufzeit: 180 Tage</div>
+          <div class="abo-benefits">
+            ✅ 5 Miner aktiv<br>
+            ✅ 20% Gewinnsteigerung<br>
+            ✅ Sofortige Auszahlungen
+          </div>
+          <button class="abo-btn">Abo kaufen</button>
         </div>
-        <div class="plan">
-          <h3>Elite Miner</h3>
-          <p>365 Tage</p>
-          <p><strong>0.15 ETH</strong></p>
-          <p>Volle Hashpower + Bonus</p>
-          <button class="btn" onclick="buyPlan('Elite', 0.15)">Jetzt starten</button>
+
+        <!-- Abo 4 -->
+        <div class="abo-card">
+          <div class="abo-title">Elite</div>
+          <div class="abo-price">0.25 ETH</div>
+          <div class="abo-duration">Laufzeit: 365 Tage</div>
+          <div class="abo-benefits">
+            ✅ 10 Miner aktiv<br>
+            ✅ 50% Gewinnsteigerung<br>
+            ✅ Priorisierte Auszahlungen<br>
+            🎁 Exklusiver Pool-Zugang
+          </div>
+          <button class="abo-btn">Abo kaufen</button>
         </div>
+
       </div>
     </div>
   </div>
 
   <script>
-    let userAccount;
-
-    async function connectWallet() {
-      if (window.ethereum) {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        userAccount = accounts[0];
-        alert("Verbunden: " + userAccount);
-        document.getElementById("aboPopup").style.visibility = "visible";
-      } else {
-        alert("Bitte MetaMask installieren.");
-      }
-    }
-
     function closePopup() {
-      document.getElementById("aboPopup").style.visibility = "hidden";
-    }
-
-    async function buyPlan(plan, price) {
-      if (!userAccount) return alert("Bitte zuerst Wallet verbinden.");
-      const web3 = new Web3(window.ethereum);
-      const tx = {
-        from: userAccount,
-        to: "0xYourAdminWalletHere", // Admin Wallet
-        value: web3.utils.toWei(price.toString(), "ether")
-      };
-      try {
-        await ethereum.request({ method: 'eth_sendTransaction', params: [tx] });
-        alert(plan + " Abo gekauft!");
-        closePopup();
-        activateMiners();
-      } catch (err) {
-        console.error(err);
-        alert("Transaktion abgebrochen");
-      }
-    }
-
-    function activateMiners() {
-      const miners = document.querySelectorAll(".mining-btn");
-      miners.forEach(m => {
-        m.style.background = "#0f0";
-        m.style.color = "#111";
-        m.style.cursor = "pointer";
-        m.textContent = m.textContent.replace("(inaktiv)", "(aktiv)");
-        m.onclick = () => alert(m.textContent + " gestartet!");
-      });
+      document.getElementById("aboOverlay").style.display = "none";
     }
   </script>
 </body>
