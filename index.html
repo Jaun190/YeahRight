@@ -1,71 +1,101 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GrowEmpire Mining</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script defer src="script.js"></script>
   <style>
     body {
-      background: url('https://images.unsplash.com/photo-1503264116251-35a269479413?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80') no-repeat center center fixed;
-      background-size: cover;
+      margin: 0; font-family: Arial, sans-serif; 
+      background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+      color: white; text-align: center;
     }
-    .glass {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
+    header { padding: 20px; font-size: 26px; font-weight: bold; }
     .btn {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      padding: 12px 20px; margin: 10px;
+      background: #3b82f6; border: none; color: white;
+      border-radius: 10px; font-size: 16px;
+      cursor: pointer; transition: 0.3s;
     }
-    .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    .btn:hover { background: #2563eb; }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px; padding: 20px; margin: 20px auto;
+      width: 300px; backdrop-filter: blur(10px);
     }
+    .hidden { display: none; }
+    #popup {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex; align-items: center; justify-content: center;
+    }
+    #popup .card { width: 350px; }
   </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen text-white">
-  
-  <!-- Header -->
-  <header class="absolute top-0 left-0 w-full flex justify-between items-center p-6">
-    <h1 class="text-3xl font-extrabold tracking-wide">🌱 GrowEmpire</h1>
-    <button id="connectBtn" class="btn px-6 py-2 rounded-lg bg-gradient-to-r from-green-400 to-emerald-600 font-bold">
-      Mit MetaMask verbinden
-    </button>
-  </header>
+<body>
+  <header>🌱 GrowEmpire Mining</header>
 
-  <!-- Main Card -->
-  <main id="mainContent" class="glass rounded-2xl shadow-2xl p-10 w-11/12 md:w-2/3 lg:w-1/2 mt-20 text-center hidden">
-    <h2 class="text-4xl font-bold mb-6">Dein Dashboard</h2>
-    
-    <!-- Subscription Popup -->
-    <div id="subscriptionModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden">
-      <div class="glass p-8 rounded-2xl w-11/12 md:w-2/3 lg:w-1/3">
-        <h3 class="text-2xl font-bold mb-4">Wähle dein Abo</h3>
-        <div class="grid gap-4">
-          <button onclick="buySubscription(1)" class="btn glass p-4 rounded-lg">Basic Miner – 29 CHF / Monat</button>
-          <button onclick="buySubscription(2)" class="btn glass p-4 rounded-lg">Pro Miner – 79 CHF / Monat</button>
-          <button onclick="buySubscription(3)" class="btn glass p-4 rounded-lg">Elite Miner – 199 CHF / Monat</button>
-        </div>
-      </div>
+  <div id="auth">
+    <button class="btn" onclick="connectWallet()">Login mit MetaMask</button>
+  </div>
+
+  <div id="popup" class="hidden">
+    <div class="card">
+      <h2>Wähle dein Abo</h2>
+      <button class="btn" onclick="buySub(1)">⚡ Basic – 0.01 ETH / Monat</button>
+      <button class="btn" onclick="buySub(2)">🔥 Pro – 0.02 ETH / Monat</button>
+      <button class="btn" onclick="buySub(3)">💎 Elite – 0.05 ETH / Monat</button>
     </div>
+  </div>
 
-    <!-- Mining Status -->
-    <div id="dashboard" class="space-y-6">
-      <p class="text-lg">Aktueller Status: <span id="status" class="font-bold text-red-400">Inaktiv ❌</span></p>
-      <p class="text-lg">Deine Hashrate: <span id="hashrate" class="font-bold">0 H/s</span></p>
-      <p class="text-lg">Deine Rewards: <span id="rewards" class="font-bold">0.0000 ETH</span></p>
+  <div id="dashboard" class="hidden">
+    <div class="card">
+      <h2>Dein Dashboard</h2>
+      <p id="status">⛏ Miner: Inaktiv</p>
+      <p id="sub">📦 Abo: keines</p>
+      <button class="btn" onclick="switchView('admin')">➡ Admin-Bereich</button>
     </div>
+  </div>
 
-    <!-- Navigation -->
-    <div class="mt-8 flex justify-center gap-6">
-      <button onclick="switchPage('dashboard')" class="btn glass px-6 py-3 rounded-lg">Dashboard</button>
-      <button onclick="switchPage('admin')" class="btn glass px-6 py-3 rounded-lg">Admin</button>
-      <button onclick="switchPage('withdraw')" class="btn glass px-6 py-3 rounded-lg">Auszahlung</button>
+  <div id="admin" class="hidden">
+    <div class="card">
+      <h2>Admin Bereich</h2>
+      <p>Pools festlegen, Auszahlungen prüfen</p>
+      <button class="btn" onclick="switchView('dashboard')">⬅ Zurück zum Dashboard</button>
     </div>
-  </main>
+  </div>
 
+  <script>
+    let provider, signer, userAddress;
+    const contractAddress = "0x1234567890123456789012345678901234567890"; // hier echte Adresse eintragen
+    const abi = []; // später ABI vom Smart Contract einsetzen
+
+    async function connectWallet() {
+      if (!window.ethereum) return alert("MetaMask installieren!");
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      signer = provider.getSigner();
+      userAddress = await signer.getAddress();
+
+      document.getElementById("auth").classList.add("hidden");
+      document.getElementById("popup").classList.remove("hidden");
+    }
+
+    async function buySub(level) {
+      document.getElementById("popup").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+
+      let aboName = level === 1 ? "Basic" : level === 2 ? "Pro" : "Elite";
+      document.getElementById("sub").innerText = "📦 Abo: " + aboName;
+      document.getElementById("status").innerText = "⛏ Miner: Aktiv";
+    }
+
+    function switchView(target) {
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("admin").classList.add("hidden");
+      document.getElementById(target).classList.remove("hidden");
+    }
+  </script>
 </body>
 </html>
