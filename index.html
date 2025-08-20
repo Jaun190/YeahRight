@@ -2,162 +2,183 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Hashcore.Website – Cloud Mining</title>
+  <title>Mining Abos</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
   <style>
     body {
-      margin:0; font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #020617);
-      color:white; overflow-x:hidden;
+      font-family: Arial, sans-serif;
+      background: #0b0f19;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
     }
-    header {
-      padding:20px; text-align:center;
-      background:rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(10px);
-      box-shadow:0 0 20px #0ea5e9;
+    h1 {
+      margin: 20px;
+      color: #4ade80;
     }
-    h1 { font-size:2.2em; color:#0ea5e9; margin:0; }
-    h2 { color:#38bdf8; margin-bottom:20px; }
-    section { padding:60px 20px; text-align:center; }
-
-    /* Cards */
-    .card {
-      background:rgba(30,41,59,0.6);
-      backdrop-filter: blur(12px);
-      padding:25px;
-      border-radius:18px;
-      margin:20px auto;
-      max-width:400px;
-      box-shadow:0 0 25px rgba(56,189,248,0.3);
-      transition: transform 0.3s ease;
+    .plans {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 40px auto;
+      flex-wrap: wrap;
     }
-    .card:hover { transform: scale(1.05); }
-    .card img {
-      width:100%; border-radius:12px; margin-bottom:15px;
+    .plan {
+      background: #1a2238;
+      border-radius: 15px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
-
-    /* Buttons */
+    .plan img {
+      width: 100%;
+      border-radius: 12px;
+    }
+    .price {
+      font-size: 22px;
+      margin: 15px 0;
+      color: #facc15;
+    }
     button {
-      background:linear-gradient(90deg,#0ea5e9,#6366f1);
-      border:none; padding:12px 24px;
-      margin:10px; border-radius:10px;
-      color:white; font-weight:bold;
-      cursor:pointer; transition:0.3s;
-      box-shadow:0 0 15px rgba(14,165,233,0.5);
+      background: #4ade80;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #000;
+      transition: 0.3s;
     }
     button:hover {
-      transform:translateY(-3px);
-      box-shadow:0 0 25px rgba(99,102,241,0.8);
+      background: #22c55e;
     }
-
-    input {
-      padding:12px; border-radius:10px; border:none;
-      width:80%; margin:10px 0;
-      background:#1e293b; color:white;
+    footer {
+      margin-top: 50px;
+      font-size: 12px;
+      color: #aaa;
     }
-
-    /* Admin Table */
-    table {
-      margin:auto; border-collapse:collapse; width:90%; color:white;
+    .link {
+      color: #38bdf8;
+      cursor: pointer;
     }
-    th, td { border:1px solid #334155; padding:12px; }
-    th { background:#1e293b; }
+    /* Popup */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background: #1f2937;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 600px;
+      max-height: 80%;
+      overflow-y: auto;
+      text-align: left;
+      color: #fff;
+    }
+    .popup-content h2 {
+      color: #facc15;
+    }
+    .close-btn {
+      float: right;
+      cursor: pointer;
+      font-size: 20px;
+      color: #f87171;
+    }
   </style>
-
-  <script>
-    const adminWallet = "0xcb165af669733864f27070454ac6c37dec991ffd".toLowerCase();
-
-    async function connectWallet() {
-      if (window.ethereum) {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        const userWallet = accounts[0].toLowerCase();
-
-        document.getElementById("wallet").innerText = "✅ Wallet verbunden: " + userWallet;
-        document.getElementById("dashboard").style.display = "block";
-        document.getElementById("auszahlung").style.display = "block";
-
-        // Admin-Bereich nur für dich
-        if(userWallet === adminWallet){
-          document.getElementById("admin").style.display = "block";
-          document.getElementById("wallet").innerText += " (Admin)";
-        }
-
-      } else {
-        alert("⚠️ Bitte MetaMask installieren!");
-      }
-    }
-  </script>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <h1>⚡ Hashcore.Website</h1>
-    <p>Cloud Mining neu definiert – schneller, transparenter, geiler als CTPool.</p>
-  </header>
+  <h1>⚡ Wähle dein Mining-Abo</h1>
 
-  <!-- Hero -->
-  <section>
-    <h2>🚀 Starte jetzt mit einem Klick</h2>
-    <button onclick="connectWallet()">Mit MetaMask verbinden</button>
-    <p id="wallet">Noch nicht verbunden</p>
-  </section>
+  <div class="plans">
+    <div class="plan">
+      <img src="miner1.png" alt="Miner 1">
+      <h2>Starter Miner</h2>
+      <p class="price">0.01 ETH / Monat</p>
+      <button onclick="pay('0.01')">Jetzt kaufen</button>
+    </div>
+    <div class="plan">
+      <img src="miner2.png" alt="Miner 2">
+      <h2>Pro Miner</h2>
+      <p class="price">0.05 ETH / Monat</p>
+      <button onclick="pay('0.05')">Jetzt kaufen</button>
+    </div>
+    <div class="plan">
+      <img src="miner3.png" alt="Miner 3">
+      <h2>Ultra Miner</h2>
+      <p class="price">0.1 ETH / Monat</p>
+      <button onclick="pay('0.1')">Jetzt kaufen</button>
+    </div>
+  </div>
 
-  <!-- Abos -->
-  <section id="abos">
-    <h2>💳 Mining Abos</h2>
-    <div class="card">
-      <img src="assets/miner1.png" alt="Bronze Miner">
-      <h3>🥉 Bronze</h3>
-      <p>30 €/Monat – 100 TH/s</p>
-      <button>Kaufen</button>
-    </div>
-    <div class="card">
-      <img src="assets/miner2.png" alt="Silber Miner">
-      <h3>🥈 Silber</h3>
-      <p>69 €/Monat – 300 TH/s</p>
-      <button>Kaufen</button>
-    </div>
-    <div class="card">
-      <img src="assets/miner3.png" alt="Gold Miner">
-      <h3>🥇 Gold</h3>
-      <p>149 €/Monat – 800 TH/s</p>
-      <button>Kaufen</button>
-    </div>
-  </section>
-
-  <!-- Dashboard -->
-  <section id="dashboard" style="display:none;">
-    <h2>📊 Dein Dashboard</h2>
-    <div class="card">
-      <p><b>Hashrate:</b> 390 TH/s</p>
-      <p><b>Einnahmen:</b> 0.052 BTC</p>
-      <p><b>Aktive Abos:</b> Bronze + Silber</p>
-    </div>
-  </section>
-
-  <!-- Auszahlung -->
-  <section id="auszahlung" style="display:none;">
-    <h2>💸 Auszahlung</h2>
-    <div class="card">
-      <input placeholder="Wallet-Adresse eingeben">
-      <button>Auszahlung beantragen</button>
-    </div>
-  </section>
-
-  <!-- Admin -->
-  <section id="admin" style="display:none;">
-    <h2>🛠️ Adminbereich</h2>
-    <div class="card">
-      <table>
-        <tr><th>Nutzer</th><th>Wallet</th><th>Abos</th><th>Einnahmen</th><th>Aktion</th></tr>
-        <tr><td>Alice</td><td>0x123...</td><td>Silber</td><td>0.12 BTC</td><td><button>Freigeben</button></td></tr>
-        <tr><td>Bob</td><td>0x456...</td><td>Bronze</td><td>0.05 BTC</td><td><button>Freigeben</button></td></tr>
-      </table>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer style="padding:20px; background:#1e293b; text-align:center;">
-    <p>© 2025 Hashcore.Website | <a href="#" style="color:#38bdf8;">AGB</a> | <a href="#" style="color:#38bdf8;">Impressum</a></p>
+  <footer>
+    <span class="link" onclick="openPopup('agb')">AGB</span> | 
+    <span class="link" onclick="openPopup('impressum')">Impressum</span>
   </footer>
+
+  <!-- POPUPS -->
+  <div class="popup" id="agbPopup">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('agb')">✖</span>
+      <h2>AGB</h2>
+      <p>Hier stehen deine Allgemeinen Geschäftsbedingungen...</p>
+    </div>
+  </div>
+
+  <div class="popup" id="impressumPopup">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('impressum')">✖</span>
+      <h2>Impressum</h2>
+      <p><strong>Firma:</strong> Deine Firma<br>
+         <strong>Adresse:</strong> Musterstrasse 1, 1234 Musterstadt<br>
+         <strong>Email:</strong> info@deinefirma.com</p>
+    </div>
+  </div>
+
+  <script>
+    // Wallet-Adresse einfügen
+    const receiverAddress = "YOUR_WALLET_ADDRESS_HERE";
+
+    async function pay(amountEth) {
+      if (typeof window.ethereum !== "undefined") {
+        try {
+          await ethereum.request({ method: "eth_requestAccounts" });
+          const web3 = new Web3(window.ethereum);
+          const accounts = await web3.eth.getAccounts();
+
+          const tx = {
+            from: accounts[0],
+            to: receiverAddress,
+            value: web3.utils.toWei(amountEth, "ether"),
+          };
+
+          const txHash = await ethereum.request({
+            method: "eth_sendTransaction",
+            params: [tx],
+          });
+
+          alert("Zahlung erfolgreich! TX Hash: " + txHash);
+        } catch (err) {
+          console.error(err);
+          alert("Fehler bei der Zahlung: " + err.message);
+        }
+      } else {
+        alert("Bitte installiere MetaMask!");
+      }
+    }
+
+    function openPopup(type) {
+      document.getElementById(type + "Popup").style.display = "flex";
+    }
+    function closePopup(type) {
+      document.getElementById(type + "Popup").style.display = "none";
+    }
+  </script>
 </body>
 </html>
