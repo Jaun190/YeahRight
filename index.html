@@ -1,109 +1,82 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>GrowEmpire Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hashline – Mining Abos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
+      background: radial-gradient(circle at top, #0f172a, #020617);
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
     }
-
-    header {
-      width: 100%;
-      padding: 20px;
-      background: linear-gradient(90deg, #065f46, #10b981);
-      text-align: center;
-      font-size: 28px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-
-    .dashboard {
-      margin-top: 40px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 25px;
-      width: 80%;
-      max-width: 1200px;
-    }
-
-    .card {
+    .glass {
       background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 16px;
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.5);
-      transition: transform 0.3s, background 0.3s;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      background: rgba(255,255,255,0.1);
-    }
-
-    .card h2 {
-      font-size: 22px;
-      margin-bottom: 10px;
-      color: #10b981;
-    }
-
-    .card p {
-      font-size: 18px;
-      margin: 0;
-    }
-
-    footer {
-      margin-top: auto;
-      padding: 15px;
-      text-align: center;
-      font-size: 14px;
-      color: #aaa;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      width: 100%;
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
     }
   </style>
 </head>
-<body>
-  <header>🌿 GrowEmpire Dashboard 🌿</header>
+<body class="min-h-screen flex flex-col items-center justify-center px-4">
+  <!-- Hero Section -->
+  <header class="text-center mb-12">
+    <h1 class="text-5xl md:text-6xl font-extrabold mb-4">Hashline Mining Abos</h1>
+    <p class="text-gray-300 text-lg max-w-2xl mx-auto">
+      Wähle dein Abo, erhöhe deine Hashrate und sichere dir Zugang zum Mining-Pool.  
+      Je länger und teurer das Abo, desto mehr Power kannst du nutzen.
+    </p>
+  </header>
 
-  <div class="dashboard">
-    <div class="card">
-      <h2>Gesamt-Ertrag</h2>
-      <p>CHF 1'250.–</p>
+  <!-- Pricing Cards -->
+  <section class="grid md:grid-cols-3 gap-8 max-w-6xl w-full">
+    <!-- Basic -->
+    <div class="glass rounded-2xl p-8 shadow-lg text-center flex flex-col">
+      <h2 class="text-2xl font-bold mb-2">Starter</h2>
+      <p class="text-gray-400 mb-6">Perfekt für Einsteiger</p>
+      <div class="text-4xl font-extrabold mb-4">CHF 59<span class="text-lg font-medium">/Monat</span></div>
+      <ul class="text-gray-300 text-left mb-6 space-y-2">
+        <li>✔ Laufzeit: 30 Tage</li>
+        <li>✔ Zugang zum Mining-Pool</li>
+        <li>✔ Hashrate x1</li>
+        <li>✔ Jederzeit erweiterbar</li>
+      </ul>
+      <button class="mt-auto bg-indigo-600 hover:bg-indigo-700 transition rounded-xl px-6 py-3 font-semibold">
+        Jetzt starten
+      </button>
     </div>
-    <div class="card">
-      <h2>Pflanzen aktiv</h2>
-      <p>12</p>
-    </div>
-    <div class="card">
-      <h2>Partner geworben</h2>
-      <p>5</p>
-    </div>
-    <div class="card">
-      <h2>Nächste Ernte</h2>
-      <p>14 Tage</p>
-    </div>
-    <div class="card">
-      <h2>Level</h2>
-      <p>🌱 Grower Stufe 2</p>
-    </div>
-    <div class="card">
-      <h2>Reinvest</h2>
-      <p>CHF 300.–</p>
-    </div>
-  </div>
 
-  <footer>© 2025 GrowEmpire – Dein virtuelles Grow-Dashboard</footer>
+    <!-- Pro -->
+    <div class="glass rounded-2xl p-8 shadow-lg text-center flex flex-col border-2 border-indigo-500">
+      <h2 class="text-2xl font-bold mb-2">Pro</h2>
+      <p class="text-gray-400 mb-6">Für ambitionierte Miner</p>
+      <div class="text-4xl font-extrabold mb-4">CHF 199<span class="text-lg font-medium">/3 Monate</span></div>
+      <ul class="text-gray-300 text-left mb-6 space-y-2">
+        <li>✔ Laufzeit: 90 Tage</li>
+        <li>✔ Erhöhte Hashrate x3</li>
+        <li>✔ Zugang zum Pool + Bonus</li>
+        <li>✔ Abo mehrfach kombinierbar</li>
+      </ul>
+      <button class="mt-auto bg-indigo-600 hover:bg-indigo-700 transition rounded-xl px-6 py-3 font-semibold">
+        Jetzt starten
+      </button>
+    </div>
+
+    <!-- Elite -->
+    <div class="glass rounded-2xl p-8 shadow-lg text-center flex flex-col">
+      <h2 class="text-2xl font-bold mb-2">Elite</h2>
+      <p class="text-gray-400 mb-6">Maximale Power</p>
+      <div class="text-4xl font-extrabold mb-4">CHF 499<span class="text-lg font-medium">/6 Monate</span></div>
+      <ul class="text-gray-300 text-left mb-6 space-y-2">
+        <li>✔ Laufzeit: 180 Tage</li>
+        <li>✔ Maximale Hashrate x8</li>
+        <li>✔ Voller Poolzugang</li>
+        <li>✔ Mehrfach buchbar</li>
+      </ul>
+      <button class="mt-auto bg-indigo-600 hover:bg-indigo-700 transition rounded-xl px-6 py-3 font-semibold">
+        Jetzt starten
+      </button>
+    </div>
+  </section>
 </body>
 </html>
