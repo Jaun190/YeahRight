@@ -4,83 +4,83 @@
   <meta charset="UTF-8">
   <title>Hashcore.Website – Cloud Mining</title>
   <style>
-    /* ===== Global Styles ===== */
     body {
-      margin:0; 
-      font-family: 'Segoe UI', sans-serif;
+      margin:0; font-family: 'Segoe UI', sans-serif;
       background: radial-gradient(circle at top, #0f172a, #020617);
-      color:white;
-      overflow-x:hidden;
+      color:white; overflow-x:hidden;
     }
     header {
-      padding:20px;
-      text-align:center;
+      padding:20px; text-align:center;
       background:rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(10px);
       box-shadow:0 0 20px #0ea5e9;
     }
     h1 { font-size:2.2em; color:#0ea5e9; margin:0; }
-    h2 { color:#38bdf8; }
+    h2 { color:#38bdf8; margin-bottom:20px; }
     section { padding:60px 20px; text-align:center; }
 
-    /* ===== Cards / Glassmorphismus ===== */
+    /* Cards */
     .card {
       background:rgba(30,41,59,0.6);
       backdrop-filter: blur(12px);
       padding:25px;
       border-radius:18px;
       margin:20px auto;
-      max-width:500px;
+      max-width:400px;
       box-shadow:0 0 25px rgba(56,189,248,0.3);
       transition: transform 0.3s ease;
     }
     .card:hover { transform: scale(1.05); }
+    .card img {
+      width:100%; border-radius:12px; margin-bottom:15px;
+    }
 
-    /* ===== Buttons ===== */
+    /* Buttons */
     button {
       background:linear-gradient(90deg,#0ea5e9,#6366f1);
-      border:none;
-      padding:12px 24px;
-      margin:10px;
-      border-radius:10px;
-      color:white;
-      font-weight:bold;
-      cursor:pointer;
-      transition:0.3s;
+      border:none; padding:12px 24px;
+      margin:10px; border-radius:10px;
+      color:white; font-weight:bold;
+      cursor:pointer; transition:0.3s;
       box-shadow:0 0 15px rgba(14,165,233,0.5);
     }
-    button:hover { transform:translateY(-3px); box-shadow:0 0 25px rgba(99,102,241,0.8); }
-
-    input {
-      padding:12px; 
-      border-radius:10px; 
-      border:none; 
-      width:80%; 
-      margin:10px 0;
-      background:#1e293b;
-      color:white;
+    button:hover {
+      transform:translateY(-3px);
+      box-shadow:0 0 25px rgba(99,102,241,0.8);
     }
 
+    input {
+      padding:12px; border-radius:10px; border:none;
+      width:80%; margin:10px 0;
+      background:#1e293b; color:white;
+    }
+
+    /* Admin Table */
     table {
-      margin:auto; 
-      border-collapse:collapse; 
-      width:90%; 
-      color:white;
+      margin:auto; border-collapse:collapse; width:90%; color:white;
     }
     th, td { border:1px solid #334155; padding:12px; }
     th { background:#1e293b; }
   </style>
 
   <script>
-    let isAdmin = false; // ⚡ Demo: auf true setzen für Admin-Ansicht
+    const adminWallet = "0xcb165af669733864f27070454ac6c37dec991ffd".toLowerCase();
 
     async function connectWallet() {
       if (window.ethereum) {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        document.getElementById("wallet").innerText = "✅ Wallet verbunden: " + accounts[0];
+        const userWallet = accounts[0].toLowerCase();
+
+        document.getElementById("wallet").innerText = "✅ Wallet verbunden: " + userWallet;
         document.getElementById("dashboard").style.display = "block";
         document.getElementById("auszahlung").style.display = "block";
-        if(isAdmin) document.getElementById("admin").style.display = "block";
+
+        // Admin-Bereich nur für dich
+        if(userWallet === adminWallet){
+          document.getElementById("admin").style.display = "block";
+          document.getElementById("wallet").innerText += " (Admin)";
+        }
+
       } else {
         alert("⚠️ Bitte MetaMask installieren!");
       }
@@ -91,12 +91,12 @@
   <!-- Header -->
   <header>
     <h1>⚡ Hashcore.Website</h1>
-    <p>Die nächste Generation von Cloud Mining – schneller, transparenter, geiler.</p>
+    <p>Cloud Mining neu definiert – schneller, transparenter, geiler als CTPool.</p>
   </header>
 
   <!-- Hero -->
   <section>
-    <h2>🚀 Verbinde deine Wallet & starte sofort</h2>
+    <h2>🚀 Starte jetzt mit einem Klick</h2>
     <button onclick="connectWallet()">Mit MetaMask verbinden</button>
     <p id="wallet">Noch nicht verbunden</p>
   </section>
@@ -105,16 +105,19 @@
   <section id="abos">
     <h2>💳 Mining Abos</h2>
     <div class="card">
+      <img src="assets/miner1.png" alt="Bronze Miner">
       <h3>🥉 Bronze</h3>
       <p>30 €/Monat – 100 TH/s</p>
       <button>Kaufen</button>
     </div>
     <div class="card">
+      <img src="assets/miner2.png" alt="Silber Miner">
       <h3>🥈 Silber</h3>
       <p>69 €/Monat – 300 TH/s</p>
       <button>Kaufen</button>
     </div>
     <div class="card">
+      <img src="assets/miner3.png" alt="Gold Miner">
       <h3>🥇 Gold</h3>
       <p>149 €/Monat – 800 TH/s</p>
       <button>Kaufen</button>
