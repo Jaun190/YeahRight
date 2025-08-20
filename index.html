@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard</title>
+  <title>Hashcore Dashboard</title>
   <style>
     body {
       background: #0e1525;
       color: white;
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
     }
     nav {
       display: flex;
-      gap: 30px;
       justify-content: center;
+      gap: 30px;
       padding: 20px;
       background: rgba(20, 30, 50, 0.9);
     }
@@ -30,20 +29,15 @@
       border-bottom: 2px solid #3b82f6;
       padding-bottom: 4px;
     }
-    .container {
-      padding: 30px;
-    }
-    h1 {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .plans, .subscriptions {
+    .container { padding: 30px; }
+    h1 { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+    .plans, .subscriptions, .miner-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
       margin: 20px 0;
     }
-    .plan, .sub-card {
+    .plan, .sub-card, .miner-card {
       background: rgba(30, 41, 59, 0.6);
       border: 1px solid #374151;
       border-radius: 16px;
@@ -51,14 +45,8 @@
       text-align: center;
       transition: 0.3s;
     }
-    .plan.selected {
-      border-color: #3b82f6;
-      background: rgba(30, 64, 175, 0.3);
-    }
-    .plan img {
-      height: 80px;
-      margin-bottom: 10px;
-    }
+    .plan.selected { border-color: #3b82f6; background: rgba(30, 64, 175, 0.3); }
+    .plan img, .miner-card img { height: 80px; margin-bottom: 10px; }
     button {
       background: #3b82f6;
       border: none;
@@ -69,9 +57,7 @@
       cursor: pointer;
       width: 100%;
     }
-    button:hover {
-      background: #2563eb;
-    }
+    button:hover { background: #2563eb; }
     input {
       width: 100%;
       padding: 8px;
@@ -124,7 +110,26 @@
     <!-- Miner -->
     <div id="miner" class="section">
       <h1>Miner</h1>
-      <p>Hier könnte deine Miner-Übersicht stehen.</p>
+      <div class="miner-list">
+        <div class="miner-card">
+          <img src="assets/miner1.png" alt="Miner 1">
+          <h3>Starter Miner</h3>
+          <p>Status: Inaktiv</p>
+          <p>Hashrate: 0 MH/s</p>
+        </div>
+        <div class="miner-card">
+          <img src="assets/miner2.png" alt="Miner 2">
+          <h3>Pro Miner</h3>
+          <p>Status: Inaktiv</p>
+          <p>Hashrate: 0 MH/s</p>
+        </div>
+        <div class="miner-card">
+          <img src="assets/miner3.png" alt="Miner 3">
+          <h3>Premium Miner</h3>
+          <p>Status: Inaktiv</p>
+          <p>Hashrate: 0 MH/s</p>
+        </div>
+      </div>
     </div>
 
     <!-- Abos -->
