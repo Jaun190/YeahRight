@@ -3,181 +3,175 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore Dashboard</title>
+  <title>Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       margin: 0;
-      background-color: #0f0f15;
-      font-family: "Segoe UI", sans-serif;
-      color: #fff;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      color: #333;
     }
 
     header {
-      background-color: #161b22;
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 18px;
-    }
-
-    header nav a {
-      margin-left: 24px;
-      color: #9bb6ff;
-      text-decoration: none;
-      font-weight: 500;
+      background: #1e1e2f;
+      color: white;
+      padding: 20px;
+      font-size: 1.5rem;
+      text-align: center;
+      font-weight: bold;
     }
 
     .container {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    .section-title {
-      font-size: 20px;
-      margin: 40px 0 20px;
-      font-weight: 600;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .cards {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 20px;
     }
 
     .card {
-      background-color: #1c1f26;
+      background: white;
+      padding: 20px;
       border-radius: 12px;
-      padding: 16px;
-      flex: 1 1 calc(33% - 20px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       text-align: center;
-    }
-
-    .card img {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
-      margin-bottom: 12px;
     }
 
     .card h3 {
       margin: 0;
-      font-size: 18px;
-    }
-
-    .card p {
-      color: #aaa;
-      margin: 4px 0 12px;
-    }
-
-    .card button {
-      background-color: #00bfff;
-      border: none;
-      padding: 10px 16px;
-      color: #fff;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .withdraw-box {
-      background-color: #1c1f26;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 40px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 6px;
-      background: #2a2d36;
-      color: #fff;
-    }
-
-    footer {
-      text-align: center;
-      padding: 40px 20px;
-      font-size: 12px;
+      font-size: 1rem;
       color: #666;
     }
 
-    @media (max-width: 768px) {
-      .cards {
-        flex-direction: column;
-      }
+    .card p {
+      margin: 10px 0 0;
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .chart-box {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    table thead {
+      background: #1e1e2f;
+      color: white;
+    }
+
+    table th, table td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    table tbody tr:nth-child(even) {
+      background: #f4f6f9;
     }
   </style>
 </head>
 <body>
-  <header>
-    <div><strong>Hashcore.Website</strong></div>
-    <nav>
-      <a href="#">Dashboard</a>
-      <a href="#">Miner</a>
-      <a href="#">Abos</a>
-      <a href="#">Auszahlung</a>
-    </nav>
-  </header>
+  <header>Dashboard</header>
 
   <div class="container">
-    <div class="section-title">Willkommen im Dashboard</div>
+    <!-- KPI Cards -->
     <div class="cards">
       <div class="card">
-        <img src="miner1.png" alt="Starter" />
-        <h3>Starter</h3>
-        <p>1 Monat aktiv</p>
+        <h3>Umsatz</h3>
+        <p>CHF 12'340</p>
       </div>
       <div class="card">
-        <img src="miner2.png" alt="Pro" />
-        <h3>Pro</h3>
-        <p>3 Monate aktiv</p>
+        <h3>Kunden</h3>
+        <p>324</p>
       </div>
       <div class="card">
-        <img src="miner3.png" alt="Premium" />
-        <h3>Premium</h3>
-        <p>12 Monate aktiv</p>
+        <h3>Bestellungen</h3>
+        <p>178</p>
+      </div>
+      <div class="card">
+        <h3>Offen</h3>
+        <p>56</p>
       </div>
     </div>
 
-    <div class="section-title">Abo wählen</div>
-    <div class="cards">
-      <div class="card">
-        <img src="miner1.png" alt="Starter Abo" />
-        <h3>Starter Abo</h3>
-        <p>1 MH/s – CHF 29.–</p>
-        <button>Jetzt wählen</button>
-      </div>
-      <div class="card">
-        <img src="miner2.png" alt="Pro Abo" />
-        <h3>Pro Abo</h3>
-        <p>2 MH/s – CHF 59.–</p>
-        <button>Jetzt wählen</button>
-      </div>
-      <div class="card">
-        <img src="miner3.png" alt="Premium Abo" />
-        <h3>Premium Abo</h3>
-        <p>4 MH/s – CHF 99.–</p>
-        <button>Jetzt wählen</button>
-      </div>
+    <!-- Chart -->
+    <div class="chart-box">
+      <canvas id="myChart" height="100"></canvas>
     </div>
 
-    <div class="section-title">Auszahlung</div>
-    <div class="withdraw-box">
-      <p>Verfügbarer Betrag: <strong style="color:#00bfff;">0.00 ETH</strong></p>
-      <input type="text" placeholder="Wallet Adresse eingeben" />
-      <button>Auszahlen</button>
-    </div>
+    <!-- Tabelle -->
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Betrag</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#001</td>
+          <td>Max Muster</td>
+          <td>Bezahlt</td>
+          <td>CHF 120</td>
+        </tr>
+        <tr>
+          <td>#002</td>
+          <td>Anna Beispiel</td>
+          <td>Offen</td>
+          <td>CHF 89</td>
+        </tr>
+        <tr>
+          <td>#003</td>
+          <td>Tom Test</td>
+          <td>Storniert</td>
+          <td>CHF 0</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <footer>
-    © 2025 Hashcore.Website – Alle Rechte vorbehalten
-  </footer>
+  <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun'],
+        datasets: [{
+          label: 'Umsatz',
+          data: [1200, 1900, 3000, 2500, 3200, 4000],
+          borderColor: '#4CAF50',
+          backgroundColor: 'rgba(76, 175, 80, 0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  </script>
 </body>
 </html>
