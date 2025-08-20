@@ -1,221 +1,91 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mining Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #fff;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .dashboard {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      font-size: 2rem;
-    }
-
-    /* Popup Overlay */
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(6px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    /* Popup Box */
-    .popup {
-      background: rgba(30,41,59,0.9);
-      border-radius: 20px;
-      padding: 20px;
-      width: 90%;
-      max-width: 700px;
-      max-height: 80%;
-      overflow-y: auto;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      animation: fadeIn 0.5s ease;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(-20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    .popup-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .popup-header h2 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-
-    .close-btn {
-      cursor: pointer;
-      font-size: 1.5rem;
-      font-weight: bold;
-      background: none;
-      border: none;
-      color: #fff;
-      transition: 0.2s;
-    }
-    .close-btn:hover { color: #f87171; }
-
-    /* Abo Cards */
-    .abo-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .abo-card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      transition: 0.3s;
-      border: 2px solid transparent;
-    }
-
-    .abo-card:hover {
-      transform: translateY(-5px);
-      border: 2px solid #38bdf8;
-    }
-
-    .abo-card.recommended {
-      border: 2px solid #38bdf8;
-      background: rgba(56,189,248,0.1);
-      box-shadow: 0 0 15px rgba(56,189,248,0.5);
-    }
-
-    .abo-title {
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-    }
-
-    .abo-price {
-      font-size: 1.8rem;
-      margin: 10px 0;
-      color: #38bdf8;
-    }
-
-    .abo-duration {
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-
-    .abo-benefits {
-      margin: 15px 0;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    .abo-btn {
-      background: #38bdf8;
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .abo-btn:hover {
-      background: #0ea5e9;
-    }
-
-  </style>
+  <meta charset="UTF-8">
+  <title>GrowEmpire – Abos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="dashboard">
-    Willkommen im Dashboard – Miner sind inaktiv bis Abo gekauft.
-  </div>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white font-sans">
 
-  <!-- Popup -->
-  <div class="overlay" id="aboOverlay">
-    <div class="popup">
-      <div class="popup-header">
-        <h2>Wähle dein Mining-Abo</h2>
-        <button class="close-btn" onclick="closePopup()">✕</button>
-      </div>
-      <div class="abo-container">
-        
-        <!-- Abo 1 -->
-        <div class="abo-card">
-          <div class="abo-title">Starter</div>
-          <div class="abo-price">0.02 ETH</div>
-          <div class="abo-duration">Laufzeit: 30 Tage</div>
-          <div class="abo-benefits">
-            ✅ 1 Miner aktiv<br>
-            ✅ 5% Gewinnsteigerung<br>
-            ❌ Keine Auszahlung möglich
-          </div>
-          <button class="abo-btn">Abo kaufen</button>
-        </div>
+  <!-- Header -->
+  <header class="text-center py-12">
+    <h1 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+      Wähle dein Mining-Abo
+    </h1>
+    <p class="mt-4 text-gray-300 text-lg">
+      Starte noch heute und sichere dir die besten Vorteile!
+    </p>
+  </header>
 
-        <!-- Abo 2 -->
-        <div class="abo-card">
-          <div class="abo-title">Basic</div>
-          <div class="abo-price">0.05 ETH</div>
-          <div class="abo-duration">Laufzeit: 90 Tage</div>
-          <div class="abo-benefits">
-            ✅ 3 Miner aktiv<br>
-            ✅ 10% Gewinnsteigerung<br>
-            ✅ Auszahlung ab 0.1 ETH
-          </div>
-          <button class="abo-btn">Abo kaufen</button>
-        </div>
+  <!-- Pricing Section -->
+  <section class="max-w-6xl mx-auto px-4 grid gap-8 md:grid-cols-4">
 
-        <!-- Abo 3 (Empfohlen) -->
-        <div class="abo-card recommended">
-          <div class="abo-title">Pro (Empfohlen)</div>
-          <div class="abo-price">0.1 ETH</div>
-          <div class="abo-duration">Laufzeit: 180 Tage</div>
-          <div class="abo-benefits">
-            ✅ 5 Miner aktiv<br>
-            ✅ 20% Gewinnsteigerung<br>
-            ✅ Sofortige Auszahlungen
-          </div>
-          <button class="abo-btn">Abo kaufen</button>
-        </div>
-
-        <!-- Abo 4 -->
-        <div class="abo-card">
-          <div class="abo-title">Elite</div>
-          <div class="abo-price">0.25 ETH</div>
-          <div class="abo-duration">Laufzeit: 365 Tage</div>
-          <div class="abo-benefits">
-            ✅ 10 Miner aktiv<br>
-            ✅ 50% Gewinnsteigerung<br>
-            ✅ Priorisierte Auszahlungen<br>
-            🎁 Exklusiver Pool-Zugang
-          </div>
-          <button class="abo-btn">Abo kaufen</button>
-        </div>
-
-      </div>
+    <!-- Basic -->
+    <div class="relative group bg-gray-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
+      <h2 class="text-xl font-bold mb-2">Starter</h2>
+      <p class="text-gray-400 mb-6">Ideal für Einsteiger</p>
+      <p class="text-4xl font-extrabold mb-6">CHF 19<span class="text-lg font-normal"> / Monat</span></p>
+      <ul class="space-y-2 mb-8 text-gray-300">
+        <li>✔ Zugang zum Dashboard</li>
+        <li>✔ 1 Miner-Slot</li>
+        <li>✔ Grundsupport</li>
+      </ul>
+      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 font-bold hover:scale-105 transition">
+        Jetzt starten
+      </button>
     </div>
-  </div>
 
-  <script>
-    function closePopup() {
-      document.getElementById("aboOverlay").style.display = "none";
-    }
-  </script>
+    <!-- Pro (Empfohlen) -->
+    <div class="relative group bg-gray-900 rounded-2xl p-8 shadow-2xl hover:shadow-emerald-500/50 transition-all hover:-translate-y-1 border-2 border-emerald-500">
+      <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-xs font-bold px-3 py-1 rounded-full">
+        EMPFOHLEN
+      </div>
+      <h2 class="text-xl font-bold mb-2">Pro</h2>
+      <p class="text-gray-400 mb-6">Am beliebtesten!</p>
+      <p class="text-4xl font-extrabold mb-6">CHF 49<span class="text-lg font-normal"> / Monat</span></p>
+      <ul class="space-y-2 mb-8 text-gray-300">
+        <li>✔ Zugang zu allen Pools</li>
+        <li>✔ 3 Miner-Slots</li>
+        <li>✔ Premium Support</li>
+        <li>✔ Extra Rewards</li>
+      </ul>
+      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-400 font-bold hover:scale-105 transition">
+        Jetzt upgraden
+      </button>
+    </div>
+
+    <!-- Advanced -->
+    <div class="relative group bg-gray-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
+      <h2 class="text-xl font-bold mb-2">Advanced</h2>
+      <p class="text-gray-400 mb-6">Für ambitionierte Miner</p>
+      <p class="text-4xl font-extrabold mb-6">CHF 99<span class="text-lg font-normal"> / Monat</span></p>
+      <ul class="space-y-2 mb-8 text-gray-300">
+        <li>✔ 10 Miner-Slots</li>
+        <li>✔ Persönlicher Support</li>
+        <li>✔ Exklusive Features</li>
+      </ul>
+      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 font-bold hover:scale-105 transition">
+        Jetzt wählen
+      </button>
+    </div>
+
+    <!-- VIP -->
+    <div class="relative group bg-gray-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
+      <h2 class="text-xl font-bold mb-2">VIP</h2>
+      <p class="text-gray-400 mb-6">Maximale Power</p>
+      <p class="text-4xl font-extrabold mb-6">CHF 199<span class="text-lg font-normal"> / Monat</span></p>
+      <ul class="space-y-2 mb-8 text-gray-300">
+        <li>✔ Unbegrenzte Miner</li>
+        <li>✔ VIP-Support</li>
+        <li>✔ Beta-Features</li>
+        <li>✔ Extra hohe Rewards</li>
+      </ul>
+      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-400 font-bold hover:scale-105 transition">
+        VIP werden
+      </button>
+    </div>
+
+  </section>
+
 </body>
 </html>
