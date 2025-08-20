@@ -2,60 +2,41 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard</title>
   <style>
     body {
       margin: 0;
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: Arial, sans-serif;
+      background: #0d0d0d;
+      color: white;
     }
 
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 30px;
-      background: rgba(20, 20, 20, 0.8);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(90deg, #1a1a1a, #333);
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 2px;
     }
 
-    header img.logo {
-      height: 40px;
-    }
-
-    header img.profile {
-      height: 40px;
-      width: 40px;
-      border-radius: 50%;
-      border: 2px solid #555;
-    }
-
-    main {
-      flex: 1;
-      padding: 40px 60px;
-    }
-
-    .stats {
+    .dashboard {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
       transition: transform 0.2s ease;
     }
 
@@ -63,136 +44,103 @@
       transform: translateY(-5px);
     }
 
-    .card h3 {
-      margin: 0;
-      font-size: 20px;
-      color: #00ff99;
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
     }
 
-    .card p {
-      font-size: 28px;
-      margin-top: 10px;
+    .card-content {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
       font-weight: bold;
+      margin-bottom: 0.5rem;
     }
 
-    .plans {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 25px;
+    .card-text {
+      font-size: 0.9rem;
+      color: #bbb;
+      margin-bottom: 1rem;
     }
 
-    .plan {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 18px;
-      padding: 25px;
+    .price {
+      font-size: 1.1rem;
+      color: #4cafef;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .button {
+      display: inline-block;
       text-align: center;
-      backdrop-filter: blur(15px);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .plan:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 6px 25px rgba(0,0,0,0.6);
-    }
-
-    .plan h2 {
-      margin: 0;
-      font-size: 22px;
-      color: #00e0ff;
-    }
-
-    .plan p.price {
-      margin: 20px 0;
-      font-size: 26px;
-      font-weight: bold;
+      padding: 0.75rem 1rem;
+      background: #4cafef;
       color: #fff;
-    }
-
-    .plan ul {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 20px 0;
-      text-align: left;
-    }
-
-    .plan ul li {
-      margin: 10px 0;
-      font-size: 15px;
-    }
-
-    .plan button {
-      background: #00e0ff;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 24px;
-      color: #000;
+      border-radius: 8px;
+      text-decoration: none;
       font-weight: bold;
-      cursor: pointer;
       transition: background 0.2s ease;
     }
 
-    .plan button:hover {
-      background: #00bcd4;
+    .button:hover {
+      background: #2196f3;
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/logo.png" alt="Logo" class="logo"/>
-    <img src="assets/profile.jpg" alt="Profil" class="profile"/>
+    Mining Dashboard
   </header>
 
-  <main>
-    <section class="stats">
-      <div class="card">
-        <h3>Einnahmen</h3>
-        <p>CHF 2'340.–</p>
+  <main class="dashboard">
+    <div class="card">
+      <img src="assets/miner1.png" alt="Miner 1" />
+      <div class="card-content">
+        <div>
+          <div class="card-title">Starter Miner</div>
+          <div class="card-text">Kompakter Einsteiger-Miner für erste Hashes.</div>
+        </div>
+        <div>
+          <div class="price">CHF 499.–</div>
+          <a href="#" class="button">Jetzt kaufen</a>
+        </div>
       </div>
-      <div class="card">
-        <h3>Hashrate</h3>
-        <p>450 MH/s</p>
-      </div>
-      <div class="card">
-        <h3>Team</h3>
-        <p>128 Mitglieder</p>
-      </div>
-    </section>
+    </div>
 
-    <section class="plans">
-      <div class="plan">
-        <h2>Starter</h2>
-        <p class="price">CHF 49.–</p>
-        <ul>
-          <li>Basis Dashboard</li>
-          <li>1 Referral-Ebene</li>
-          <li>Standard Support</li>
-        </ul>
-        <button>Jetzt starten</button>
+    <div class="card">
+      <img src="assets/miner2.png" alt="Miner 2" />
+      <div class="card-content">
+        <div>
+          <div class="card-title">Pro Miner</div>
+          <div class="card-text">Leistungsstarker Miner für ambitionierte Nutzer.</div>
+        </div>
+        <div>
+          <div class="price">CHF 1’199.–</div>
+          <a href="#" class="button">Jetzt kaufen</a>
+        </div>
       </div>
+    </div>
 
-      <div class="plan">
-        <h2>Pro</h2>
-        <p class="price">CHF 29.– / Monat</p>
-        <ul>
-          <li>Erweiterte Statistik</li>
-          <li>3 Referral-Ebenen</li>
-          <li>Pro Support</li>
-        </ul>
-        <button>Upgrade</button>
+    <div class="card">
+      <img src="assets/miner3.png" alt="Miner 3" />
+      <div class="card-content">
+        <div>
+          <div class="card-title">Ultra Miner</div>
+          <div class="card-text">Maximale Hashrate für Profis & Reseller.</div>
+        </div>
+        <div>
+          <div class="price">CHF 2’499.–</div>
+          <a href="#" class="button">Jetzt kaufen</a>
+        </div>
       </div>
-
-      <div class="plan">
-        <h2>Elite</h2>
-        <p class="price">CHF 99.– / Monat</p>
-        <ul>
-          <li>Alle Funktionen freigeschaltet</li>
-          <li>Unbegrenzte Ebenen</li>
-          <li>Premium Support</li>
-        </ul>
-        <button>Elite werden</button>
-      </div>
-    </section>
+    </div>
   </main>
 </body>
 </html>
