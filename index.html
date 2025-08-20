@@ -1,100 +1,234 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GrowEmpire Mining</title>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <title>Hashline Mining</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
   <style>
     body {
-      margin: 0; font-family: Arial, sans-serif; 
+      margin: 0;
+      font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
-      color: white; text-align: center;
+      color: white;
     }
-    header { padding: 20px; font-size: 26px; font-weight: bold; }
+    header {
+      padding: 15px;
+      background: #111;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      color: #0ff;
+    }
     .btn {
-      padding: 12px 20px; margin: 10px;
-      background: #3b82f6; border: none; color: white;
-      border-radius: 10px; font-size: 16px;
-      cursor: pointer; transition: 0.3s;
+      background: #0ff;
+      color: #111;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
     }
-    .btn:hover { background: #2563eb; }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 20px; padding: 20px; margin: 20px auto;
-      width: 300px; backdrop-filter: blur(10px);
+    .btn:hover {
+      background: #09c;
+      color: white;
     }
-    .hidden { display: none; }
-    #popup {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    .dashboard {
+      padding: 20px;
+      text-align: center;
+    }
+    .mining-box {
+      margin: 20px auto;
+      background: #222;
+      border-radius: 12px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 0 20px #0ff3;
+    }
+    .mining-btn {
+      background: #444;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    /* Popup Overlay */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.8);
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: visible;
     }
-    #popup .card { width: 350px; }
+    .popup {
+      background: #111;
+      padding: 30px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 900px;
+      box-shadow: 0 0 30px #0ff;
+      position: relative;
+    }
+    .popup h2 {
+      text-align: center;
+      color: #0ff;
+      margin-bottom: 20px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 15px; right: 20px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+      gap: 20px;
+    }
+    .plan {
+      background: #222;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px #0ff3;
+      transition: transform 0.3s;
+    }
+    .plan:hover {
+      transform: scale(1.05);
+    }
+    .plan h3 {
+      color: #0ff;
+    }
+    .plan p {
+      color: #aaa;
+    }
+    .recommended {
+      border: 2px solid #0f0;
+      position: relative;
+    }
+    .recommended::after {
+      content: "Empfohlen";
+      position: absolute;
+      top: -12px; right: 10px;
+      background: #0f0;
+      color: #111;
+      padding: 2px 8px;
+      font-size: 12px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <header>🌱 GrowEmpire Mining</header>
+  <header>
+    <h1>Hashline Dashboard</h1>
+    <button class="btn" onclick="connectWallet()">Mit MetaMask verbinden</button>
+  </header>
 
-  <div id="auth">
-    <button class="btn" onclick="connectWallet()">Login mit MetaMask</button>
-  </div>
-
-  <div id="popup" class="hidden">
-    <div class="card">
-      <h2>Wähle dein Abo</h2>
-      <button class="btn" onclick="buySub(1)">⚡ Basic – 0.01 ETH / Monat</button>
-      <button class="btn" onclick="buySub(2)">🔥 Pro – 0.02 ETH / Monat</button>
-      <button class="btn" onclick="buySub(3)">💎 Elite – 0.05 ETH / Monat</button>
+  <div class="dashboard">
+    <h2>Mining Dashboard</h2>
+    <div class="mining-box">
+      <h3>Miner</h3>
+      <div class="mining-btn">Miner 1 (inaktiv)</div>
+      <div class="mining-btn">Miner 2 (inaktiv)</div>
+      <div class="mining-btn">Miner 3 (inaktiv)</div>
     </div>
   </div>
 
-  <div id="dashboard" class="hidden">
-    <div class="card">
-      <h2>Dein Dashboard</h2>
-      <p id="status">⛏ Miner: Inaktiv</p>
-      <p id="sub">📦 Abo: keines</p>
-      <button class="btn" onclick="switchView('admin')">➡ Admin-Bereich</button>
-    </div>
-  </div>
-
-  <div id="admin" class="hidden">
-    <div class="card">
-      <h2>Admin Bereich</h2>
-      <p>Pools festlegen, Auszahlungen prüfen</p>
-      <button class="btn" onclick="switchView('dashboard')">⬅ Zurück zum Dashboard</button>
+  <!-- Abo-Popup -->
+  <div class="overlay" id="aboPopup">
+    <div class="popup">
+      <span class="close-btn" onclick="closePopup()">&times;</span>
+      <h2>Wähle dein Mining-Abo</h2>
+      <div class="plans">
+        <div class="plan">
+          <h3>Basic Miner</h3>
+          <p>30 Tage</p>
+          <p><strong>0.02 ETH</strong></p>
+          <p>Einsteiger-Paket</p>
+          <button class="btn" onclick="buyPlan('Basic', 0.02)">Jetzt starten</button>
+        </div>
+        <div class="plan recommended">
+          <h3>Standard Miner</h3>
+          <p>90 Tage</p>
+          <p><strong>0.05 ETH</strong></p>
+          <p>Bester Preis-Leistung</p>
+          <button class="btn" onclick="buyPlan('Standard', 0.05)">Jetzt starten</button>
+        </div>
+        <div class="plan">
+          <h3>Pro Miner</h3>
+          <p>180 Tage</p>
+          <p><strong>0.09 ETH</strong></p>
+          <p>Für ernsthafte Miner</p>
+          <button class="btn" onclick="buyPlan('Pro', 0.09)">Jetzt starten</button>
+        </div>
+        <div class="plan">
+          <h3>Elite Miner</h3>
+          <p>365 Tage</p>
+          <p><strong>0.15 ETH</strong></p>
+          <p>Volle Hashpower + Bonus</p>
+          <button class="btn" onclick="buyPlan('Elite', 0.15)">Jetzt starten</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    let provider, signer, userAddress;
-    const contractAddress = "0x1234567890123456789012345678901234567890"; // hier echte Adresse eintragen
-    const abi = []; // später ABI vom Smart Contract einsetzen
+    let userAccount;
 
     async function connectWallet() {
-      if (!window.ethereum) return alert("MetaMask installieren!");
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      signer = provider.getSigner();
-      userAddress = await signer.getAddress();
-
-      document.getElementById("auth").classList.add("hidden");
-      document.getElementById("popup").classList.remove("hidden");
+      if (window.ethereum) {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        userAccount = accounts[0];
+        alert("Verbunden: " + userAccount);
+        document.getElementById("aboPopup").style.visibility = "visible";
+      } else {
+        alert("Bitte MetaMask installieren.");
+      }
     }
 
-    async function buySub(level) {
-      document.getElementById("popup").classList.add("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
-
-      let aboName = level === 1 ? "Basic" : level === 2 ? "Pro" : "Elite";
-      document.getElementById("sub").innerText = "📦 Abo: " + aboName;
-      document.getElementById("status").innerText = "⛏ Miner: Aktiv";
+    function closePopup() {
+      document.getElementById("aboPopup").style.visibility = "hidden";
     }
 
-    function switchView(target) {
-      document.getElementById("dashboard").classList.add("hidden");
-      document.getElementById("admin").classList.add("hidden");
-      document.getElementById(target).classList.remove("hidden");
+    async function buyPlan(plan, price) {
+      if (!userAccount) return alert("Bitte zuerst Wallet verbinden.");
+      const web3 = new Web3(window.ethereum);
+      const tx = {
+        from: userAccount,
+        to: "0xYourAdminWalletHere", // Admin Wallet
+        value: web3.utils.toWei(price.toString(), "ether")
+      };
+      try {
+        await ethereum.request({ method: 'eth_sendTransaction', params: [tx] });
+        alert(plan + " Abo gekauft!");
+        closePopup();
+        activateMiners();
+      } catch (err) {
+        console.error(err);
+        alert("Transaktion abgebrochen");
+      }
+    }
+
+    function activateMiners() {
+      const miners = document.querySelectorAll(".mining-btn");
+      miners.forEach(m => {
+        m.style.background = "#0f0";
+        m.style.color = "#111";
+        m.style.cursor = "pointer";
+        m.textContent = m.textContent.replace("(inaktiv)", "(aktiv)");
+        m.onclick = () => alert(m.textContent + " gestartet!");
+      });
     }
   </script>
 </body>
