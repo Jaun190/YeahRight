@@ -1,73 +1,107 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-900">
-  <!-- Header -->
-  <header class="bg-white shadow p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold">Dein Dashboard</h1>
-    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Logout</button>
-  </header>
+// src/pages/Dashboard.tsx
+import React, { useState } from "react";
+import miner1 from "@/assets/miner1.png";
+import miner2 from "@/assets/miner2.png";
+import miner3 from "@/assets/miner3.png";
 
-  <!-- Statistik-Karten -->
-  <section class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white shadow rounded-xl p-6">
-      <h2 class="text-sm text-gray-500">Gesamt-Umsatz</h2>
-      <p class="text-2xl font-bold mt-2">CHF 12'450.–</p>
-    </div>
-    <div class="bg-white shadow rounded-xl p-6">
-      <h2 class="text-sm text-gray-500">Provisionen</h2>
-      <p class="text-2xl font-bold mt-2">CHF 3'200.–</p>
-    </div>
-    <div class="bg-white shadow rounded-xl p-6">
-      <h2 class="text-sm text-gray-500">Dein Level</h2>
-      <p class="text-2xl font-bold mt-2">Elite</p>
-    </div>
-  </section>
+const Dashboard: React.FC = () => {
+  const [selectedPlan, setSelectedPlan] = useState<string>("");
 
-  <!-- Produkte Grid -->
-  <section class="p-6">
-    <h2 class="text-xl font-semibold mb-4">Produkte</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      
-      <!-- Produkt 1 -->
-      <div class="bg-white shadow rounded-xl overflow-hidden">
-        <img src="assets/miner1.png" alt="Miner 1" class="w-full h-40 object-cover">
-        <div class="p-4">
-          <h3 class="text-lg font-bold">ASIC Miner A1</h3>
-          <p class="text-gray-600 text-sm mt-1">Leistungsstarker Bitcoin-Miner</p>
-          <p class="text-indigo-600 font-semibold mt-2">CHF 2'499.–</p>
-          <button class="mt-3 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Jetzt kaufen</button>
+  const plans = [
+    {
+      id: "starter",
+      name: "Starter",
+      duration: "1 Monat",
+      rate: "1 MH/s Mining-Rate",
+      image: miner1,
+    },
+    {
+      id: "pro",
+      name: "Pro",
+      duration: "3 Monate",
+      rate: "2 MH/s + Live-Support",
+      image: miner2,
+    },
+    {
+      id: "premium",
+      name: "Premium",
+      duration: "12 Monate",
+      rate: "4 MH/s + Prioris. Auszahlungen",
+      image: miner3,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#0e1525] text-white p-6">
+      <h1 className="text-2xl font-bold mb-2">Willkommen im Dashboard</h1>
+      <p className="text-gray-400 mb-8">
+        Miner sind inaktiv bis Abo gekauft
+      </p>
+
+      {/* Plans */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        {plans.map((plan) => (
+          <div
+            key={plan.id}
+            onClick={() => setSelectedPlan(plan.id)}
+            className={`rounded-2xl p-6 cursor-pointer border transition 
+              ${selectedPlan === plan.id ? "border-blue-500 bg-blue-900/30" : "border-gray-700 bg-gray-800/40"}
+            `}
+          >
+            <img src={plan.image} alt={plan.name} className="h-24 mx-auto mb-4" />
+            <h2 className="text-lg font-semibold text-center">{plan.name}</h2>
+            <p className="text-center text-gray-400">{plan.duration}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Subscription options */}
+      <h2 className="text-xl font-semibold mb-4">Wähle dein Abo</h2>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-gray-800/50 rounded-xl p-4">
+          <h3 className="font-semibold">Starter</h3>
+          <p className="text-sm text-gray-400">1 Monat</p>
+          <p className="text-sm text-gray-400">1 MH/s Mining-Rate</p>
+          <button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg">
+            Wählen
+          </button>
+        </div>
+
+        <div className="bg-gray-800/50 rounded-xl p-4">
+          <h3 className="font-semibold">Pro</h3>
+          <p className="text-sm text-gray-400">3 Monate</p>
+          <p className="text-sm text-gray-400">2 MH/s + Live-Support</p>
+          <button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg">
+            Wählen
+          </button>
+        </div>
+
+        <div className="bg-gray-800/50 rounded-xl p-4">
+          <h3 className="font-semibold">Premium</h3>
+          <p className="text-sm text-gray-400">12 Monate</p>
+          <p className="text-sm text-gray-400">4 MH/s + Prioris. Auszahlungen</p>
+          <button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg">
+            Wählen
+          </button>
+        </div>
+
+        {/* Admin */}
+        <div className="bg-gray-800/50 rounded-xl p-4">
+          <h3 className="font-semibold">Admin</h3>
+          <p className="text-sm text-gray-400">Balance</p>
+          <p className="text-white text-lg">0.00 ETH</p>
+          <input
+            type="text"
+            placeholder="Wallet Adresse"
+            className="mt-3 w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm"
+          />
+          <button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg">
+            Auszahlen
+          </button>
         </div>
       </div>
-      
-      <!-- Produkt 2 -->
-      <div class="bg-white shadow rounded-xl overflow-hidden">
-        <img src="assets/miner2.png" alt="Miner 2" class="w-full h-40 object-cover">
-        <div class="p-4">
-          <h3 class="text-lg font-bold">ASIC Miner B2</h3>
-          <p class="text-gray-600 text-sm mt-1">Effizient & leise im Betrieb</p>
-          <p class="text-indigo-600 font-semibold mt-2">CHF 1'799.–</p>
-          <button class="mt-3 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Jetzt kaufen</button>
-        </div>
-      </div>
-      
-      <!-- Produkt 3 -->
-      <div class="bg-white shadow rounded-xl overflow-hidden">
-        <img src="assets/miner3.png" alt="Miner 3" class="w-full h-40 object-cover">
-        <div class="p-4">
-          <h3 class="text-lg font-bold">ASIC Miner C3</h3>
-          <p class="text-gray-600 text-sm mt-1">Top Hashrate für Profis</p>
-          <p class="text-indigo-600 font-semibold mt-2">CHF 3'299.–</p>
-          <button class="mt-3 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Jetzt kaufen</button>
-        </div>
-      </div>
-      
     </div>
-  </section>
-</body>
-</html>
+  );
+};
+
+export default Dashboard;
