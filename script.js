@@ -1,0 +1,1 @@
+console.log("Hashcore.Website loaded");
