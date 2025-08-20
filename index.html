@@ -2,51 +2,108 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>CTPool – Cloud Mining</title>
+  <title>Hashcore.Website – Cloud Mining</title>
   <style>
-    body { margin:0; background:#0f172a; color:white; font-family:Arial, sans-serif; }
-    header { padding:20px; background:#1e293b; text-align:center; }
-    h1 { color:#38bdf8; margin:0; }
-    section { padding:40px 20px; text-align:center; }
-    .card { background:#1e293b; padding:20px; border-radius:12px; margin:20px auto; max-width:500px; }
-    button { background:#3b82f6; border:none; padding:10px 20px; margin:5px; border-radius:8px; color:white; cursor:pointer; }
-    input { padding:10px; border-radius:8px; border:none; width:80%; margin:10px 0; }
-    table { margin:auto; border-collapse:collapse; width:80%; }
-    th, td { border:1px solid #334155; padding:10px; }
-    th { background:#334155; }
+    /* ===== Global Styles ===== */
+    body {
+      margin:0; 
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #0f172a, #020617);
+      color:white;
+      overflow-x:hidden;
+    }
+    header {
+      padding:20px;
+      text-align:center;
+      background:rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      box-shadow:0 0 20px #0ea5e9;
+    }
+    h1 { font-size:2.2em; color:#0ea5e9; margin:0; }
+    h2 { color:#38bdf8; }
+    section { padding:60px 20px; text-align:center; }
+
+    /* ===== Cards / Glassmorphismus ===== */
+    .card {
+      background:rgba(30,41,59,0.6);
+      backdrop-filter: blur(12px);
+      padding:25px;
+      border-radius:18px;
+      margin:20px auto;
+      max-width:500px;
+      box-shadow:0 0 25px rgba(56,189,248,0.3);
+      transition: transform 0.3s ease;
+    }
+    .card:hover { transform: scale(1.05); }
+
+    /* ===== Buttons ===== */
+    button {
+      background:linear-gradient(90deg,#0ea5e9,#6366f1);
+      border:none;
+      padding:12px 24px;
+      margin:10px;
+      border-radius:10px;
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+      box-shadow:0 0 15px rgba(14,165,233,0.5);
+    }
+    button:hover { transform:translateY(-3px); box-shadow:0 0 25px rgba(99,102,241,0.8); }
+
+    input {
+      padding:12px; 
+      border-radius:10px; 
+      border:none; 
+      width:80%; 
+      margin:10px 0;
+      background:#1e293b;
+      color:white;
+    }
+
+    table {
+      margin:auto; 
+      border-collapse:collapse; 
+      width:90%; 
+      color:white;
+    }
+    th, td { border:1px solid #334155; padding:12px; }
+    th { background:#1e293b; }
   </style>
+
   <script>
-    let isAdmin = false; // ⚡ Demo: true zeigt Adminbereich
-    
+    let isAdmin = false; // ⚡ Demo: auf true setzen für Admin-Ansicht
+
     async function connectWallet() {
       if (window.ethereum) {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        document.getElementById("wallet").innerText = "Wallet verbunden: " + accounts[0];
+        document.getElementById("wallet").innerText = "✅ Wallet verbunden: " + accounts[0];
         document.getElementById("dashboard").style.display = "block";
         document.getElementById("auszahlung").style.display = "block";
         if(isAdmin) document.getElementById("admin").style.display = "block";
       } else {
-        alert("Bitte MetaMask installieren!");
+        alert("⚠️ Bitte MetaMask installieren!");
       }
     }
   </script>
 </head>
 <body>
+  <!-- Header -->
   <header>
-    <h1>🚀 CTPool Cloud Mining</h1>
-    <p>Starte dein Mining in Sekunden – mit Abo & Wallet</p>
+    <h1>⚡ Hashcore.Website</h1>
+    <p>Die nächste Generation von Cloud Mining – schneller, transparenter, geiler.</p>
   </header>
 
   <!-- Hero -->
   <section>
-    <h2>Mit MetaMask verbinden</h2>
-    <button onclick="connectWallet()">Wallet verbinden</button>
+    <h2>🚀 Verbinde deine Wallet & starte sofort</h2>
+    <button onclick="connectWallet()">Mit MetaMask verbinden</button>
     <p id="wallet">Noch nicht verbunden</p>
   </section>
 
   <!-- Abos -->
   <section id="abos">
-    <h2>Mining Abos</h2>
+    <h2>💳 Mining Abos</h2>
     <div class="card">
       <h3>🥉 Bronze</h3>
       <p>30 €/Monat – 100 TH/s</p>
@@ -66,11 +123,11 @@
 
   <!-- Dashboard -->
   <section id="dashboard" style="display:none;">
-    <h2>Dein Dashboard</h2>
+    <h2>📊 Dein Dashboard</h2>
     <div class="card">
-      <p>Hashrate: <b>390 TH/s</b></p>
-      <p>Einnahmen: <b>0.052 BTC</b></p>
-      <p>Aktive Abos: Bronze + Silber</p>
+      <p><b>Hashrate:</b> 390 TH/s</p>
+      <p><b>Einnahmen:</b> 0.052 BTC</p>
+      <p><b>Aktive Abos:</b> Bronze + Silber</p>
     </div>
   </section>
 
@@ -95,8 +152,9 @@
     </div>
   </section>
 
+  <!-- Footer -->
   <footer style="padding:20px; background:#1e293b; text-align:center;">
-    <p>© 2025 CTPool – Alle Rechte vorbehalten | <a href="#" style="color:#38bdf8;">AGB</a> | <a href="#" style="color:#38bdf8;">Impressum</a></p>
+    <p>© 2025 Hashcore.Website | <a href="#" style="color:#38bdf8;">AGB</a> | <a href="#" style="color:#38bdf8;">Impressum</a></p>
   </footer>
 </body>
 </html>
