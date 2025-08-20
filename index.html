@@ -2,216 +2,93 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CT Pool Deluxe</title>
+  <title>Mining Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    header {
-      width: 100%;
-      padding: 20px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-    }
-
-    header h1 {
-      font-size: 2rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin: 0;
-    }
-
-    .plans {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin: 40px auto;
-      justify-content: center;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 15px;
-      padding: 30px;
-      width: 260px;
-      text-align: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      transition: transform 0.3s;
-      cursor: pointer;
-    }
-
-    .card:hover {
-      transform: translateY(-10px);
-    }
-
-    .card h2 {
-      margin: 0;
-      font-size: 1.4rem;
-    }
-
-    .price {
-      font-size: 2rem;
-      margin: 20px 0;
-      color: #4ade80;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 12px 24px;
-      border-radius: 8px;
-      background: #4ade80;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .btn:hover {
-      background: #22c55e;
-    }
-
-    footer {
-      padding: 20px;
-      margin-top: 40px;
-      font-size: 0.9rem;
-      opacity: 0.7;
-    }
-
-    /* Popup */
-    .popup {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .popup-content {
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
-
-    .popup h3 {
-      margin-bottom: 15px;
-    }
-
-    .close {
-      background: #ef4444;
-      color: #fff;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 20px;
-      display: inline-block;
-    }
-
-    /* MetaMask Button */
-    #metamaskLogin {
-      margin: 20px auto;
-      padding: 12px 20px;
-      background: #f59e0b;
-      color: #fff;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    #metamaskLogin:hover {
-      background: #d97706;
-    }
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; text-align: center; }
+    .card { background: #222; padding: 20px; margin: 20px auto; border-radius: 12px; width: 400px; }
+    button { background: #28a745; color: white; padding: 10px; border: none; border-radius: 6px; cursor: pointer; }
+    button:disabled { background: gray; }
+    h1 { color: #0f0; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>CT Pool Deluxe</h1>
-    <p>Wähle dein Abo & verbinde deine Wallet</p>
-  </header>
-
-  <div id="metamaskLogin">🔗 Mit MetaMask anmelden</div>
-  <p id="walletAddress"></p>
-
-  <section class="plans">
-    <div class="card" onclick="openPopup('Starter Abo', 'CHF 29 / Monat')">
-      <h2>Starter</h2>
-      <p class="price">CHF 29/Monat</p>
-      <p>Perfekt für Einsteiger</p>
-      <div class="btn">Abo wählen</div>
-    </div>
-
-    <div class="card" onclick="openPopup('Pro Abo', 'CHF 59 / Monat')">
-      <h2>Pro</h2>
-      <p class="price">CHF 59/Monat</p>
-      <p>Für aktive Nutzer</p>
-      <div class="btn">Abo wählen</div>
-    </div>
-
-    <div class="card" onclick="openPopup('Elite Abo', 'CHF 99 / Monat')">
-      <h2>Elite</h2>
-      <p class="price">CHF 99/Monat</p>
-      <p>Maximale Vorteile</p>
-      <div class="btn">Abo wählen</div>
-    </div>
-  </section>
-
-  <div id="popup" class="popup">
-    <div class="popup-content">
-      <h3 id="popupTitle">Abo</h3>
-      <p id="popupPrice"></p>
-      <p>Bitte bestätige dein Abo.</p>
-      <div class="btn" onclick="confirmAbo()">✅ Bestätigen</div>
-      <div class="close" onclick="closePopup()">❌ Schließen</div>
-    </div>
+  <h1>Hashline Mining Dashboard</h1>
+  <div class="card">
+    <p><b>Wallet:</b> <span id="wallet">Nicht verbunden</span></p>
+    <button onclick="connectWallet()">Wallet verbinden</button>
   </div>
 
-  <footer>
-    © 2025 CT Pool Deluxe – Alle Rechte vorbehalten
-  </footer>
+  <div class="card">
+    <h2>Mining Abo kaufen</h2>
+    <p>Wähle dein Mining-Paket:</p>
+    <button onclick="buyPlan(1)">Basic – 0.01 ETH / Monat</button>
+    <button onclick="buyPlan(2)">Pro – 0.05 ETH / Monat</button>
+    <button onclick="buyPlan(3)">Elite – 0.1 ETH / Monat</button>
+  </div>
 
-  <script>
-    // Fake MetaMask Connect
-    document.getElementById("metamaskLogin").onclick = async function() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          document.getElementById("walletAddress").innerText = "Verbunden: " + accounts[0];
-        } catch (err) {
-          alert("Verbindung abgelehnt!");
-        }
-      } else {
-        alert("MetaMask nicht gefunden!");
-      }
-    };
+  <div class="card">
+    <h2>Deine Mining Rate</h2>
+    <p><span id="rate">0</span> Hash/s</p>
+  </div>
 
-    // Popup Logic
-    function openPopup(title, price) {
-      document.getElementById("popupTitle").innerText = title;
-      document.getElementById("popupPrice").innerText = price;
-      document.getElementById("popup").style.display = "flex";
+  <div class="card">
+    <h2>Admin Bereich</h2>
+    <button onclick="withdraw()">Pool Auszahlung</button>
+  </div>
+
+<script>
+  let web3;
+  let contract;
+  const contractAddress = "DEINE_CONTRACT_ADRESSE"; // nach Deployment eintragen
+  const abi = [
+    {
+      "inputs":[{"internalType":"uint8","name":"plan","type":"uint8"}],
+      "name":"buyPlan","outputs":[],"stateMutability":"payable","type":"function"
+    },
+    {
+      "inputs":[],"name":"getRate","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
+      "stateMutability":"view","type":"function"
+    },
+    {
+      "inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"
     }
+  ];
 
-    function closePopup() {
-      document.getElementById("popup").style.display = "none";
+  async function connectWallet() {
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+      await ethereum.request({ method: "eth_requestAccounts" });
+      const accounts = await web3.eth.getAccounts();
+      document.getElementById("wallet").innerText = accounts[0];
+      contract = new web3.eth.Contract(abi, contractAddress);
+      loadRate();
+    } else {
+      alert("Bitte MetaMask installieren!");
     }
+  }
 
-    function confirmAbo() {
-      alert("✅ Dein Abo wurde gebucht!");
-      closePopup();
-    }
-  </script>
+  async function buyPlan(plan) {
+    const accounts = await web3.eth.getAccounts();
+    let value = "0";
+    if (plan === 1) value = web3.utils.toWei("0.01", "ether");
+    if (plan === 2) value = web3.utils.toWei("0.05", "ether");
+    if (plan === 3) value = web3.utils.toWei("0.1", "ether");
+    await contract.methods.buyPlan(plan).send({ from: accounts[0], value });
+    loadRate();
+  }
+
+  async function loadRate() {
+    const accounts = await web3.eth.getAccounts();
+    const rate = await contract.methods.getRate().call({ from: accounts[0] });
+    document.getElementById("rate").innerText = rate;
+  }
+
+  async function withdraw() {
+    const accounts = await web3.eth.getAccounts();
+    await contract.methods.withdraw().send({ from: accounts[0] });
+    alert("Auszahlung ausgeführt");
+  }
+</script>
 </body>
 </html>
