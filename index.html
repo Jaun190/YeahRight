@@ -2,90 +2,122 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hashcore.Website Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hashcore Dashboard</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0b0f19;
-      color: white;
+      background-color: #0f0f15;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
     }
+
     header {
-      background-color: #0f172a;
+      background-color: #161b22;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      font-size: 18px;
     }
-    header h1 {
-      font-size: 1.2rem;
-    }
-    nav a {
-      color: white;
-      margin-left: 2rem;
+
+    header nav a {
+      margin-left: 24px;
+      color: #9bb6ff;
       text-decoration: none;
+      font-weight: 500;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      margin: 40px 0 20px;
+      font-weight: 600;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: #1c1f26;
+      border-radius: 12px;
+      padding: 16px;
+      flex: 1 1 calc(33% - 20px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .card img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .card p {
+      color: #aaa;
+      margin: 4px 0 12px;
+    }
+
+    .card button {
+      background-color: #00bfff;
+      border: none;
+      padding: 10px 16px;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
       font-weight: bold;
     }
-    .container {
-      padding: 2rem;
+
+    .withdraw-box {
+      background-color: #1c1f26;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 40px;
     }
-    .section-title {
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
-    }
-    .cards, .plans {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
-    .card, .plan {
-      background-color: #1e293b;
-      border-radius: 10px;
-      padding: 1rem;
-      flex: 1;
-      min-width: 200px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    .card img {
-      height: 80px;
-      margin-bottom: 0.5rem;
-    }
-    .card h3, .plan h4 {
-      margin: 0.5rem 0;
-    }
-    button {
-      background-color: #0ea5e9;
-      border: none;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-    .admin-box {
-      background-color: #1e293b;
-      padding: 1rem;
-      border-radius: 10px;
-    }
+
     input {
       width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
+      padding: 10px;
+      margin: 10px 0;
       border: none;
-      border-radius: 5px;
-      background-color: #334155;
-      color: white;
+      border-radius: 6px;
+      background: #2a2d36;
+      color: #fff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .cards {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Hashcore.Website</h1>
+    <div><strong>Hashcore.Website</strong></div>
     <nav>
       <a href="#">Dashboard</a>
       <a href="#">Miner</a>
@@ -95,52 +127,57 @@
   </header>
 
   <div class="container">
-    <h2 class="section-title">Willkommen im Dashboard</h2>
-    <p>Miner sind inaktiv bis Abo gekauft</p>
-
+    <div class="section-title">Willkommen im Dashboard</div>
     <div class="cards">
       <div class="card">
-        <img src="assets/miner1.png" alt="Starter Miner" />
+        <img src="miner1.png" alt="Starter" />
         <h3>Starter</h3>
-        <p>1 Monat</p>
+        <p>1 Monat aktiv</p>
       </div>
       <div class="card">
-        <img src="assets/miner2.png" alt="Pro Miner" />
+        <img src="miner2.png" alt="Pro" />
         <h3>Pro</h3>
-        <p>3 Monate</p>
+        <p>3 Monate aktiv</p>
       </div>
       <div class="card">
-        <img src="assets/miner3.png" alt="Premium Miner" />
+        <img src="miner3.png" alt="Premium" />
         <h3>Premium</h3>
-        <p>12 Monate</p>
+        <p>12 Monate aktiv</p>
       </div>
     </div>
 
-    <h2 class="section-title">Wähle dein Abo</h2>
-    <div class="plans">
-      <div class="plan">
-        <h4>Starter</h4>
-        <p>1 MH/s Mining-Rate</p>
-        <button>Wählen</button>
+    <div class="section-title">Abo wählen</div>
+    <div class="cards">
+      <div class="card">
+        <img src="miner1.png" alt="Starter Abo" />
+        <h3>Starter Abo</h3>
+        <p>1 MH/s – CHF 29.–</p>
+        <button>Jetzt wählen</button>
       </div>
-      <div class="plan">
-        <h4>Pro</h4>
-        <p>2 MH/s + Live-Support</p>
-        <button>Wählen</button>
+      <div class="card">
+        <img src="miner2.png" alt="Pro Abo" />
+        <h3>Pro Abo</h3>
+        <p>2 MH/s – CHF 59.–</p>
+        <button>Jetzt wählen</button>
       </div>
-      <div class="plan">
-        <h4>Premium</h4>
-        <p>4 MH/s + Prioris. Auszahlungen</p>
-        <button>Wählen</button>
+      <div class="card">
+        <img src="miner3.png" alt="Premium Abo" />
+        <h3>Premium Abo</h3>
+        <p>4 MH/s – CHF 99.–</p>
+        <button>Jetzt wählen</button>
       </div>
     </div>
 
-    <h2 class="section-title">Admin</h2>
-    <div class="admin-box">
-      <p>Balance: 0.00 ETH</p>
+    <div class="section-title">Auszahlung</div>
+    <div class="withdraw-box">
+      <p>Verfügbarer Betrag: <strong style="color:#00bfff;">0.00 ETH</strong></p>
       <input type="text" placeholder="Wallet Adresse eingeben" />
       <button>Auszahlen</button>
     </div>
   </div>
+
+  <footer>
+    © 2025 Hashcore.Website – Alle Rechte vorbehalten
+  </footer>
 </body>
 </html>
