@@ -3,80 +3,147 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashline – Mining Abos</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>GrowEmpire – Mining Abos</title>
   <style>
     body {
-      background: radial-gradient(circle at top, #0f172a, #020617);
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
       color: white;
-      font-family: 'Inter', sans-serif;
     }
-    .glass {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(12px);
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      flex: 1 1 250px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    }
+
+    .card h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #22d3ee, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .price {
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .duration {
+      font-size: 1rem;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    ul li {
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      color: white;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    header {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      background: linear-gradient(to right, #06b6d4, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center px-4">
-  <!-- Hero Section -->
-  <header class="text-center mb-12">
-    <h1 class="text-5xl md:text-6xl font-extrabold mb-4">Hashline Mining Abos</h1>
-    <p class="text-gray-300 text-lg max-w-2xl mx-auto">
-      Wähle dein Abo, erhöhe deine Hashrate und sichere dir Zugang zum Mining-Pool.  
-      Je länger und teurer das Abo, desto mehr Power kannst du nutzen.
-    </p>
-  </header>
-
-  <!-- Pricing Cards -->
-  <section class="grid md:grid-cols-3 gap-8 max-w-6xl w-full">
-    <!-- Basic -->
-    <div class="glass rounded-2xl p-8 shadow-lg text-center flex flex-col">
-      <h2 class="text-2xl font-bold mb-2">Starter</h2>
-      <p class="text-gray-400 mb-6">Perfekt für Einsteiger</p>
-      <div class="text-4xl font-extrabold mb-4">CHF 59<span class="text-lg font-medium">/Monat</span></div>
-      <ul class="text-gray-300 text-left mb-6 space-y-2">
-        <li>✔ Laufzeit: 30 Tage</li>
-        <li>✔ Zugang zum Mining-Pool</li>
-        <li>✔ Hashrate x1</li>
-        <li>✔ Jederzeit erweiterbar</li>
+<body>
+  <header>GrowEmpire Mining Abos</header>
+  <div class="container">
+    
+    <div class="card">
+      <h2>Starter</h2>
+      <div class="price">CHF 199</div>
+      <div class="duration">3 Monate</div>
+      <ul>
+        <li>✅ Einstieg ins Mining</li>
+        <li>✅ 1x Hash-Paket</li>
+        <li>✅ Upgrade jederzeit möglich</li>
       </ul>
-      <button class="mt-auto bg-indigo-600 hover:bg-indigo-700 transition rounded-xl px-6 py-3 font-semibold">
-        Jetzt starten
-      </button>
+      <a href="#" class="btn">Jetzt kaufen</a>
+    </div>
+    
+    <div class="card">
+      <h2>Pro</h2>
+      <div class="price">CHF 499</div>
+      <div class="duration">6 Monate</div>
+      <ul>
+        <li>✅ Mehr Hashrate</li>
+        <li>✅ 2x Hash-Paket</li>
+        <li>✅ Zugang zu Extra-Tools</li>
+      </ul>
+      <a href="#" class="btn">Jetzt kaufen</a>
+    </div>
+    
+    <div class="card">
+      <h2>Elite</h2>
+      <div class="price">CHF 899</div>
+      <div class="duration">12 Monate</div>
+      <ul>
+        <li>✅ Maximale Hashrate</li>
+        <li>✅ 3x Hash-Paket</li>
+        <li>✅ Exklusiver Support</li>
+      </ul>
+      <a href="#" class="btn">Jetzt kaufen</a>
     </div>
 
-    <!-- Pro -->
-    <div class="glass rounded-2xl p-8 shadow-lg text-center flex flex-col border-2 border-indigo-500">
-      <h2 class="text-2xl font-bold mb-2">Pro</h2>
-      <p class="text-gray-400 mb-6">Für ambitionierte Miner</p>
-      <div class="text-4xl font-extrabold mb-4">CHF 199<span class="text-lg font-medium">/3 Monate</span></div>
-      <ul class="text-gray-300 text-left mb-6 space-y-2">
-        <li>✔ Laufzeit: 90 Tage</li>
-        <li>✔ Erhöhte Hashrate x3</li>
-        <li>✔ Zugang zum Pool + Bonus</li>
-        <li>✔ Abo mehrfach kombinierbar</li>
-      </ul>
-      <button class="mt-auto bg-indigo-600 hover:bg-indigo-700 transition rounded-xl px-6 py-3 font-semibold">
-        Jetzt starten
-      </button>
-    </div>
-
-    <!-- Elite -->
-    <div class="glass rounded-2xl p-8 shadow-lg text-center flex flex-col">
-      <h2 class="text-2xl font-bold mb-2">Elite</h2>
-      <p class="text-gray-400 mb-6">Maximale Power</p>
-      <div class="text-4xl font-extrabold mb-4">CHF 499<span class="text-lg font-medium">/6 Monate</span></div>
-      <ul class="text-gray-300 text-left mb-6 space-y-2">
-        <li>✔ Laufzeit: 180 Tage</li>
-        <li>✔ Maximale Hashrate x8</li>
-        <li>✔ Voller Poolzugang</li>
-        <li>✔ Mehrfach buchbar</li>
-      </ul>
-      <button class="mt-auto bg-indigo-600 hover:bg-indigo-700 transition rounded-xl px-6 py-3 font-semibold">
-        Jetzt starten
-      </button>
-    </div>
-  </section>
+  </div>
 </body>
 </html>
