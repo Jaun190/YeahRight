@@ -1,124 +1,60 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashcore.Website</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: white;
-    }
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-    header h1 {
-      font-size: 3rem;
-      margin: 0;
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .miner-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      padding: 2rem;
-      max-width: 1200px;
-      margin: auto;
-    }
-    .miner-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 1rem;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .miner-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
-    }
-    .miner-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: contain;
-      background: #111;
-    }
-    .miner-content {
-      padding: 1.5rem;
-      text-align: center;
-    }
-    .miner-content h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: #00c6ff;
-    }
-    .miner-content p {
-      font-size: 0.95rem;
-      color: #ccc;
-      margin-bottom: 1rem;
-    }
-    .price {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #00ff99;
-      margin-bottom: 1rem;
-    }
-    .btn {
-      display: inline-block;
-      padding: 0.6rem 1.2rem;
-      border-radius: 30px;
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
-      text-decoration: none;
-      color: white;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    .btn:hover {
-      opacity: 0.85;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrowChain – Abos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header>
-    <h1>Hashcore.Website</h1>
-    <p>High-End Mining Hardware – direkt für dich</p>
-  </header>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <h1 class="text-4xl font-extrabold text-center mb-12">Wähle dein GrowChain Abo</h1>
 
-  <section class="miner-grid">
-    <div class="miner-card">
-      <img src="assets/miner1.png" alt="Miner 1">
-      <div class="miner-content">
-        <h2>HashMiner X1</h2>
-        <p>Effizienter Bitcoin Miner für Einsteiger und Profis.</p>
-        <div class="price">CHF 2'499.–</div>
-        <a href="#" class="btn">Jetzt kaufen</a>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <!-- Monatslizenz -->
+      <div class="bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col justify-between hover:scale-105 transition">
+        <h2 class="text-2xl font-bold mb-4">Monatslizenz</h2>
+        <p class="text-gray-400 mb-6">Starte flexibel und monatlich kündbar.</p>
+        <div class="mt-auto">
+          <p class="text-4xl font-extrabold">CHF 29.–</p>
+          <p class="text-gray-400">pro Monat</p>
+          <button class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl">Jetzt starten</button>
+        </div>
+      </div>
+
+      <!-- 6-Monatslizenz -->
+      <div class="bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col justify-between hover:scale-105 transition border-2 border-green-500">
+        <h2 class="text-2xl font-bold mb-4">6-Monats Lizenz</h2>
+        <p class="text-gray-400 mb-6">Spare mehr mit 6 Monaten Laufzeit.</p>
+        <div class="mt-auto">
+          <p class="text-4xl font-extrabold">CHF 139.–</p>
+          <p class="text-gray-400">einmalig</p>
+          <button class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl">Jetzt starten</button>
+        </div>
+      </div>
+
+      <!-- Jahreslizenz -->
+      <div class="bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col justify-between hover:scale-105 transition">
+        <h2 class="text-2xl font-bold mb-4">Jahreslizenz</h2>
+        <p class="text-gray-400 mb-6">Die beste Wahl für langfristigen Erfolg.</p>
+        <div class="mt-auto">
+          <p class="text-4xl font-extrabold">CHF 199.–</p>
+          <p class="text-gray-400">pro Jahr</p>
+          <button class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl">Jetzt starten</button>
+        </div>
+      </div>
+
+      <!-- Lifetime -->
+      <div class="bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col justify-between hover:scale-105 transition border-2 border-yellow-400">
+        <h2 class="text-2xl font-bold mb-4">Lifetime</h2>
+        <p class="text-gray-400 mb-6">Einmal zahlen, unbegrenzt nutzen.</p>
+        <div class="mt-auto">
+          <p class="text-4xl font-extrabold">CHF 500.–</p>
+          <p class="text-gray-400">einmalig</p>
+          <button class="mt-6 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl">Jetzt starten</button>
+        </div>
       </div>
     </div>
-
-    <div class="miner-card">
-      <img src="assets/miner2.png" alt="Miner 2">
-      <div class="miner-content">
-        <h2>HashMiner Pro</h2>
-        <p>Maximale Power für dein Mining-Business.</p>
-        <div class="price">CHF 4'299.–</div>
-        <a href="#" class="btn">Jetzt kaufen</a>
-      </div>
-    </div>
-
-    <div class="miner-card">
-      <img src="assets/miner3.png" alt="Miner 3">
-      <div class="miner-content">
-        <h2>HashMiner Ultra</h2>
-        <p>Die Zukunft des Mining – brutal stark & effizient.</p>
-        <div class="price">CHF 6'999.–</div>
-        <a href="#" class="btn">Jetzt kaufen</a>
-      </div>
-    </div>
-  </section>
+  </div>
 </body>
 </html>
