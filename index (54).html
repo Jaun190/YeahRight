@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hashcore Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0e0e0e;
+      color: #fff;
+    }
+
+    header {
+      background-color: #1a1a1a;
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #4dd0e1;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      margin: 2rem 0 1rem;
+      border-bottom: 1px solid #333;
+      padding-bottom: 0.5rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background-color: #1f1f1f;
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card img {
+      max-width: 100%;
+      height: 160px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      margin: 0.5rem 0;
+      color: #4dd0e1;
+    }
+
+    .card p {
+      color: #ccc;
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hashcore Dashboard</h1>
+  </header>
+  <main>
+    <div class="section-title">Deine Miner</div>
+    <div class="card-grid">
+      <div class="card">
+        <img src="assets/miner1.png" alt="Miner 1" />
+        <h3>Starter Miner</h3>
+        <p>Günstiger Einstieg, ideal für Anfänger. 30 MH/s Leistung.</p>
+      </div>
+      <div class="card">
+        <img src="assets/miner2.png" alt="Miner 2" />
+        <h3>Pro Miner</h3>
+        <p>Optimale Balance zwischen Kosten und Ertrag. 75 MH/s Leistung.</p>
+      </div>
+      <div class="card">
+        <img src="assets/miner3.png" alt="Miner 3" />
+        <h3>Ultimate Miner</h3>
+        <p>Maximale Power für Profis. 150 MH/s Leistung.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Abonnements & Auszahlung</div>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Aktives Abo</h3>
+        <p>Pro Miner Abo aktiv bis 20.09.2025</p>
+      </div>
+      <div class="card">
+        <h3>Nächste Auszahlung</h3>
+        <p>CHF 120.– am 01.10.2025</p>
+      </div>
+      <div class="card">
+        <h3>Provision erhalten</h3>
+        <p>Letzte Referral-Provision: CHF 15.–</p>
+      </div>
+    </div>
+  </main>
+  <div class="footer">© 2025 Hashcore.Website – Alle Rechte vorbehalten.</div>
+</body>
+</html>
