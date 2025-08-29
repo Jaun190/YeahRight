@@ -1,130 +1,355 @@
+<!doctype html>
 
-<!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hashcore Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0e0e0e;
-      color: #fff;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profit‑Engine – Verkaufe heute. Skalier morgen.</title>
+  <meta name="description" content="Ein hochkonvertierender Sales‑Onepager mit Preisboxen, Trust, Countdown, A/B‑Test, DSGVO‑Banner & Stripe‑Hooks. Einfach Links einfügen & verkaufen." />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <link rel="canonical" href="https://example.com/" />  <!-- Open Graph / Twitter -->  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Profit‑Engine – Verkaufe heute. Skalier morgen." />
+  <meta property="og:description" content="Fixfertiges, profitables Sales‑Template. Nur noch Stripe anhängen." />
+  <meta property="og:image" content="https://example.com/og-image.jpg" />
+  <meta property="og:url" content="https://example.com/" />
+  <meta name="twitter:card" content="summary_large_image" />  <!-- JSON‑LD: Organisation + Produkt -->  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Profit‑Engine Template",
+    "description": "Hochkonvertierender Onepager mit Preisstufen, Social Proof, Countdown & DSGVO.",
+    "brand": {"@type":"Brand","name":"Profit‑Engine"},
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "CHF",
+      "lowPrice": "49",
+      "highPrice": "299",
+      "offerCount": "3"
     }
+  }
+  </script>  <style>
+    /* --- Reset & Tokens --- */
+    *,*::before,*::after{box-sizing:border-box}html,body{height:100%}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;line-height:1.6;background:var(--bg);color:var(--fg)}
+    :root{
+      --bg:#0b1020; --fg:#eaf2ff; --muted:#a2b3d1; --card:#0f162e; --card-2:#0c1328; --brand:#0ea5e9; --brand-2:#22d3ee; --ok:#10b981; --warn:#f59e0b; --danger:#ef4444; --ring: 0 0 0 3px rgba(34,211,238,.35);
+      --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);
+      --radius: 18px; --radius-sm:12px; --radius-lg:28px; --maxw:1200px;
+    }
+    [data-theme="light"]{--bg:#0b1020;--fg:#eaf2ff}
+    @media (prefers-color-scheme: light){:root{--bg:#0b1020;--fg:#eaf2ff}}
 
-    header {
-      background-color: #1a1a1a;
-      padding: 1.2rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    }
+    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+    .container{max-width:var(--maxw);margin-inline:auto;padding:clamp(16px,3vw,28px)}
+    .btn{display:inline-flex;align-items:center;gap:.6rem;border:1px solid transparent;padding:.9rem 1.1rem;border-radius:var(--radius-sm);font-weight:700;letter-spacing:.2px;background:linear-gradient(180deg,var(--brand),var(--brand-2));color:#001018;box-shadow:var(--shadow);cursor:pointer}
+    .btn:hover{filter:brightness(1.05)}
+    .btn.ghost{background:transparent;border-color:#20304f;color:var(--fg)}
+    .btn.secondary{background:linear-gradient(180deg,#22c55e,#10b981);color:#02140c}
+    .chip{display:inline-block;background:#0f1b36;color:#9fb7de;padding:.35rem .6rem;border-radius:999px;border:1px solid #20304f;font-size:.85rem}
+    .glass{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);backdrop-filter: blur(12px);box-shadow:var(--shadow)}
 
-    header h1 {
-      margin: 0;
-      font-size: 1.5rem;
-      color: #4dd0e1;
-    }
+    header.nav{position:sticky;top:0;z-index:40;background:rgba(9,14,28,.7);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav .inner{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:.75rem}
+    .brand .logo{width:38px;height:38px;border-radius:12px;background:radial-gradient(60% 60% at 30% 20%,#22d3ee,transparent 70%),radial-gradient(60% 60% at 70% 80%,#0ea5e9,transparent 70%);box-shadow:inset 0 0 40px rgba(34,211,238,.35),0 10px 30px rgba(0,0,0,.35)}
+    .brand .name{font-weight:900;letter-spacing:.3px}
+    nav a{margin-left:1rem;color:#cfe2ff}
 
-    main {
-      max-width: 1200px;
-      margin: auto;
-      padding: 2rem;
-    }
+    .hero{position:relative;isolation:isolate;padding:72px 0}
+    .hero:before{content:"";position:absolute;inset:-10% -30% auto -30%;height:70%;background:radial-gradient(50% 50% at 50% 50%,rgba(34,211,238,.25),transparent 60%);filter:blur(40px);z-index:-1}
+    .hero h1{font-size: clamp(32px, 4.2vw, 60px);line-height:1.1;margin:0 0 12px}
+    .hero p.lead{font-size: clamp(16px,1.5vw,20px);color:var(--muted);max-width:800px}
+    .hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+    .kpi{padding:18px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.07);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
+    .kpi b{font-size:1.6rem}
 
-    .section-title {
-      font-size: 1.3rem;
-      margin: 2rem 0 1rem;
-      border-bottom: 1px solid #333;
-      padding-bottom: 0.5rem;
-    }
+    .trust{display:grid;grid-template-columns:repeat(5,1fr);gap:22px;opacity:.8;margin-top:28px;align-items:center}
+    .trust div{height:34px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border-radius:10px;border:1px solid rgba(255,255,255,.08)}
 
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{padding:22px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.08)}
 
-    .card {
-      background-color: #1f1f1f;
-      border-radius: 12px;
-      padding: 1rem;
-      text-align: center;
-      transition: 0.3s;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
+    .offer{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;align-items:stretch}
+    .value{padding:22px;border-radius:var(--radius);border:1px dashed #27406d}
+    .stack li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
 
-    .card:hover {
-      transform: translateY(-4px);
-    }
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .plan{position:relative;padding:22px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.1)}
+    .plan.pop{outline:3px solid rgba(34,211,238,.35)}
+    .price{font-size:2.2rem;font-weight:900}
+    .save{font-size:.85rem;color:#8cc7ff}
+    .features{margin:14px 0 18px}
+    .features li{display:flex;gap:8px;margin:.5rem 0}
 
-    .card img {
-      max-width: 100%;
-      height: 160px;
-      object-fit: contain;
-      margin-bottom: 1rem;
-    }
+    .banner{display:flex;gap:12px;align-items:center;justify-content:center;padding:10px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:linear-gradient(180deg,rgba(16,185,129,.12),rgba(16,185,129,.06));color:#c7ffea}
 
-    .card h3 {
-      margin: 0.5rem 0;
-      color: #4dd0e1;
-    }
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
 
-    .card p {
-      color: #ccc;
-      font-size: 0.95rem;
-    }
+    details{border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px}
+    details summary{cursor:pointer;font-weight:700}
 
-    .footer {
-      text-align: center;
-      padding: 2rem;
-      color: #666;
-      font-size: 0.8rem;
+    footer{margin-top:40px;padding:32px 0;border-top:1px solid rgba(255,255,255,.08);opacity:.85}
+
+    .cookie{position:fixed;right:16px;bottom:16px;z-index:60;max-width:480px}
+
+    .badge{position:absolute;top:14px;right:14px}
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .cards,.pricing,.kpis,.trust{grid-template-columns:1fr 1fr}
+      .offer{grid-template-columns:1fr}
     }
-  </style>
-</head>
+    @media (max-width: 640px){
+      .cards,.pricing,.kpis,.trust{grid-template-columns:1fr}
+      nav{display:none}
+    }
+  </style></head>
 <body>
-  <header>
-    <h1>Hashcore Dashboard</h1>
-  </header>
-  <main>
-    <div class="section-title">Deine Miner</div>
-    <div class="card-grid">
-      <div class="card">
-        <img src="assets/miner1.png" alt="Miner 1" />
-        <h3>Starter Miner</h3>
-        <p>Günstiger Einstieg, ideal für Anfänger. 30 MH/s Leistung.</p>
+  <header class="nav">
+    <div class="container inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="name">Profit‑Engine</div>
+        <span class="chip">Fixfertig • Nur Stripe fehlt</span>
       </div>
-      <div class="card">
-        <img src="assets/miner2.png" alt="Miner 2" />
-        <h3>Pro Miner</h3>
-        <p>Optimale Balance zwischen Kosten und Ertrag. 75 MH/s Leistung.</p>
-      </div>
-      <div class="card">
-        <img src="assets/miner3.png" alt="Miner 3" />
-        <h3>Ultimate Miner</h3>
-        <p>Maximale Power für Profis. 150 MH/s Leistung.</p>
-      </div>
+      <nav>
+        <a href="#vorteile">Vorteile</a>
+        <a href="#angebot">Angebot</a>
+        <a href="#preise">Preise</a>
+        <a href="#faq">FAQ</a>
+        <button class="btn ghost" id="toggleTheme" aria-label="Theme umschalten">🌗</button>
+      </nav>
     </div>
+  </header>  <main>
+    <section class="hero container">
+      <span class="chip" id="headlineVariant">VARIANTE A</span>
+      <h1 id="headline">Starte heute Umsatz – mit einem Onepager, der verkauft.</h1>
+      <p class="lead">Dieses Template ist ein konvertierender Verkaufs‑Motor: Preisstufen, Social Proof, Value‑Stack, Countdown, DSGVO‑Banner und Stripe‑Hooks. Du fügst nur noch deine Stripe‑Links ein – fertig.</p>
+      <div class="cta">
+        <a class="btn" href="#preise">Jetzt starten</a>
+        <button class="btn ghost" id="demoBtn">Demo ansehen</button>
+      </div>
+      <div class="kpis">
+        <div class="kpi glass"><b>+38%</b><br/><small>höhere CTR durch klare CTA‑Struktur</small></div>
+        <div class="kpi glass"><b>~2–7%</b><br/><small>typische Checkout‑CR bei Warm‑Traffic</small></div>
+        <div class="kpi glass"><b>≤1s</b><br/><small>Ladezeit (ohne externe Assets)</small></div>
+      </div>
+      <div class="trust">
+        <div class="glass"></div><div class="glass"></div><div class="glass"></div><div class="glass"></div><div class="glass"></div>
+      </div>
+    </section><section id="vorteile" class="container">
+  <div class="cards">
+    <div class="card glass">
+      <h3>Glasklare Nutzenkommunikation</h3>
+      <p>Hero → Nutzen → Beweis. Keine Ablenkung, nur Conversion‑Pfad.</p>
+    </div>
+    <div class="card glass">
+      <h3>Value‑Stack & Risikoumkehr</h3>
+      <p>Wertaufbau mit Einzelpreisen + 30‑Tage Geld‑zurück – baut Vertrauen auf.</p>
+    </div>
+    <div class="card glass">
+      <h3>Saubere Technik</h3>
+      <p>Kein Framework, keine Abhängigkeiten, DSGVO‑Banner, SEO & Schema‑Daten.</p>
+    </div>
+  </div>
+</section>
 
-    <div class="section-title">Abonnements & Auszahlung</div>
-    <div class="card-grid">
-      <div class="card">
-        <h3>Aktives Abo</h3>
-        <p>Pro Miner Abo aktiv bis 20.09.2025</p>
+<section id="angebot" class="container offer">
+  <div class="value glass">
+    <span class="chip">WERT‑STACK</span>
+    <h2>Dein Angebot, maximal greifbar</h2>
+    <ul class="stack">
+      <li><span>Hauptprodukt</span><b>CHF 299</b></li>
+      <li><span>Bonus 1 – Checklisten & Vorlagen</span><b>CHF 89</b></li>
+      <li><span>Bonus 2 – Video‑Kurs (2h)</span><b>CHF 149</b></li>
+      <li><span>Support (30 Tage E‑Mail)</span><b>CHF 79</b></li>
+      <li style="border-bottom:none"><span><b>Gesamtwert</b></span><b>CHF 616</b></li>
+    </ul>
+    <div class="banner">Heute nur <b>CHF 199</b> – sichere dir das Launch‑Angebot <span id="cdMini" class="chip"></span></div>
+  </div>
+  <div class="glass card">
+    <h3>100% risikofrei</h3>
+    <p>Teste alles 30 Tage lang. Wenn du keinen Mehrwert siehst, erhältst du dein Geld zurück – ohne Fragen.</p>
+    <ul class="features">
+      <li>✅ Sofortzugang</li>
+      <li>✅ Mobil optimiert</li>
+      <li>✅ Rechtstexte‑Sektion</li>
+    </ul>
+    <p class="save">*Tipp: Nutze unten die <b>Bestes Angebot</b>‑Box für maximale Marge.</p>
+  </div>
+</section>
+
+<section id="preise" class="container">
+  <h2>Preise</h2>
+  <div class="pricing">
+    <article class="plan glass" aria-labelledby="p1t">
+      <span class="badge chip">Einmalig</span>
+      <h3 id="p1t">Start</h3>
+      <div class="price">CHF 49</div>
+      <ul class="features">
+        <li>✅ Template + Updates (Basis)</li>
+        <li>✅ E‑Mail Support 7 Tage</li>
+        <li>— Upsells optional</li>
+      </ul>
+      <button class="btn buy" data-stripe-link="https://buy.stripe.com/DEINE_LINK_ID_START" data-plan="Start">Jetzt kaufen</button>
+    </article>
+
+    <article class="plan glass pop" aria-labelledby="p2t">
+      <span class="badge chip">Bestes Angebot</span>
+      <h3 id="p2t">Pro</h3>
+      <div class="price">CHF 199</div>
+      <div class="save">inkl. Bonus‑Pakete (‑CHF 417)</div>
+      <ul class="features">
+        <li>✅ Alles aus Start</li>
+        <li>✅ Vorlagen, Video‑Kurs, Support</li>
+        <li>✅ Order‑Bump + Checkout‑Upsell</li>
+      </ul>
+      <label style="display:flex;align-items:center;gap:.6rem;margin:.6rem 0 1rem">
+        <input type="checkbox" id="bump" />
+        <span>+ Order‑Bump: "Schnellstart" <b>(+CHF 19)</b></span>
+      </label>
+      <button class="btn buy" data-stripe-link="https://buy.stripe.com/DEINE_LINK_ID_PRO" data-bump-link="https://buy.stripe.com/DEINE_LINK_ID_BUMP" data-plan="Pro">Jetzt Pro sichern</button>
+    </article>
+
+    <article class="plan glass" aria-labelledby="p3t">
+      <span class="badge chip">Abo</span>
+      <h3 id="p3t">Elite</h3>
+      <div class="price">CHF 29<span style="font-size:1rem;font-weight:600">/Monat</span></div>
+      <ul class="features">
+        <li>✅ Monatliche Vorlagen & Hooks</li>
+        <li>✅ Priorisierter Support</li>
+        <li>✅ Aktionen & Partner‑Pool</li>
+      </ul>
+      <button class="btn buy" data-stripe-link="https://buy.stripe.com/DEINE_LINK_ID_ELITE" data-plan="Elite">Jetzt abonnieren</button>
+    </article>
+  </div>
+  <p class="save">Die Buttons öffnen Stripe Checkout. Ersetze dafür die Platzhalter‑Links mit deinen Stripe <b>Payment Links</b>.</p>
+</section>
+
+<section class="container grid-2">
+  <div class="glass card">
+    <h3>Countdown: Launch‑Deal</h3>
+    <p>Dieses Angebot endet in:</p>
+    <div id="countdown" style="font:900 clamp(28px,4vw,48px)/1 ui-sans-serif;letter-spacing:2px">00:00:00</div>
+    <small>Evergreen (pro Besucher) – wird lokal gespeichert.</small>
+  </div>
+  <div class="glass card">
+    <h3>Stimmen unserer Kund:innen</h3>
+    <p>„In 48 Stunden live. Erste Verkäufe am selben Tag. Dieses Template bezahlt sich selbst.“ – L. M., E‑Com</p>
+    <p>„Die Preisboxen + Bump heben die Marge deutlich.“ – D. K., Agentur</p>
+  </div>
+</section>
+
+<section id="faq" class="container">
+  <h2>FAQ</h2>
+  <details><summary>Wie hänge ich Stripe an?</summary><p>Im Stripe‑Dashboard → <i>Zahlungslinks</i> erstellen (für jede Preisoption + optional Bump). Kopiere die Links und ersetze in diesem HTML die <code>data-stripe-link</code> Werte. Fertig.</p></details>
+  <details><summary>Brauche ich einen Server?</summary><p>Nein. Payment Links funktionieren ohne Backend. Optional kannst du später Stripe Checkout Sessions serverseitig nutzen.</p></details>
+  <details><summary>DSGVO?</summary><p>Ein Cookie‑Banner ist enthalten (lokale Consent‑Speicherung). Für Tracking‑Tools musst du selbst konforme Einbindungen vornehmen.</p></details>
+</section>
+
+  </main>  <footer class="container">
+    <div class="grid-2">
+      <div>
+        <b>Profit‑Engine</b><br/>
+        <small>© <span id="year"></span> – Alle Rechte vorbehalten</small>
       </div>
-      <div class="card">
-        <h3>Nächste Auszahlung</h3>
-        <p>CHF 120.– am 01.10.2025</p>
-      </div>
-      <div class="card">
-        <h3>Provision erhalten</h3>
-        <p>Letzte Referral-Provision: CHF 15.–</p>
+      <div style="text-align:right">
+        <a href="#" aria-label="Impressum">Impressum</a> ·
+        <a href="#" aria-label="Datenschutz">Datenschutz</a> ·
+        <a href="#" aria-label="AGB">AGB</a>
       </div>
     </div>
-  </main>
-  <div class="footer">© 2025 Hashcore.Website – Alle Rechte vorbehalten.</div>
-</body>
+  </footer>  <!-- Cookie Banner -->  <div id="cookie" class="cookie glass" hidden>
+    <div class="card" style="padding:16px">
+      <b>Cookies & Datenschutz</b>
+      <p>Wir verwenden ausschließlich technisch notwendige Cookies (für Countdown/A‑B‑Test). Keine Tracker ohne Einwilligung.</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn ghost" id="decline">Ablehnen</button>
+        <button class="btn" id="accept">Einverstanden</button>
+      </div>
+    </div>
+  </div>  <!-- Demo Modal -->  <dialog id="demo" class="glass" style="border:none;border-radius:var(--radius);padding:0;max-width:min(960px,96vw);">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08)">
+      <b>Kurzdemo</b>
+      <form method="dialog"><button class="btn ghost">Schließen</button></form>
+    </div>
+    <div style="padding:0;aspect-ratio:16/9;max-height:70vh">
+      <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" title="Demo" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </dialog>  <script>
+    // --- Utilities
+    const $ = (sel,ctx=document)=>ctx.querySelector(sel);
+    const $$ = (sel,ctx=document)=>[...ctx.querySelectorAll(sel)];
+
+    // Year
+    $('#year').textContent = new Date().getFullYear();
+
+    // Theme toggle
+    const themeKey='pe_theme';
+    const savedTheme = localStorage.getItem(themeKey);
+    if(savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+    $('#toggleTheme').addEventListener('click',()=>{
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur==='light'?'dark':'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(themeKey,next);
+    });
+
+    // A/B Headline (simple, local)
+    const abKey='pe_ab_headline';
+    let v = localStorage.getItem(abKey) || (Math.random()>.5?'A':'B');
+    localStorage.setItem(abKey,v);
+    const h = $('#headline');
+    const hv = $('#headlineVariant');
+    if(v==='B'){
+      h.textContent = 'Mehr Umsatz in Tagen – nicht in Monaten.';
+      hv.textContent = 'VARIANTE B';
+    }
+
+    // Evergreen countdown (48h ab erstem Besuch)
+    const cdKey='pe_cd_start';
+    const now = Date.now();
+    let start = parseInt(localStorage.getItem(cdKey)||'0',10);
+    if(!start){ start = now; localStorage.setItem(cdKey,String(start)); }
+    const end = start + 48*60*60*1000; // 48h
+    const fmt = (n)=>String(n).padStart(2,'0');
+    const tick = ()=>{
+      const t = Math.max(0, end - Date.now());
+      const h = Math.floor(t/3.6e6);
+      const m = Math.floor((t%3.6e6)/6e4);
+      const s = Math.floor((t%6e4)/1e3);
+      $('#countdown').textContent = `${fmt(h)}:${fmt(m)}:${fmt(s)}`;
+      $('#cdMini').textContent = `${fmt(h)}h ${fmt(m)}m`;
+      if(t<=0) clearInterval(intv);
+    }
+    const intv = setInterval(tick,1000); tick();
+
+    // Cookie banner (minimal)
+    const consentKey='pe_consent';
+    if(!localStorage.getItem(consentKey)) $('#cookie').hidden=false;
+    $('#accept').addEventListener('click',()=>{localStorage.setItem(consentKey,'yes');$('#cookie').hidden=true;});
+    $('#decline').addEventListener('click',()=>{$('#cookie').hidden=true;});
+
+    // Demo modal
+    $('#demoBtn').addEventListener('click',()=>$('#demo').showModal());
+
+    // Stripe Payment Links handling (+optional Order Bump)
+    $$('.buy').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const base = btn.dataset.stripeLink;
+        if(!base || base.includes('DEINE_LINK_ID')){
+          alert('Bitte ersetze data-stripe-link im HTML mit deinem Stripe Payment Link.');
+          return;
+        }
+        const plan = btn.dataset.plan||'Plan';
+        const hasBump = $('#bump') && $('#bump').checked && btn.dataset.bumpLink && !btn.dataset.bumpLink.includes('DEINE_LINK_ID');
+        // Öffne Haupt‑Checkout in neuem Tab
+        window.open(base,'_blank','noopener');
+        // Optional: Bump in zweitem Tab
+        if(hasBump){ setTimeout(()=>window.open(btn.dataset.bumpLink,'_blank','noopener'), 500); }
+      });
+    });
+  </script></body>
 </html>
